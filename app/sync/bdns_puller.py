@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import date
+from datetime import date, date as date_t
 from typing import Any
 
 import httpx
@@ -37,3 +37,32 @@ async def fetch_page(page: int, since: date, page_size: int | None = None) -> di
         response = await client.get(url, params=params)
         response.raise_for_status()
         return response.json()
+
+
+def _parse_date(value: str | None) -> date_t | None:
+    if not value:
+        return None
+    return date_t.fromisoformat(value)
+
+
+def parse_item(raw: dict[str, Any]) -> dict[str, Any]:
+    """Mapea un item bruto de BDNS al formato de nuestro modelo Subvencion."""
+    return {
+        "source": "bdns",
+        "external_id": str(raw["id"]),
+        "titulo": raw.get("titulo", ""),
+        "organismo": raw.get("organismo"),
+        "ambito": raw.get("ambito", "estatal"),
+        "ccaa": raw.get("ccaa"),
+        "fecha_inicio": _parse_date(raw.get("fechaInicio")),
+        "fecha_fin": _parse_date(raw.get("fechaFin")),
+        "importe_total": raw.get("importeTotal"),
+        "importe_max_beneficiario": raw.get("importeMaxBeneficiario"),
+        "porcentaje": raw.get("porcentaje"),
+        "beneficiarios": raw.get("beneficiarios"),
+        "cnae_elegible": raw.get("cnaeElegible") or [],
+        "finalidad": raw.get("finalidad") or [],
+        "descripcion": raw.get("descripcion"),
+        "enlace_oficial": raw.get("enlaceOficial"),
+        "raw_payload": raw,
+    }
