@@ -1,23 +1,34 @@
 {
-  "page": 1,
-  "totalPages": 2,
-  "items": [
+  "content": [
     {
-      "id": "BDNS-001",
-      "titulo": "Ayudas para digitalización de PYMEs",
-      "organismo": "Ministerio de Industria",
-      "ambito": "estatal",
-      "ccaa": null,
-      "fechaInicio": "2026-01-15",
-      "fechaFin": "2026-12-31",
-      "importeTotal": 1000000.00,
-      "importeMaxBeneficiario": 12000.00,
-      "porcentaje": null,
-      "beneficiarios": {"tamanos": ["micro", "pequena", "mediana"]},
-      "cnaeElegible": ["6201", "6202"],
-      "finalidad": ["digitalizacion"],
-      "descripcion": "Ayudas Kit Digital para PYMEs.",
-      "enlaceOficial": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-1"
+      "id": 1107676,
+      "mrr": false,
+      "numeroConvocatoria": "906115",
+      "descripcion": "CONVENIO DE COLABORACIÓN CON EL GREMIO DE HOSTELERIA PARA LA DINAMIZACIÓN DE LA HOSTELERIA 2026",
+      "descripcionLeng": null,
+      "fechaRecepcion": "2026-01-15",
+      "nivel1": "LOCAL",
+      "nivel2": "CERDANYOLA DEL VALLÈS",
+      "nivel3": "AYUNTAMIENTO DE CERDANYOLA DEL VALLÈS",
+      "codigoInvente": null
     }
-  ]
+  ],
+  "pageable": {
+    "sort": {"sorted": false, "unsorted": true, "empty": true},
+    "pageNumber": 0,
+    "pageSize": 100,
+    "offset": 0,
+    "paged": true,
+    "unpaged": false
+  },
+  "last": false,
+  "totalElements": 9279,
+  "totalPages": 93,
+  "first": true,
+  "sort": {"sorted": false, "unsorted": true, "empty": true},
+  "numberOfElements": 1,
+  "size": 100,
+  "number": 0,
+  "empty": false,
+  "advertencia": null
 }

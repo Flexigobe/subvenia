@@ -14,27 +14,39 @@ from app.db.models import Subvencion
 
 settings = get_settings()
 
+# Mapping from BDNS nivel1 values to normalised ambito strings.
+_NIVEL1_TO_AMBITO: dict[str, str] = {
+    "ESTATAL": "estatal",
+    "AUTONÓMICA": "autonomico",
+    "AUTONOMICA": "autonomico",
+    "LOCAL": "local",
+    "EUROPEA": "europeo",
+}
+
 
 async def fetch_page(page: int, since: date, page_size: int | None = None) -> dict[str, Any]:
     """Descarga una página del listado de convocatorias BDNS.
 
     Args:
-        page: número de página (1-indexed).
+        page: número de página (1-indexed, se convierte a 0-indexed internamente).
         since: fecha desde la que filtrar convocatorias modificadas.
         page_size: tamaño de página. Si None, usa el de config.
 
     Returns:
-        Dict con claves `page`, `totalPages`, `items` (lista de convocatorias en bruto).
+        La respuesta JSON cruda de la API BDNS (Spring Page). Contiene las claves
+        ``content`` (lista de items), ``last`` (bool), ``totalPages``, etc.
 
     Raises:
         httpx.HTTPStatusError: si el servidor responde con >= 400.
     """
     size = page_size or settings.bdns_page_size
     url = f"{settings.bdns_base_url}/convocatorias/busqueda"
+    # BDNS usa paginación 0-indexed; los callers externos pasan 1-indexed.
     params = {
-        "page": page,
+        "page": page - 1,
         "pageSize": size,
-        "fechaDesde": since.isoformat(),
+        # La API BDNS espera el formato DD/MM/YYYY.
+        "fechaDesde": since.strftime("%d/%m/%Y"),
     }
     async with httpx.AsyncClient(timeout=30.0) as client:
         response = await client.get(url, params=params)
@@ -49,24 +61,48 @@ def _parse_date(value: str | None) -> date_t | None:
 
 
 def parse_item(raw: dict[str, Any]) -> dict[str, Any]:
-    """Mapea un item bruto de BDNS al formato de nuestro modelo Subvencion."""
+    """Mapea un item bruto del endpoint de listado BDNS al formato de Subvencion.
+
+    Campos disponibles en el listado:
+        id, mrr, numeroConvocatoria, descripcion, descripcionLeng,
+        fechaRecepcion, nivel1, nivel2, nivel3, codigoInvente
+
+    Los campos no presentes en el listado (importes, fechaFin, beneficiarios,
+    cnae, finalidad, enlace) se dejan en None / [].  Un paso posterior (Plan 2)
+    podrá enriquecerlos desde el endpoint de detalle cuando esté disponible.
+    """
+    nivel1 = raw.get("nivel1") or ""
+    ambito = _NIVEL1_TO_AMBITO.get(nivel1.upper(), "estatal")
+
+    # Organismo: usamos el nivel más específico disponible.
+    organismo = raw.get("nivel3") or raw.get("nivel2") or raw.get("nivel1")
+
     return {
         "source": "bdns",
-        "external_id": str(raw["id"]),
-        "titulo": raw.get("titulo", ""),
-        "organismo": raw.get("organismo"),
-        "ambito": raw.get("ambito", "estatal"),
-        "ccaa": raw.get("ccaa"),
-        "fecha_inicio": _parse_date(raw.get("fechaInicio")),
-        "fecha_fin": _parse_date(raw.get("fechaFin")),
-        "importe_total": raw.get("importeTotal"),
-        "importe_max_beneficiario": raw.get("importeMaxBeneficiario"),
-        "porcentaje": raw.get("porcentaje"),
-        "beneficiarios": raw.get("beneficiarios"),
-        "cnae_elegible": raw.get("cnaeElegible") or [],
-        "finalidad": raw.get("finalidad") or [],
+        # numeroConvocatoria es el identificador público canónico de la convocatoria.
+        "external_id": str(raw["numeroConvocatoria"]),
+        # descripcion es el campo de texto libre más cercano a un título en el listado.
+        "titulo": raw.get("descripcion", ""),
+        "organismo": organismo,
+        "ambito": ambito,
+        # BDNS no devuelve ccaa en el listado; se podría inferir de nivel2 en el futuro.
+        "ccaa": None,
+        # fechaRecepcion es la fecha de publicación/registro; la más cercana a fechaInicio.
+        "fecha_inicio": _parse_date(raw.get("fechaRecepcion")),
+        # Fecha de fin no disponible en el listado.
+        "fecha_fin": None,
+        # Importes no disponibles en el listado.
+        "importe_total": None,
+        "importe_max_beneficiario": None,
+        "porcentaje": None,
+        # Beneficiarios, cnae y finalidad no disponibles en el listado.
+        "beneficiarios": None,
+        "cnae_elegible": [],
+        "finalidad": [],
+        # descripcion duplicada en el campo propio (puede enriquecerse con detalle).
         "descripcion": raw.get("descripcion"),
-        "enlace_oficial": raw.get("enlaceOficial"),
+        # Enlace oficial no disponible en el listado.
+        "enlace_oficial": None,
         "raw_payload": raw,
     }
 
@@ -104,7 +140,7 @@ async def sync_all(session: Session, since: date) -> dict[str, int]:
     page = 1
     while True:
         payload = await fetch_page(page=page, since=since)
-        items = payload.get("items", [])
+        items = payload.get("content", [])
         if not items:
             break
         for raw in items:
@@ -114,8 +150,8 @@ async def sync_all(session: Session, since: date) -> dict[str, int]:
             else:
                 updated += 1
         session.commit()
-        total_pages = payload.get("totalPages", 1)
-        if page >= total_pages:
+        # Spring Page usa `last: true` cuando no hay más páginas.
+        if payload.get("last", True):
             break
         page += 1
     return {"created": created, "updated": updated, "total": created + updated}
