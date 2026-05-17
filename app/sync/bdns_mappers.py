@@ -17,7 +17,8 @@ _NIVEL1_TO_AMBITO: dict[str, str] = {
 # (keyword_lowercase_normalized, finalidad_token). Primer match gana, varias keywords pueden mapear al mismo token.
 _FINALIDAD_KEYWORDS: list[tuple[str, str]] = [
     ("digital", "digitalizacion"),
-    ("ti c", "digitalizacion"),  # TIC con espacio (post-normalización)
+    ("tic", "digitalizacion"),
+    ("sociedad de la informacion", "digitalizacion"),
     ("i+d", "i+d"),
     ("i+i", "i+d"),
     ("investigaci", "i+d"),
