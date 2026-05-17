@@ -1,0 +1,10 @@
+{% if success %}
+<div class="bg-green-50 border border-green-200 rounded-xl p-4 text-sm">
+  ✓ Listo. Te enviaremos el informe a <strong>{{ email }}</strong> y nuevas convocatorias afines cuando salgan.
+  Comprueba también la bandeja de spam los primeros días.
+</div>
+{% elif error %}
+<div class="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-800">
+  {{ error }}
+</div>
+{% endif %}

@@ -1,0 +1,30 @@
+<html>
+<body style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 600px; margin: 0 auto;">
+  <h1>Tu informe de subvenciones está listo</h1>
+  <p>Hola{% if razon_social %}, {{ razon_social }}{% endif %},</p>
+  <p>Hemos preparado tu informe personalizado con las subvenciones que mejor encajan con
+     tu empresa{% if attachments %} (adjunto en PDF){% endif %}.</p>
+
+  {% if top3 %}
+  <h2>Tus top 3 recomendadas</h2>
+  <ul>
+    {% for r in top3 %}
+    <li>
+      <strong>{{ r.subvencion.titulo }}</strong>
+      ({{ r.score }}% match)<br>
+      <a href="{{ base_url }}/subsidy/{{ r.subvencion.id }}">Ver detalle →</a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  <p>A partir de ahora, te enviaremos un email cuando publiquen nuevas convocatorias
+     que coincidan con tu perfil ({{ perfil.cnae }}, {{ perfil.tamano }}, finalidades:
+     {{ perfil.finalidad | join(", ") }}).</p>
+
+  <p style="font-size: 12px; color: #888;">
+    ¿No quieres más emails?
+    <a href="{{ base_url }}/unsubscribe/{{ unsubscribe_token }}">Darme de baja</a>
+  </p>
+</body>
+</html>
