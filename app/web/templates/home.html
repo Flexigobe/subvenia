@@ -5,7 +5,7 @@
   <p class="text-gray-600">Buscamos en la BDNS (Base de Datos Nacional de Subvenciones) las convocatorias abiertas que encajan con tu perfil.</p>
 </div>
 
-<form method="post" action="/search" class="bg-white rounded-2xl border border-gray-200 p-6 space-y-6">
+<form method="post" action="/search" id="search-form" class="bg-white rounded-2xl border border-gray-200 p-6 space-y-6">
   <section>
     <h2 class="text-xs font-semibold text-gray-500 uppercase mb-3">① Tu empresa</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -61,10 +61,37 @@
       {% endfor %}
     </div>
     <p class="text-xs text-gray-500 mt-2">Marca al menos una.</p>
+    <p id="finalidad-error" class="hidden text-sm text-red-600 mt-2 font-semibold">⚠ Marca al menos una finalidad antes de buscar.</p>
   </section>
 
   <button type="submit" class="w-full bg-green-700 hover:bg-green-800 text-white font-semibold py-3 rounded-lg">
     Buscar subvenciones →
   </button>
 </form>
+
+<script>
+  (function () {
+    var form = document.getElementById('search-form');
+    if (!form) return;
+    var errorMsg = document.getElementById('finalidad-error');
+    form.addEventListener('submit', function (e) {
+      var checked = form.querySelectorAll('input[name="finalidad"]:checked');
+      if (checked.length === 0) {
+        e.preventDefault();
+        errorMsg.classList.remove('hidden');
+        errorMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        errorMsg.classList.add('hidden');
+      }
+    });
+    // Hide error as soon as the user ticks any chip
+    form.querySelectorAll('input[name="finalidad"]').forEach(function (cb) {
+      cb.addEventListener('change', function () {
+        if (form.querySelectorAll('input[name="finalidad"]:checked').length > 0) {
+          errorMsg.classList.add('hidden');
+        }
+      });
+    });
+  })();
+</script>
 {% endblock %}
