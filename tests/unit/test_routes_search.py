@@ -98,3 +98,34 @@ def test_search_requires_at_least_one_finalidad():
         },
     )
     assert response.status_code == 422
+
+
+def test_subsidy_detail_renders(db_session):
+    sub = Subvencion(
+        source="bdns",
+        external_id="DETAIL-1",
+        titulo="Detalle ayuda",
+        organismo="Ministerio X",
+        ambito="estatal",
+        cnae_elegible=["6201"],
+        finalidad=["digitalizacion"],
+        estado="abierta",
+        fecha_inicio=date.today(),
+        fecha_fin=date.today() + timedelta(days=60),
+        importe_max_beneficiario=15000,
+        descripcion="Descripción completa.",
+        enlace_oficial="https://boe.es/detalle",
+    )
+    db_session.add(sub)
+    db_session.commit()
+
+    response = client.get(f"/subsidy/{sub.id}")
+    assert response.status_code == 200
+    assert "Detalle ayuda" in response.text
+    assert "Descripción completa." in response.text
+    assert "https://boe.es/detalle" in response.text
+
+
+def test_subsidy_detail_404_when_not_found():
+    response = client.get("/subsidy/00000000-0000-0000-0000-000000000000")
+    assert response.status_code == 404

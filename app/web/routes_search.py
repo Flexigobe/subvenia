@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import uuid
 from pathlib import Path
+from uuid import UUID
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
@@ -129,3 +130,17 @@ def search(
             "total": len(ranked),
         },
     )
+
+
+@router.get("/subsidy/{subsidy_id}", response_class=HTMLResponse)
+def subsidy_detail(
+    request: Request,
+    subsidy_id: UUID,
+    db: Session = Depends(get_db),
+) -> HTMLResponse:
+    from app.db.models import Subvencion
+
+    sub = db.get(Subvencion, subsidy_id)
+    if sub is None:
+        raise HTTPException(status_code=404, detail="Subvención no encontrada")
+    return templates.TemplateResponse(request, "subsidy_detail.html", {"sub": sub})
