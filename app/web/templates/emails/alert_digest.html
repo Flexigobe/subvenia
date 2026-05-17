@@ -1,0 +1,30 @@
+<html>
+<body style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 600px; margin: 0 auto;">
+  <h1>{{ total_new }} nuevas subvenciones para tu empresa</h1>
+  <p>Estas convocatorias acaban de salir y encajan con tu perfil
+  ({{ perfil.cnae }}, {{ perfil.tamano }}, finalidades:
+  {{ perfil.finalidad | join(", ") if perfil.finalidad else "todas" }}):</p>
+
+  <ul>
+    {% for s in new_subvenciones %}
+    <li style="margin-bottom: 12px;">
+      <strong>{{ s.titulo }}</strong><br>
+      <span style="font-size: 12px; color: #555;">
+        {{ s.organismo or "—" }}
+        {% if s.importe_max_beneficiario %} · Hasta {{ "{:,.0f}".format(s.importe_max_beneficiario) }}€{% endif %}
+        {% if s.fecha_fin %} · Cierra {{ s.fecha_fin.strftime("%d/%m/%Y") }}{% endif %}
+      </span><br>
+      <a href="{{ base_url }}/subsidy/{{ s.id }}">Ver detalle →</a>
+    </li>
+    {% endfor %}
+  </ul>
+
+  {% if total_new > 10 %}
+  <p><em>Y {{ total_new - 10 }} más. <a href="{{ base_url }}/subvenciones">Ver todas</a>.</em></p>
+  {% endif %}
+
+  <p style="font-size: 12px; color: #888; margin-top: 32px;">
+    <a href="{{ base_url }}/unsubscribe/{{ unsubscribe_token }}">Darme de baja de las alertas</a>
+  </p>
+</body>
+</html>

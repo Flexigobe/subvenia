@@ -7,7 +7,9 @@ from datetime import date, timedelta
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
+from apscheduler.triggers.interval import IntervalTrigger
 
+from app.alerts.dispatcher import dispatch_alerts, flush_outbox
 from app.config import get_settings
 from app.db.session import SessionLocal
 from app.sync.bdns_enricher import enrich_existing
@@ -57,6 +59,22 @@ async def run_eu_sync() -> None:
     logger.info("EU sync done: %s", stats)
 
 
+async def run_flush_outbox() -> None:
+    """Procesa la cola de emails pendientes."""
+    with SessionLocal() as session:
+        stats = await flush_outbox(session)
+    if stats["processed"]:
+        logger.info("Outbox flush: %s", stats)
+
+
+async def run_dispatch_alerts() -> None:
+    """Manda alertas diarias a las suscripciones activas."""
+    logger.info("Starting alerts dispatch")
+    with SessionLocal() as session:
+        stats = await dispatch_alerts(session)
+    logger.info("Alerts dispatch done: %s", stats)
+
+
 def build_scheduler() -> AsyncIOScheduler:
     settings = get_settings()
     scheduler = AsyncIOScheduler(timezone="Europe/Madrid")
@@ -82,6 +100,18 @@ def build_scheduler() -> AsyncIOScheduler:
         run_eu_sync,
         CronTrigger(hour=3, minute=45),
         id="eu_sync",
+        replace_existing=True,
+    )
+    scheduler.add_job(
+        run_flush_outbox,
+        IntervalTrigger(minutes=5),
+        id="flush_outbox",
+        replace_existing=True,
+    )
+    scheduler.add_job(
+        run_dispatch_alerts,
+        CronTrigger(hour=9, minute=0),
+        id="dispatch_alerts",
         replace_existing=True,
     )
     return scheduler

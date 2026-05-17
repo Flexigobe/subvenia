@@ -28,6 +28,11 @@ class Settings(BaseSettings):
     gemini_api_key: str = ""
     gemini_model: str = "gemini-2.0-flash"  # 1500 RPD free tier vs 250 RPD on 2.5-flash
 
+    # Brevo (transactional email)
+    brevo_api_key: str = ""
+    alert_from_email: str = "alertas@flexigobe.com"
+    alert_admin_email: str = ""  # if set, system alerts (sync failures) go here
+
 
 @lru_cache
 def get_settings() -> Settings:
