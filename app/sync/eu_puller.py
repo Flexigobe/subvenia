@@ -140,12 +140,25 @@ async def fetch_page(page: int = 1, page_size: int = 50, text: str = "***") -> d
         return r.json()
 
 
-def parse_item(raw: dict[str, Any]) -> dict[str, Any]:
+_ACCEPTED_LANGUAGES = {"es", "en"}
+
+
+def parse_item(raw: dict[str, Any]) -> dict[str, Any] | None:
     """Map a raw EU API result to the Subvencion field dict.
 
     All metadata values are lists → use _first() to extract the scalar.
+
+    Returns None if the record's language is not Spanish or English — keeping the
+    DB clean of unreadable titles for our Spanish-speaking users. The EU search API
+    indexes documents in all 24 EU languages and ignores any server-side language
+    filter, so we drop the rest client-side.
     """
     md = raw.get("metadata") or {}
+
+    # Language filter: skip records whose primary language is not es/en
+    lang = (_first(md.get("language")) or "").lower()
+    if lang and lang not in _ACCEPTED_LANGUAGES:
+        return None
 
     identifier = _first(md.get("identifier"), "")
     external_id = str(identifier).strip() if identifier else ""
@@ -279,6 +292,9 @@ async def sync_all(
 
         for raw in results:
             parsed = parse_item(raw)
+            if parsed is None:
+                # parse_item returns None for non-es/en records (unreadable to our users)
+                continue
             if not parsed["external_id"]:
                 # Skip items without a usable identifier (FAQ pages, etc.)
                 continue

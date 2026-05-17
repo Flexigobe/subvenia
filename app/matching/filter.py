@@ -88,28 +88,37 @@ def find_candidates(session: Session, perfil: EmpresaProfile, limit: int = 30) -
     today = date.today()
     stmt = stmt.where((Subvencion.fecha_fin.is_(None)) | (Subvencion.fecha_fin >= today))
 
-    # CNAE: contiene el CNAE del perfil O lista está vacía (cardinality == 0)
+    # CNAE: matching jerárquico CNAE-2009. Los records BDNS suelen guardar prefijos
+    # (`['62']` significa "todo el sector 62: actividades de informática") y los códigos
+    # van hasta 4 dígitos. Match si el cnae_elegible incluye CUALQUIER prefijo del cnae
+    # del usuario (ej. usuario 6201 matchea registros con cnae_elegible=['6'], ['62'],
+    # ['620'] o ['6201']). O si la lista está vacía (wildcard genérico).
+    cnae_prefixes = [perfil.cnae[:n] for n in range(1, len(perfil.cnae) + 1)]
     stmt = stmt.where(
-        (Subvencion.cnae_elegible.contains([perfil.cnae]))
+        (Subvencion.cnae_elegible.overlap(cnae_prefixes))
         | (func.cardinality(Subvencion.cnae_elegible) == 0)
     )
 
-    # Finalidad: lenient — solapa con la del perfil O record sin finalidad clasificada
-    # (los que no solapan obtienen score bajo en _compute_score y caen al final del ranking)
+    # Finalidad: lenient — solapa con la del perfil, O record sin finalidad clasificada
+    # (cardinality 0), O finalidad clasificada como ['otros'] (record genérico sin tema claro).
+    # Los no-matches obtienen score bajo en _compute_score y caen al final del ranking.
     if perfil.finalidad:
         stmt = stmt.where(
             (Subvencion.finalidad.overlap(perfil.finalidad))
             | (func.cardinality(Subvencion.finalidad) == 0)
+            | (Subvencion.finalidad.contains(["otros"]))
         )
 
-    # Ámbito
+    # Ámbito: estatal y UE siempre visibles. Local también (la mayoría son ayuntamientos sin
+    # ccaa rellenada, el usuario decide si le interesa). Autonómica solo si CCAA coincide.
     ccaa = perfil.ccaa
     if ccaa:
         stmt = stmt.where(
-            (Subvencion.ambito.in_(["estatal", "ue"])) | (Subvencion.ccaa == ccaa)
+            (Subvencion.ambito.in_(["estatal", "ue", "local"]))
+            | (Subvencion.ccaa == ccaa)
         )
     else:
-        stmt = stmt.where(Subvencion.ambito.in_(["estatal", "ue"]))
+        stmt = stmt.where(Subvencion.ambito.in_(["estatal", "ue", "local"]))
 
     rows = session.execute(stmt.limit(500)).scalars().all()
 

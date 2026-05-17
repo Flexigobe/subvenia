@@ -186,6 +186,44 @@ async def test_eu_sync_all_upserts_records(db_session, httpx_mock):
     assert all(r.ambito == "ue" for r in rows)
 
 
+def test_eu_parse_item_skips_non_spanish_or_english_languages():
+    """Records with metadata.language not in (es, en) return None — keeps DB readable
+    for Spanish users (Plan 3 hotfix)."""
+    from app.sync.eu_puller import parse_item
+
+    bg_record = {
+        "metadata": {
+            "identifier": ["BG-1"],
+            "title": ["Спетсиалист..."],
+            "status": ["31094502"],
+            "language": ["bg"],
+            "deadlineDate": ["2026-12-31T00:00:00.000+0000"],
+        }
+    }
+    en_record = {
+        "metadata": {
+            "identifier": ["EN-1"],
+            "title": ["Funding call"],
+            "status": ["31094502"],
+            "language": ["en"],
+            "deadlineDate": ["2026-12-31T00:00:00.000+0000"],
+        }
+    }
+    es_record = {
+        "metadata": {
+            "identifier": ["ES-1"],
+            "title": ["Ayudas para la digitalización"],
+            "status": ["31094502"],
+            "language": ["es"],
+            "deadlineDate": ["2026-12-31T00:00:00.000+0000"],
+        }
+    }
+
+    assert parse_item(bg_record) is None
+    assert parse_item(en_record) is not None
+    assert parse_item(es_record) is not None
+
+
 @pytest.mark.asyncio
 async def test_eu_sync_all_skips_closed_records(db_session, httpx_mock):
     """Records with status=Closed (31094503) are skipped, not upserted."""
