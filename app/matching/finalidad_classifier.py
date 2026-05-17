@@ -12,6 +12,7 @@ import asyncio
 import hashlib
 import json
 import logging
+import re as _re
 import time
 
 from app.config import get_settings
@@ -69,6 +70,9 @@ def _cache_key(text: str) -> str:
     return hashlib.sha256(text[:500].encode("utf-8")).hexdigest()[:16]
 
 
+_JSON_ARRAY_RE = _re.compile(r"\[[^\[\]]*?(?:\[[^\[\]]*?\][^\[\]]*?)*\]", _re.DOTALL)
+
+
 def _strip_markdown_fences(text: str) -> str:
     text = text.strip()
     if text.startswith("```"):
@@ -79,6 +83,31 @@ def _strip_markdown_fences(text: str) -> str:
             lines = lines[:-1]
         text = "\n".join(lines).strip()
     return text
+
+
+def _extract_json_array(text: str) -> str | None:
+    """Find the first plausible JSON array in ``text``, tolerant to wrappers.
+
+    Handles cases like:
+      - ```json\\n["digitalizacion"]\\n```
+      - print(["digitalizacion"])
+      - Here's the answer: ["digitalizacion"]
+      - ["digitalizacion"] (clean)
+      - ["X"]);  (trailing punctuation like the ``}\\n]);`` pattern from production)
+    Returns the substring of the matched array, or None if no array is found.
+    """
+    if not text:
+        return None
+    stripped = _strip_markdown_fences(text)
+    # First try: maybe it's a clean JSON array now
+    s = stripped.strip()
+    if s.startswith("[") and s.endswith("]"):
+        return s
+    # Fallback: find the first balanced [...] in the original text
+    match = _JSON_ARRAY_RE.search(text)
+    if match:
+        return match.group(0)
+    return None
 
 
 async def classify(text: str | None, fallback: list[str]) -> list[str]:
@@ -114,10 +143,31 @@ async def classify(text: str | None, fallback: list[str]) -> list[str]:
             asyncio.to_thread(model.generate_content, prompt),
             timeout=_TIMEOUT_S,
         )
-        raw = _strip_markdown_fences(resp.text or "")
-        parsed = json.loads(raw)
+        raw_text = resp.text or ""
+        extracted = _extract_json_array(raw_text)
+        if extracted is None:
+            logger.warning(
+                "Finalidad classifier: no JSON array found in response. Raw text (first 200 chars): %r",
+                raw_text[:200],
+            )
+            return fallback
+        try:
+            parsed = json.loads(extracted)
+        except json.JSONDecodeError as exc:
+            logger.warning(
+                "Finalidad classifier: JSON decode failed (%s). Extracted: %r. Raw: %r",
+                exc,
+                extracted[:200],
+                raw_text[:200],
+            )
+            return fallback
         if not isinstance(parsed, list):
-            raise ValueError(f"Expected JSON array, got {type(parsed).__name__}")
+            logger.warning(
+                "Finalidad classifier: expected JSON array, got %s. Raw: %r",
+                type(parsed).__name__,
+                raw_text[:200],
+            )
+            return fallback
         # Filter unknown tokens and cap at 3
         cleaned = [t for t in parsed if isinstance(t, str) and t in VOCAB][:3]
         if not cleaned:

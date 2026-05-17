@@ -156,3 +156,44 @@ async def test_classify_uses_cache(mock_gemini, clear_cache):
 
     assert result1 == result2
     assert mock_gemini.last_prompt is None  # cache hit, no LLM call
+
+
+@pytest.mark.asyncio
+async def test_classify_extracts_array_from_print_wrapper(mock_gemini, clear_cache):
+    """LLM responds like `print(["digitalizacion"])` — extract the array."""
+    mock_gemini.response_text = 'print(["digitalizacion", "i+d"])'
+    from app.matching.finalidad_classifier import classify
+
+    result = await classify("Programa de digitalización e I+D", fallback=["otros"])
+    assert "digitalizacion" in result
+    assert "i+d" in result
+
+
+@pytest.mark.asyncio
+async def test_classify_extracts_array_from_prefix_text(mock_gemini, clear_cache):
+    """LLM responds with chat prefix before the array — extract just the array."""
+    mock_gemini.response_text = 'Here\'s the result: ["formacion"] hope that helps!'
+    from app.matching.finalidad_classifier import classify
+
+    result = await classify("Programa formativo", fallback=["otros"])
+    assert "formacion" in result
+
+
+@pytest.mark.asyncio
+async def test_classify_extracts_array_with_trailing_punctuation(mock_gemini, clear_cache):
+    """The `}\\n]);` pattern observed in production — array with trailing junk."""
+    mock_gemini.response_text = '["innovacion"]); '
+    from app.matching.finalidad_classifier import classify
+
+    result = await classify("Innovación", fallback=["otros"])
+    assert "innovacion" in result
+
+
+@pytest.mark.asyncio
+async def test_classify_returns_fallback_when_no_array_in_response(mock_gemini, clear_cache):
+    """LLM responds with prose only, no array — fallback applies."""
+    mock_gemini.response_text = "I don't know the answer."
+    from app.matching.finalidad_classifier import classify
+
+    result = await classify("Texto", fallback=["i+d"])
+    assert result == ["i+d"]

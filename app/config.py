@@ -33,6 +33,14 @@ class Settings(BaseSettings):
     alert_from_email: str = "alertas@flexigobe.com"
     alert_admin_email: str = ""  # if set, system alerts (sync failures) go here
 
+    # Admin panel (HTTP Basic). Si admin_pass='' el panel queda deshabilitado en prod.
+    # En dev, se autogenera al arrancar si está vacío (ver app/main.py lifespan).
+    admin_user: str = ""
+    admin_pass: str = ""
+
+    # Rate limiting (POST /search only, sliding window 1h)
+    rate_limit_per_hour: int = 60
+
 
 @lru_cache
 def get_settings() -> Settings:

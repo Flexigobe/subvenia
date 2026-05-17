@@ -69,6 +69,44 @@ app/
 └── web/                 # Rutas + templates Jinja2 + HTMX
 ```
 
+## Deploy en Railway
+
+La app está lista para Railway sin tocar código. El flujo:
+
+1. **Crear proyecto en Railway** (https://railway.com → "New Project").
+2. **Añadir Postgres**: "+ New" → "Database" → "Add PostgreSQL". Railway inyecta automáticamente `DATABASE_URL` como variable.
+3. **Conectar este repo**: "+ New" → "GitHub Repo" → seleccionar `subvenciones-app`.
+4. **Variables de entorno** (en Settings → Variables del servicio web):
+
+   | Variable | Valor | Notas |
+   |----------|-------|-------|
+   | `DATABASE_URL` | auto | Inyectado por el plugin Postgres |
+   | `BASE_URL` | `https://<servicio>.up.railway.app` | URL pública; ajustar tras 1er deploy |
+   | `GEMINI_API_KEY` | tu key | https://aistudio.google.com/app/apikey |
+   | `BREVO_API_KEY` | (opcional) | Si vacío, emails se loguean — no se envían |
+   | `ALERT_FROM_EMAIL` | `alertas@flexigobe.com` | Verificado en Brevo |
+   | `ADMIN_USER` | `admin` | Cambia si quieres |
+   | `ADMIN_PASS` | `<cadena segura>` | Genérala con `openssl rand -base64 24` |
+   | `RATE_LIMIT_PER_HOUR` | `60` | Default; sube si quieres más permisivo |
+
+5. **Deploy automático**: cada push a `main` despliega. Health-check en `/healthz`.
+6. **Logs**: Settings → Deploys → View Logs (incluye logs estructurados de los syncs).
+7. **(Opcional) Dominio personalizado**: Settings → Domains → Custom Domain → seguir instrucciones DNS.
+
+### Limitaciones del deploy actual
+
+- **Single worker**: APScheduler corre in-process y el rate limiter es per-worker. Si escalas a `RAILWAY_REPLICA_COUNT > 1` los crons se duplicarían y el rate limiter sería por instancia. Para escalar horizontalmente se necesita extraer el scheduler a un servicio aparte y mover el rate limiter a Redis.
+- **WeasyPrint** depende de pango/cairo, instalados via `nixpacks.toml`. Si los logs muestran `ImportError: cannot load library libpango`, revisa que el build use Nixpacks (no Dockerfile custom).
+
+### Despliegue local de prueba (sin Railway)
+
+```bash
+docker run -d --name pg -p 5432:5432 -e POSTGRES_USER=subvenciones -e POSTGRES_PASSWORD=subvenciones postgres:15
+source .venv/bin/activate
+alembic upgrade head
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
 ## Documentación
 
 - Diseño: [docs/superpowers/specs/2026-05-17-subvenciones-app-design.md](docs/superpowers/specs/2026-05-17-subvenciones-app-design.md)

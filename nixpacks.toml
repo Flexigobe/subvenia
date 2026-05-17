@@ -1,0 +1,14 @@
+# Extra system packages required by WeasyPrint (PDF generator).
+# Without these, weasyprint imports fail and /api/subscribe falls back to no-attachment.
+
+[phases.setup]
+nixPkgs = [
+  "python312",
+  "pango",
+  "cairo",
+  "harfbuzz",
+  "gdk-pixbuf",
+  "libffi",
+  "fontconfig",
+  "dejavu_fonts",
+]

@@ -1,0 +1,71 @@
+{% extends "admin/_base.html" %}
+{% block admin_content %}
+<div class="space-y-4">
+  <header class="flex items-baseline justify-between">
+    <h1 class="text-2xl font-bold">Outbox</h1>
+    <div class="text-xs text-gray-500">{{ "{:,}".format(total) }} con filtro actual</div>
+  </header>
+
+  <!-- Filter chips -->
+  <div class="flex gap-2 flex-wrap text-sm">
+    {% for s in ["all", "pending", "sent", "dead"] %}
+    <a href="/admin/outbox?status={{ s }}"
+       class="px-3 py-1 rounded-full border {% if status == s %}bg-gray-900 text-white border-gray-900{% else %}border-gray-300 text-gray-700 hover:bg-gray-100{% endif %}">
+      {{ s }}{% if s != "all" %} ({{ status_counts.get(s, 0) }}){% endif %}
+    </a>
+    {% endfor %}
+
+    {% if status_counts.get("dead", 0) > 0 %}
+    <form method="post" action="/admin/outbox/retry-dead" class="ml-auto"
+          onsubmit="return confirm('Reintentar todos los {{ status_counts['dead'] }} emails dead?');">
+      <button type="submit" class="text-sm bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 px-3 py-1 rounded-full">
+        ↻ Reintentar {{ status_counts["dead"] }} dead
+      </button>
+    </form>
+    {% endif %}
+  </div>
+
+  <div class="bg-white border border-gray-200 rounded-2xl overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
+        <tr>
+          <th class="px-3 py-2 text-left">Creado</th>
+          <th class="px-3 py-2 text-left">A</th>
+          <th class="px-3 py-2 text-left">Asunto</th>
+          <th class="px-3 py-2 text-left">Status</th>
+          <th class="px-3 py-2 text-left">Intentos</th>
+          <th class="px-3 py-2 text-left">Enviado</th>
+          <th class="px-3 py-2 text-left">Error</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in rows %}
+        <tr class="border-t border-gray-100">
+          <td class="px-3 py-1.5 whitespace-nowrap text-gray-600">{{ r.created_at.strftime("%d/%m/%Y %H:%M") }}</td>
+          <td class="px-3 py-1.5">{{ r.to_email }}</td>
+          <td class="px-3 py-1.5 text-gray-700">{{ r.subject[:60] }}</td>
+          <td class="px-3 py-1.5">
+            {% if r.status == "sent" %}<span class="text-green-700 font-semibold">sent</span>
+            {% elif r.status == "pending" %}<span class="text-yellow-700">pending</span>
+            {% else %}<span class="text-red-700 font-semibold">dead</span>{% endif %}
+          </td>
+          <td class="px-3 py-1.5">{{ r.attempts }}</td>
+          <td class="px-3 py-1.5 text-gray-600">{{ r.sent_at.strftime("%d/%m/%Y %H:%M") if r.sent_at else "—" }}</td>
+          <td class="px-3 py-1.5 text-red-700 text-xs max-w-xs truncate" title="{{ r.last_error or '' }}">{{ (r.last_error or '')[:80] }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="px-3 py-6 text-center text-gray-400">Sin emails en este estado</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if total_pages > 1 %}
+  <nav class="flex items-center justify-between text-sm">
+    {% if page > 1 %}<a href="/admin/outbox?status={{ status }}&amp;page={{ page-1 }}" class="text-gray-700 hover:underline">← Anterior</a>{% else %}<span></span>{% endif %}
+    <span class="text-gray-500">Página {{ page }} de {{ total_pages }}</span>
+    {% if page < total_pages %}<a href="/admin/outbox?status={{ status }}&amp;page={{ page+1 }}" class="text-gray-700 hover:underline">Siguiente →</a>{% else %}<span></span>{% endif %}
+  </nav>
+  {% endif %}
+</div>
+{% endblock %}
