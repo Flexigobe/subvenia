@@ -8,6 +8,7 @@ from decimal import Decimal
 
 from sqlalchemy import (
     JSON,
+    Boolean,
     Date,
     DateTime,
     Enum,
@@ -117,3 +118,61 @@ class BdnsCatalog(Base):
         onupdate=func.now(),
         nullable=False,
     )
+
+
+class AlertSubscription(Base):
+    __tablename__ = "alert_subscription"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True)
+    perfil: Mapped[dict] = mapped_column(JSONB, nullable=False)
+    unsubscribe_token: Mapped[str] = mapped_column(String(64), unique=True, nullable=False, index=True)
+    last_sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
+class AlertSent(Base):
+    __tablename__ = "alert_sent"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    subscription_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("alert_subscription.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    subvencion_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("subvencion.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    sent_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+    __table_args__ = (
+        UniqueConstraint("subscription_id", "subvencion_id", name="uq_alert_sub_subv"),
+    )
+
+
+class EmailOutbox(Base):
+    __tablename__ = "email_outbox"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    to_email: Mapped[str] = mapped_column(String(255), nullable=False)
+    subject: Mapped[str] = mapped_column(Text, nullable=False)
+    body_html: Mapped[str] = mapped_column(Text, nullable=False)
+    attachments: Mapped[list | None] = mapped_column(JSONB)
+    status: Mapped[str] = mapped_column(
+        Enum("pending", "sent", "dead", name="outbox_status_enum"),
+        default="pending",
+        nullable=False,
+    )
+    attempts: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    last_error: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
