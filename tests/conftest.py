@@ -3,6 +3,7 @@
 import os
 
 os.environ["DATABASE_URL"] = "postgresql+psycopg://subvenciones:subvenciones@localhost:5432/subvenciones_test"
+os.environ["GEMINI_API_KEY"] = ""  # Never invoke Gemini during tests — use deterministic fallback
 
 import pytest
 from sqlalchemy import create_engine
