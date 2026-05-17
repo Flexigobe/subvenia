@@ -111,11 +111,15 @@ Responsable de PYME / autónomo / financiero / consultor externo que evalúa qu�
 
 ### Coste mensual estimado
 
-- Railway: 5€ (ya contratado)
-- Anthropic: ~5€ (estimado con 100 búsquedas/día)
-- Brevo: 0€ (free tier)
-- Dominio: ~0.85€/mes (~10€/año amortizado)
-- **Total: ~11€/mes**
+| Concepto | Mes 1-2 (~20 búsq/día) | Mes 3-6 (~100 búsq/día) |
+|----------|------------------------|--------------------------|
+| Railway (web + Postgres) | 5€ (ya contratado) | 5€ |
+| Anthropic Claude Haiku (3 llamadas batch/búsqueda con cache 7d) | ~3-5€ | ~20-30€ |
+| Brevo (free tier 300 emails/día) | 0€ | 0€ |
+| Dominio (~10€/año amortizado) | ~0.85€ | ~0.85€ |
+| **Total** | **~9-11€/mes** | **~25-35€/mes** |
+
+El coste LLM escala lineal con tráfico. La caché de scoring por `(empresa_perfil_hash, subvencion_id)` con TTL 7d mitiga repeticiones. Si el tráfico se dispara antes de monetizar, primera palanca = reducir candidatos a 20 (2 batches) o ampliar TTL de cache.
 
 ### Diagrama lógico
 
@@ -334,11 +338,11 @@ Cola de emails con reintentos (para alerta y bienvenida).
 4. `POST /search` con form completo:
    - Pydantic valida inputs.
    - Persiste registro en `search`.
-   - `matching.filter.candidates()` ejecuta SELECT en `subvencion` con: `estado='abierta'`, `cnae` compatible (`cnae_elegible @> ARRAY[user.cnae] OR cnae_elegible = '{}'`), `ambito` compatible con provincia o `'estatal'`/`'ue'`, `finalidad && user.finalidad`, `fecha_fin > now()`. Límite 80.
-   - `matching.scorer_llm.score()` paraleliza llamadas a Claude Haiku (10 concurrentes con asyncio.gather). Cada llamada recibe el contexto de la empresa + el resumen de la subvención y devuelve `{score: int, razon: str}`.
-   - Si el LLM falla por timeout o error, fallback a scoring determinista (peso por % match CNAE + finalidad + cercanía a fecha_fin).
-   - Persiste top 30 en `search_result`.
-   - Renderiza `results.html` con top 3 como cards destacadas + tabla compacta del resto.
+   - `matching.filter.candidates()` ejecuta SELECT en `subvencion` con: `estado='abierta'`, `cnae` compatible (`cnae_elegible @> ARRAY[user.cnae] OR cnae_elegible = '{}'`), `ambito` compatible con provincia o `'estatal'`/`'ue'`, `finalidad && user.finalidad`, `fecha_fin > now()`. Pre-rank determinista (peso por % match CNAE + finalidad + cercanía a fecha_fin) y se queda con los **30 mejores candidatos**.
+   - `matching.scorer_llm.score()` envía esos 30 candidatos a Claude Haiku **en 3 llamadas batch (10 subvenciones por llamada)** vía `asyncio.gather`. El modelo devuelve para cada subvención `{score: int 0-100, razon: str}`.
+   - Si el LLM falla por timeout o error, fallback a usar directamente el score determinista del pre-rank (sin razón en lenguaje natural).
+   - Persiste los 30 resultados (con score y razón) en `search_result`, ordenados por score descendente.
+   - Renderiza `results.html` con los **top 3 como cards destacadas + los 27 restantes** en tabla compacta.
 5. `GET /subsidy/{id}` → detalle completo de la subvención + enlace oficial.
 6. (Opcional) Bottom de `results.html` → form "deja tu email para recibir el PDF + alertas":
    - `POST /api/subscribe` crea `alert_subscription` con el perfil de la última búsqueda y encola email de bienvenida con PDF adjunto.
@@ -474,7 +478,7 @@ Cuando se arranque la implementación, **lo primero será confirmar con Victor l
 | BDNS cambia su API o se cae | Pull diario tolerante a fallos; mantenemos snapshot, no nos quedamos sin datos |
 | libreborme cierra o cambia ToS | Tenemos fallback a OpenCorporates; y siempre el formulario manual |
 | OpenCorporates pasa a pago / sube tier | Idem: fallback a manual; impacto solo en UX, no en funcionalidad |
-| Coste de LLM se dispara con tráfico | Limitamos a 10 llamadas Claude por búsqueda (top-N); rate limit por IP; cache de scoring por `(empresa_perfil_hash, subvencion_id)` con TTL 7d |
+| Coste de LLM se dispara con tráfico | Pre-rank determinista deja solo top 30 candidatos; 3 llamadas batch a Haiku por búsqueda (no 30); rate limit 60 búsquedas/hora por IP_hash; cache de scoring por `(empresa_perfil_hash, subvencion_id)` con TTL 7d |
 | Privacidad: capturamos NIF y emails | Política de privacidad clara en footer; SHA-256 sobre IP; opción de borrado bajo petición; cumplimiento RGPD básico |
 | Recibir queja por mostrar info incorrecta | Aclarar en cada resultado: "Información orientativa generada automáticamente. Consulta siempre la convocatoria oficial." con link directo |
 
