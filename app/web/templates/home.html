@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="text-center mb-8">
+  <h1 class="text-3xl font-bold mb-2">¿Qué subvenciones puede pedir tu empresa?</h1>
+  <p class="text-gray-600">Buscamos en la BDNS (Base de Datos Nacional de Subvenciones) las convocatorias abiertas que encajan con tu perfil.</p>
+</div>
+
+<form method="post" action="/search" class="bg-white rounded-2xl border border-gray-200 p-6 space-y-6">
+  <section>
+    <h2 class="text-xs font-semibold text-gray-500 uppercase mb-3">① Tu empresa</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm mb-1">NIF / CIF</label>
+        <input type="text" name="nif" required pattern=".{8,10}" placeholder="B12345678"
+               class="w-full border border-gray-300 rounded px-3 py-2">
+      </div>
+      <div>
+        <label class="block text-sm mb-1">Razón social <span class="text-gray-400 text-xs">(opcional)</span></label>
+        <input type="text" name="razon_social" class="w-full border border-gray-300 rounded px-3 py-2">
+      </div>
+      <div>
+        <label class="block text-sm mb-1">CNAE (código de actividad)</label>
+        <input type="text" name="cnae" required pattern="\d{3,4}" placeholder="6201"
+               class="w-full border border-gray-300 rounded px-3 py-2">
+        <p class="text-xs text-gray-500 mt-1">Catálogo CNAE-2009. Busca en <a class="underline" target="_blank" href="https://www.ine.es/dyngs/INEbase/es/operacion.htm?c=Estadistica_C&cid=1254736177032">ine.es</a> si no lo sabes.</p>
+      </div>
+      <div>
+        <label class="block text-sm mb-1">Tamaño de empresa</label>
+        <select name="tamano" required class="w-full border border-gray-300 rounded px-3 py-2">
+          <option value="micro">Microempresa (&lt;10 empleados)</option>
+          <option value="pequena">Pequeña (10-49)</option>
+          <option value="mediana">Mediana (50-249)</option>
+          <option value="grande">Grande (250+)</option>
+        </select>
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-sm mb-1">Provincia</label>
+        <select name="provincia" required class="w-full border border-gray-300 rounded px-3 py-2">
+          {% for code, name in provincias %}
+            <option value="{{ code }}">{{ code }} — {{ name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="text-xs font-semibold text-gray-500 uppercase mb-3">② ¿Para qué necesitas financiación?</h2>
+    <div class="flex flex-wrap gap-2">
+      {% for f in finalidades %}
+        <label class="cursor-pointer">
+          <input type="checkbox" name="finalidad" value="{{ f.value }}" class="peer hidden">
+          <span class="inline-block px-3 py-1.5 rounded-full border border-gray-300 text-sm peer-checked:bg-green-700 peer-checked:text-white peer-checked:border-green-700">{{ f.label }}</span>
+        </label>
+      {% endfor %}
+    </div>
+    <p class="text-xs text-gray-500 mt-2">Marca al menos una.</p>
+  </section>
+
+  <button type="submit" class="w-full bg-green-700 hover:bg-green-800 text-white font-semibold py-3 rounded-lg">
+    Buscar subvenciones →
+  </button>
+</form>
+{% endblock %}
