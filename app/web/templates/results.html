@@ -66,4 +66,33 @@
   <p class="text-sm text-gray-700">Prueba con otra finalidad o vuelve a buscar más adelante — la BDNS se actualiza a diario.</p>
 </div>
 {% endif %}
+
+<section class="mt-12 bg-white border border-gray-200 rounded-2xl p-6">
+  <h2 class="text-xl font-bold mb-2">¿Quieres recibirlo por email?</h2>
+  <p class="text-sm text-gray-600 mb-4">
+    Te enviamos este informe en PDF y te avisamos cuando salga una nueva
+    convocatoria que encaje con tu perfil. Sin spam, baja con un clic.
+  </p>
+  <form
+    hx-post="/api/subscribe"
+    hx-target="#subscribe-result"
+    hx-swap="innerHTML"
+    class="flex flex-col md:flex-row gap-2"
+  >
+    <input
+      type="email"
+      name="email"
+      required
+      placeholder="tu@empresa.com"
+      class="flex-1 border border-gray-300 rounded px-3 py-2"
+    >
+    <input type="hidden" name="perfil_json" value='{{ perfil_json }}'>
+    <input type="hidden" name="nif" value="{{ nif }}">
+    <input type="hidden" name="razon_social" value="{{ razon_social or '' }}">
+    <button type="submit" class="bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-2 rounded">
+      Recibir alertas →
+    </button>
+  </form>
+  <div id="subscribe-result" class="mt-3"></div>
+</section>
 {% endblock %}

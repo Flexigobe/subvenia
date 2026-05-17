@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+  body { font-family: -apple-system, sans-serif; padding: 40px; color: #222; }
+  h1 { color: #1e6b2a; }
+  h2 { color: #1e6b2a; margin-top: 32px; font-size: 14pt; }
+  .meta { font-size: 9pt; color: #666; }
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 10pt; }
+  th, td { padding: 6px 4px; text-align: left; border-bottom: 1px solid #ddd; }
+  .card { margin-bottom: 12px; padding: 10px; background: #f0faf2; border-left: 4px solid #1e6b2a; }
+  .small { font-size: 9pt; color: #666; }
+</style>
+</head>
+<body>
+<h1>Informe de subvenciones</h1>
+<p class="meta">Empresa: {{ razon_social or nif }} · CNAE {{ perfil.cnae }} · {{ perfil.tamano }} · Provincia {{ perfil.provincia }}<br>
+Generado: {{ generated_at }} · Buscador de subvenciones</p>
+
+{% if top3 %}
+<h2>Top 3 recomendadas</h2>
+{% for r in top3 %}
+<div class="card">
+  <strong>{{ r.subvencion.titulo }}</strong> &middot; <span class="small">{{ r.score }}% match</span><br>
+  <span class="small">{{ r.subvencion.organismo or '—' }}
+  {% if r.subvencion.importe_max_beneficiario %} · Hasta {{ "{:,.0f}".format(r.subvencion.importe_max_beneficiario) }}€{% endif %}
+  {% if r.subvencion.fecha_fin %} · Cierra {{ r.subvencion.fecha_fin.strftime("%d/%m/%Y") }}{% endif %}</span>
+  {% if r.razon %}<br><em class="small">{{ r.razon }}</em>{% endif %}
+</div>
+{% endfor %}
+{% endif %}
+
+{% if rest %}
+<h2>Otras elegibles ({{ rest|length }})</h2>
+<table>
+  <tr><th>Score</th><th>Convocatoria</th><th>Organismo</th><th>Importe</th><th>Cierra</th></tr>
+  {% for r in rest %}
+  <tr>
+    <td>{{ r.score }}</td>
+    <td>{{ r.subvencion.titulo[:80] }}</td>
+    <td>{{ r.subvencion.organismo or '—' }}</td>
+    <td>{% if r.subvencion.importe_max_beneficiario %}{{ "{:,.0f}".format(r.subvencion.importe_max_beneficiario) }}€{% else %}—{% endif %}</td>
+    <td>{% if r.subvencion.fecha_fin %}{{ r.subvencion.fecha_fin.strftime("%d/%m/%Y") }}{% else %}—{% endif %}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+
+<p class="small" style="margin-top: 32px;">Información orientativa generada automáticamente. Consulta siempre la convocatoria oficial.</p>
+</body>
+</html>

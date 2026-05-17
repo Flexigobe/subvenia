@@ -13,7 +13,7 @@ from app.db.models import Subvencion
 
 FIXTURES = Path(__file__).resolve().parents[1] / "fixtures" / "eu"
 
-# ── Exact URL the puller will request (page=1) ─────────────────────────────
+# ── Exact URL the puller will request (page=1, fetch_page default text="***") ──
 _EXPECTED_URL = (
     "https://api.tech.ec.europa.eu/search-api/prod/rest/search"
     "?apiKey=SEDIA&text=%2A%2A%2A&pageSize=50&pageNumber=1&languages=es%2Cen"
@@ -156,13 +156,16 @@ def test_eu_parse_item_no_external_id_skipped():
 
 @pytest.mark.asyncio
 async def test_eu_sync_all_upserts_records(db_session, httpx_mock):
-    """End-to-end: fetch_page → parse_item → upsert into DB."""
+    """End-to-end: fetch_page → parse_item → upsert into DB.
+
+    Fixture has 1 open (31094502) + 2 closed (31094503) records.
+    Only the open one should be upserted; closed ones are skipped.
+    """
     payload = json.loads((FIXTURES / "page_sample.json").read_text())
 
-    # First page returns the fixture (has totalResults = large number but we cap at max_pages=1)
+    # sync_all now uses text="<year> <year+1>", so don't match on URL
     httpx_mock.add_response(
         method="POST",
-        url=_EXPECTED_URL,
         json=payload,
     )
 
@@ -170,8 +173,10 @@ async def test_eu_sync_all_upserts_records(db_session, httpx_mock):
 
     stats = await sync_all(db_session, max_pages=1)
 
+    # Fixture: 1 open record gets upserted; 2 closed records are skipped
     assert stats["total"] >= 1
     assert stats["created"] + stats["updated"] == stats["total"]
+    assert "skipped_closed" in stats
 
     # Verify records are actually in the DB with source='eu'
     rows = db_session.execute(
@@ -179,3 +184,74 @@ async def test_eu_sync_all_upserts_records(db_session, httpx_mock):
     ).scalars().all()
     assert len(rows) >= 1
     assert all(r.ambito == "ue" for r in rows)
+
+
+@pytest.mark.asyncio
+async def test_eu_sync_all_skips_closed_records(db_session, httpx_mock):
+    """Records with status=Closed (31094503) are skipped, not upserted."""
+    closed_record = {
+        "metadata": {
+            "identifier": ["CLOSED-1"],
+            "title": ["Closed call"],
+            "status": ["31094503"],
+            "deadlineDate": ["2020-01-01T00:00:00.000+0000"],
+        }
+    }
+    open_record = {
+        "metadata": {
+            "identifier": ["OPEN-1"],
+            "title": ["Open call"],
+            "status": ["31094502"],
+            "deadlineDate": ["2026-12-31T00:00:00.000+0000"],
+        }
+    }
+    httpx_mock.add_response(
+        method="POST",
+        json={"results": [closed_record, open_record], "totalPages": 1, "totalResults": 2},
+    )
+
+    from app.sync.eu_puller import sync_all
+
+    stats = await sync_all(db_session, max_pages=1, page_size=50)
+
+    assert stats["skipped_closed"] == 1
+    assert stats["created"] == 1
+    assert stats["updated"] == 0
+    rows = db_session.execute(
+        select(Subvencion).where(Subvencion.source == "eu")
+    ).scalars().all()
+    assert len(rows) == 1
+    assert rows[0].external_id == "OPEN-1"
+
+
+@pytest.mark.asyncio
+async def test_eu_sync_all_stops_when_min_useful_reached(db_session, httpx_mock):
+    """Iteration stops as soon as min_useful records have been persisted."""
+
+    def make_record(rid):
+        return {
+            "metadata": {
+                "identifier": [rid],
+                "title": [f"T{rid}"],
+                "status": ["31094502"],
+                "deadlineDate": ["2026-12-31T00:00:00.000+0000"],
+            }
+        }
+
+    # Mock 2 pages, each with 3 open records
+    httpx_mock.add_response(
+        method="POST",
+        json={"results": [make_record(f"M-{i}") for i in range(3)], "totalPages": 10, "totalResults": 30},
+    )
+    httpx_mock.add_response(
+        method="POST",
+        json={"results": [make_record(f"M-{i + 3}") for i in range(3)], "totalPages": 10, "totalResults": 30},
+    )
+
+    from app.sync.eu_puller import sync_all
+
+    # min_useful=4: page 1 gives 3 (<4), fetches page 2 → 6 ≥ 4, stops
+    stats = await sync_all(db_session, max_pages=10, page_size=50, min_useful=4)
+
+    assert stats["created"] == 6
+    assert stats["pages"] == 2

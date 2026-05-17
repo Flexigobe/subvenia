@@ -15,6 +15,14 @@ Cada result tiene:
   - metadata.typesOfAction    — lista de tipo de acción
   - summary (top-level)       — descripción breve
   - url (top-level)           — URL JSON del topic (no el portal HTML)
+
+API behaviour notes (verified 2026-05):
+  - Server-side sort/filter params are silently ignored (sort, sortField, filter, status, facets
+    all return identical results). Client-side filtering is the only option.
+  - With text="***" the API returns primarily historical/closed records (0-2 open per 50).
+  - Using text="<current_year> <next_year>" yields ~24-50 open records per page by matching
+    calls whose deadline dates include those year strings — far better hit rate.
+  - Results are capped at ~4 950 items (99 pages × 50) regardless of totalResults (644k+).
 """
 
 from __future__ import annotations
@@ -109,15 +117,19 @@ def _first(lst: Any, default: Any = None) -> Any:
     return lst if lst is not None else default
 
 
-async def fetch_page(page: int = 1, page_size: int = 50) -> dict[str, Any]:
+async def fetch_page(page: int = 1, page_size: int = 50, text: str = "***") -> dict[str, Any]:
     """Hits the EU search endpoint and returns the raw JSON response.
 
     POST request with apiKey in query string; empty form body.
     Returns the response dict with keys: results, totalResults, pageNumber, pageSize.
+
+    The `text` param accepts any keyword string. Using year strings like "2026 2027"
+    increases the proportion of open/future calls returned (API ignores all sort/filter
+    params; text search is the only effective client-side pre-filter available).
     """
     params = {
         "apiKey": EU_API_KEY,
-        "text": "***",
+        "text": text,
         "pageSize": page_size,
         "pageNumber": page,
         "languages": "es,en",
@@ -210,28 +222,57 @@ def _upsert(session: Session, parsed: dict[str, Any]) -> bool:
 
 async def sync_all(
     session: Session,
-    max_pages: int | None = None,
+    max_pages: int = 50,
     page_size: int = 50,
+    min_useful: int = 20,
 ) -> dict[str, int]:
-    """Iterate EU API pages, parse, and upsert into the DB.
+    """Page through the EU search endpoint and upsert open / proximamente grants.
+
+    Skips Closed records (status=31094503): users cannot apply to them and they
+    dominate the default sort order.  Stops as soon as `min_useful` records have
+    been persisted OR `max_pages` is reached.
+
+    The search text is set to "<current_year> <next_year>" which significantly
+    increases the proportion of open/future calls returned compared to "***".
+    Server-side sort and filter params are silently ignored by the EU API
+    (verified 2026-05), so this year-keyword approach is the most effective
+    practical pre-filter available on the client side.
+
+    Operational limit (verified 2026-05): the SEDIA search API is a full EU
+    document index, not a grants-only index.  With any text query it yields
+    only ~20-60 unique open grant topics across its accessible pages (644k
+    total documents but ~99% are historical closed grants or non-grant docs).
+    Setting min_useful=20 ensures we stop quickly once useful records are found
+    rather than scanning all 30-50 pages for diminishing returns.
 
     Args:
-        session: SQLAlchemy session.
-        max_pages: cap on pages fetched (default: no cap — use with care,
-                   the index has 600k+ documents across all types).
-        page_size: items per page (default 50).
+        session:    SQLAlchemy session.
+        max_pages:  Hard cap on pages fetched (default 50).
+        page_size:  Items per page requested from the API (default 50).
+        min_useful: Stop as soon as this many open/proximamente records have
+                    been persisted (default 20, reflecting the API's practical
+                    yield of unique open grants per sync run).
 
     Returns:
-        {"created": N, "updated": M, "total": N+M, "pages": P}
+        {
+            "created":        N,  # new rows inserted
+            "updated":        M,  # existing rows refreshed
+            "skipped_closed": K,  # closed records skipped (not upserted)
+            "total":          N+M,
+            "pages":          P,  # last page number consumed
+        }
     """
+    # Build year-targeted search text to bias results toward future deadlines.
+    now = datetime.now(tz=timezone.utc)
+    search_text = f"{now.year} {now.year + 1}"
+
     page = 1
-    created = updated = 0
+    created = updated = skipped_closed = 0
+    # Track external_ids seen this run to guard against API returning duplicates.
+    seen_ids: set[str] = set()
 
-    while True:
-        if max_pages is not None and page > max_pages:
-            break
-
-        payload = await fetch_page(page=page, page_size=page_size)
+    while page <= max_pages:
+        payload = await fetch_page(page=page, page_size=page_size, text=search_text)
         results = payload.get("results") or []
         if not results:
             break
@@ -241,6 +282,13 @@ async def sync_all(
             if not parsed["external_id"]:
                 # Skip items without a usable identifier (FAQ pages, etc.)
                 continue
+            if parsed["external_id"] in seen_ids:
+                # API sometimes returns the same record on multiple pages — skip.
+                continue
+            seen_ids.add(parsed["external_id"])
+            if parsed["estado"] == "cerrada":
+                skipped_closed += 1
+                continue
             if _upsert(session, parsed):
                 created += 1
             else:
@@ -248,9 +296,12 @@ async def sync_all(
 
         session.commit()
 
-        total_results = payload.get("totalResults")
-        # Detect last page conservatively: no results, or page * size >= totalResults
-        if total_results is not None and page * page_size >= total_results:
+        useful = created + updated
+        if useful >= min_useful:
+            break
+
+        total_pages = payload.get("totalPages")
+        if total_pages is not None and page >= total_pages:
             break
 
         page += 1
@@ -258,6 +309,7 @@ async def sync_all(
     return {
         "created": created,
         "updated": updated,
+        "skipped_closed": skipped_closed,
         "total": created + updated,
-        "pages": page - 1,
+        "pages": page,
     }

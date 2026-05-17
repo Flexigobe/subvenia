@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import uuid
 from pathlib import Path
 from uuid import UUID
@@ -119,6 +120,13 @@ async def search(
     top3 = ranked[:3]
     rest = ranked[3:]
 
+    perfil_json = json.dumps({
+        "cnae": cnae,
+        "tamano": tamano,
+        "provincia": provincia,
+        "finalidad": finalidad,
+    })
+
     return templates.TemplateResponse(
         request,
         "results.html",
@@ -128,6 +136,7 @@ async def search(
             "top3": top3,
             "rest": rest,
             "total": len(ranked),
+            "perfil_json": perfil_json,
         },
     )
 
