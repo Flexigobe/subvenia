@@ -51,6 +51,44 @@ async def flush_outbox(session: Session, max_per_run: int = 50) -> dict[str, int
             logger.warning("Outbox send failed for %s: %s", msg.to_email, exc)
         session.commit()
 
+    # If any emails became dead during THIS run AND an admin alert address is configured,
+    # enqueue one summary alert.  We only enqueue if no [ADMIN ALERT] is already pending
+    # to prevent duplicates.  The alert email itself is subject to the same retry/dead logic,
+    # but we do NOT spawn further alerts for it (the subject prefix guard handles that).
+    if dead > 0:
+        from app.config import get_settings as _get_settings
+        _settings = _get_settings()
+        if _settings.alert_admin_email:
+            already_pending = session.execute(
+                select(EmailOutbox).where(
+                    EmailOutbox.status == "pending",
+                    EmailOutbox.subject.like("[ADMIN ALERT]%"),
+                ).limit(1)
+            ).scalar_one_or_none()
+            if not already_pending:
+                recent_dead_rows = session.execute(
+                    select(EmailOutbox.to_email, EmailOutbox.subject, EmailOutbox.last_error)
+                    .where(EmailOutbox.status == "dead")
+                    .order_by(EmailOutbox.created_at.desc())
+                    .limit(10)
+                ).all()
+                details = "\n".join(
+                    f"- to={r.to_email} subject={(r.subject or '')[:60]}<br>error={r.last_error or '—'}"
+                    for r in recent_dead_rows
+                )
+                session.add(EmailOutbox(
+                    to_email=_settings.alert_admin_email,
+                    subject=f"[ADMIN ALERT] {dead} email(s) marked dead in outbox",
+                    body_html=(
+                        f"<p>El cron de flush_outbox detectó <strong>{dead}</strong> email(s) "
+                        f"que no se pudieron enviar tras 5 intentos.</p>"
+                        f"<p>Últimos hasta 10 dead:</p><pre>{details}</pre>"
+                        f"<p>Revisa <a href=\"{_settings.base_url}/admin/outbox?status=dead\">"
+                        f"el panel admin</a> para más detalle y posible retry-dead.</p>"
+                    ),
+                ))
+                session.commit()
+
     return {"sent": sent, "failed": failed, "dead": dead, "processed": len(pending)}
 
 

@@ -24,6 +24,9 @@ logger = logging.getLogger(__name__)
 # DO NOT use this in production — set real values via env vars.
 _DEV_ADMIN: dict[str, str] = {}
 
+# Holds a reference to the running scheduler so /healthz can inspect it.
+_scheduler_ref: dict = {"instance": None}
+
 
 def _get_admin_credentials() -> tuple[str, str]:
     """Return (user, pass) — env-set values if present, else dev fallback dict."""
@@ -49,11 +52,13 @@ async def lifespan(app: FastAPI):
 
     scheduler = build_scheduler()
     scheduler.start()
+    _scheduler_ref["instance"] = scheduler
     logger.info("Scheduler started")
     try:
         yield
     finally:
         scheduler.shutdown(wait=False)
+        _scheduler_ref["instance"] = None
         logger.info("Scheduler stopped")
 
 
@@ -74,5 +79,39 @@ app.add_middleware(RateLimitMiddleware, requests_per_window=settings.rate_limit_
 
 
 @app.get("/healthz")
-def healthz() -> dict[str, str]:
-    return {"status": "ok"}
+def healthz() -> dict:
+    import time as _time
+
+    from sqlalchemy import text
+
+    checks: dict = {}
+    overall = "ok"
+
+    # DB check
+    db_status = "ok"
+    try:
+        from app.db.session import SessionLocal
+        t0 = _time.perf_counter()
+        with SessionLocal() as session:
+            session.execute(text("SELECT 1"))
+        checks["db_latency_ms"] = round((_time.perf_counter() - t0) * 1000, 2)
+    except Exception as exc:
+        db_status = "error"
+        checks["db_error"] = type(exc).__name__
+        overall = "degraded"
+
+    # Scheduler check
+    scheduler_status = (
+        "running"
+        if (_scheduler_ref.get("instance") and _scheduler_ref["instance"].running)
+        else "stopped"
+    )
+    if scheduler_status != "running":
+        overall = "degraded"
+
+    return {
+        "status": overall,
+        "db": db_status,
+        "scheduler": scheduler_status,
+        "checks": checks,
+    }

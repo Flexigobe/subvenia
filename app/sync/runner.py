@@ -33,6 +33,7 @@ async def run_bdns_sync() -> None:
         stats["updated"],
         stats["total"],
     )
+    logger.info("sync_complete", extra={"sync_name": "bdns", "stats": stats})
 
 
 async def run_bdns_enricher() -> None:
@@ -41,6 +42,7 @@ async def run_bdns_enricher() -> None:
     with SessionLocal() as session:
         stats = await enrich_existing(session, max_records=1000)
     logger.info("BDNS enrichment done: %s", stats)
+    logger.info("sync_complete", extra={"sync_name": "bdns_enricher", "stats": stats})
 
 
 async def run_catalogs_sync() -> None:
@@ -49,6 +51,7 @@ async def run_catalogs_sync() -> None:
     with SessionLocal() as session:
         stats = await sync_catalogs(session)
     logger.info("BDNS catalogs sync done: %s", stats)
+    logger.info("sync_complete", extra={"sync_name": "catalogs", "stats": stats})
 
 
 async def run_eu_sync() -> None:
@@ -57,6 +60,7 @@ async def run_eu_sync() -> None:
     with SessionLocal() as session:
         stats = await eu_sync_all(session, max_pages=10)
     logger.info("EU sync done: %s", stats)
+    logger.info("sync_complete", extra={"sync_name": "eu", "stats": stats})
 
 
 async def run_flush_outbox() -> None:
@@ -65,6 +69,7 @@ async def run_flush_outbox() -> None:
         stats = await flush_outbox(session)
     if stats["processed"]:
         logger.info("Outbox flush: %s", stats)
+    logger.info("sync_complete", extra={"sync_name": "outbox_flush", "stats": stats})
 
 
 async def run_dispatch_alerts() -> None:
@@ -73,6 +78,7 @@ async def run_dispatch_alerts() -> None:
     with SessionLocal() as session:
         stats = await dispatch_alerts(session)
     logger.info("Alerts dispatch done: %s", stats)
+    logger.info("sync_complete", extra={"sync_name": "alerts_dispatch", "stats": stats})
 
 
 def build_scheduler() -> AsyncIOScheduler:

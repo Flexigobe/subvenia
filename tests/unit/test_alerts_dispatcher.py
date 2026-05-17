@@ -143,3 +143,116 @@ async def test_dispatch_alerts_skips_inactive_subs(db_session, monkeypatch):
     from app.alerts.dispatcher import dispatch_alerts
     stats = await dispatch_alerts(db_session)
     assert stats["subscriptions_alerted"] == 0
+
+
+@pytest.mark.asyncio
+async def test_flush_outbox_enqueues_admin_alert_when_emails_die(db_session, monkeypatch):
+    """When emails get newly marked 'dead' AND alert_admin_email is set,
+    flush_outbox enqueues a [ADMIN ALERT] summary."""
+    from app.config import get_settings
+
+    monkeypatch.setattr(get_settings(), "brevo_api_key", "fake-key")
+    monkeypatch.setattr(get_settings(), "alert_admin_email", "admin@example.com")
+
+    # Pre-seed an email at attempts=4 → will fail and become dead this run
+    db_session.add(EmailOutbox(
+        to_email="user@example.com",
+        subject="S",
+        body_html="<p>x</p>",
+        attempts=4,
+        status="pending",
+    ))
+    db_session.commit()
+
+    import app.alerts.dispatcher as dispatcher
+
+    async def boom(*a, **k):
+        raise RuntimeError("simulated send failure")
+
+    monkeypatch.setattr(dispatcher, "send_email", boom)
+
+    from app.alerts.dispatcher import flush_outbox
+    await flush_outbox(db_session)
+
+    # An admin alert should be enqueued
+    alerts = db_session.execute(
+        select(EmailOutbox).where(EmailOutbox.subject.like("[ADMIN ALERT]%"))
+    ).scalars().all()
+    assert len(alerts) == 1
+    assert alerts[0].to_email == "admin@example.com"
+    assert "dead" in alerts[0].body_html.lower()
+
+
+@pytest.mark.asyncio
+async def test_flush_outbox_does_not_duplicate_pending_admin_alert(db_session, monkeypatch):
+    """If an admin alert is already pending, flush_outbox should NOT enqueue another."""
+    from app.config import get_settings
+
+    monkeypatch.setattr(get_settings(), "brevo_api_key", "fake-key")
+    monkeypatch.setattr(get_settings(), "alert_admin_email", "admin@example.com")
+
+    # Pre-seed an existing pending admin alert
+    db_session.add(EmailOutbox(
+        to_email="admin@example.com",
+        subject="[ADMIN ALERT] 3 email(s) marked dead in outbox",
+        body_html="<p>existing</p>",
+        status="pending",
+    ))
+    # And a new dying message
+    db_session.add(EmailOutbox(
+        to_email="user@example.com",
+        subject="S",
+        body_html="<p>x</p>",
+        attempts=4,
+        status="pending",
+    ))
+    db_session.commit()
+
+    import app.alerts.dispatcher as dispatcher
+
+    async def boom(*a, **k):
+        raise RuntimeError("simulated")
+
+    monkeypatch.setattr(dispatcher, "send_email", boom)
+
+    from app.alerts.dispatcher import flush_outbox
+    await flush_outbox(db_session)
+
+    # Should still be only 1 admin alert (no duplicate)
+    alerts = db_session.execute(
+        select(EmailOutbox).where(EmailOutbox.subject.like("[ADMIN ALERT]%"))
+    ).scalars().all()
+    assert len(alerts) == 1
+
+
+@pytest.mark.asyncio
+async def test_flush_outbox_skips_admin_alert_when_no_admin_email(db_session, monkeypatch):
+    """If alert_admin_email is empty, no admin alert is enqueued even on dead emails."""
+    from app.config import get_settings
+
+    monkeypatch.setattr(get_settings(), "brevo_api_key", "fake-key")
+    monkeypatch.setattr(get_settings(), "alert_admin_email", "")
+
+    db_session.add(EmailOutbox(
+        to_email="user@example.com",
+        subject="S",
+        body_html="<p>x</p>",
+        attempts=4,
+        status="pending",
+    ))
+    db_session.commit()
+
+    import app.alerts.dispatcher as dispatcher
+
+    async def boom(*a, **k):
+        raise RuntimeError("simulated")
+
+    monkeypatch.setattr(dispatcher, "send_email", boom)
+
+    from app.alerts.dispatcher import flush_outbox
+    await flush_outbox(db_session)
+
+    alerts = db_session.execute(
+        select(EmailOutbox).where(EmailOutbox.subject.like("[ADMIN ALERT]%"))
+    ).scalars().all()
+    assert len(alerts) == 0
