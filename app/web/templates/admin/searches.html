@@ -1,0 +1,70 @@
+{% extends "admin/_base.html" %}
+{% block admin_content %}
+<div class="space-y-4">
+  <header class="flex items-baseline justify-between flex-wrap gap-2">
+    <h1 class="text-2xl font-bold">Búsquedas</h1>
+    <div class="text-xs text-gray-500">{{ "{:,}".format(total) }} resultados</div>
+  </header>
+
+  <!-- Filters -->
+  <form method="get" action="/admin/searches" class="bg-white border border-gray-200 rounded-2xl p-4 flex flex-wrap gap-3 items-end">
+    <div>
+      <label class="block text-xs text-gray-500 mb-1">Desde</label>
+      <input type="date" name="since" value="{{ since }}" class="border border-gray-300 rounded px-2 py-1 text-sm">
+    </div>
+    <div class="flex items-center gap-2">
+      <input type="checkbox" id="has_email_cb" name="has_email" value="true" {% if has_email %}checked{% endif %}>
+      <label for="has_email_cb" class="text-sm">Solo con email</label>
+    </div>
+    <button type="submit" class="bg-green-700 hover:bg-green-800 text-white px-4 py-1.5 rounded text-sm">Filtrar</button>
+    <a href="/admin/searches.csv{% if since or has_email %}?{% if since %}since={{ since }}{% endif %}{% if since and has_email %}&amp;{% endif %}{% if has_email %}has_email=true{% endif %}{% endif %}"
+       class="ml-auto bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-1.5 rounded text-sm">
+      Exportar CSV
+    </a>
+  </form>
+
+  <!-- Table -->
+  <div class="bg-white border border-gray-200 rounded-2xl overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
+        <tr>
+          <th class="px-3 py-2 text-left">Fecha</th>
+          <th class="px-3 py-2 text-left">NIF</th>
+          <th class="px-3 py-2 text-left">Razón social</th>
+          <th class="px-3 py-2 text-left">CNAE</th>
+          <th class="px-3 py-2 text-left">Tamaño</th>
+          <th class="px-3 py-2 text-left">Provincia</th>
+          <th class="px-3 py-2 text-left">Finalidad</th>
+          <th class="px-3 py-2 text-left">Email</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in rows %}
+        <tr class="border-t border-gray-100">
+          <td class="px-3 py-1.5 whitespace-nowrap text-gray-600">{{ r.created_at.strftime("%d/%m/%Y %H:%M") }}</td>
+          <td class="px-3 py-1.5"><strong>{{ r.nif }}</strong></td>
+          <td class="px-3 py-1.5">{{ r.razon_social or "—" }}</td>
+          <td class="px-3 py-1.5">{{ r.cnae }}</td>
+          <td class="px-3 py-1.5">{{ r.tamano }}</td>
+          <td class="px-3 py-1.5">{{ r.provincia }}</td>
+          <td class="px-3 py-1.5">{{ r.finalidad | join(", ") if r.finalidad else "—" }}</td>
+          <td class="px-3 py-1.5 {% if r.email %}text-green-700 font-semibold{% else %}text-gray-400{% endif %}">{{ r.email or "—" }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" class="px-3 py-6 text-center text-gray-400">Sin resultados</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if total_pages > 1 %}
+  <nav class="flex items-center justify-between text-sm">
+    {% set prev_qs = "?page=" + (page-1)|string + ("&amp;since=" + since if since else "") + ("&amp;has_email=true" if has_email else "") %}
+    {% set next_qs = "?page=" + (page+1)|string + ("&amp;since=" + since if since else "") + ("&amp;has_email=true" if has_email else "") %}
+    {% if page > 1 %}<a href="/admin/searches{{ prev_qs }}" class="text-gray-700 hover:underline">← Anterior</a>{% else %}<span></span>{% endif %}
+    <span class="text-gray-500">Página {{ page }} de {{ total_pages }}</span>
+    {% if page < total_pages %}<a href="/admin/searches{{ next_qs }}" class="text-gray-700 hover:underline">Siguiente →</a>{% else %}<span></span>{% endif %}
+  </nav>
+  {% endif %}
+</div>
+{% endblock %}

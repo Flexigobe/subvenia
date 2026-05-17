@@ -4,13 +4,17 @@ para evitar dejar el panel abierto por accidente."""
 
 from __future__ import annotations
 
+import csv
+import io
 import secrets as _secrets
+from datetime import date as _date
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Annotated
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import func, select
@@ -198,6 +202,156 @@ def admin_index(
     metrics = _compute_dashboard_metrics(db)
     return templates.TemplateResponse(request, "admin/dashboard.html", metrics)
 
+
+# ---------------------------------------------------------------------------
+# Helpers for searches filter
+# ---------------------------------------------------------------------------
+
+def _parse_since_date(value: str | None) -> _date | None:
+    if not value:
+        return None
+    try:
+        return _date.fromisoformat(value)
+    except ValueError:
+        return None
+
+
+def _searches_base_query(since: _date | None, has_email: bool):
+    """Build the filtered Search query used by both the HTML view and CSV export."""
+    stmt = select(Search).order_by(Search.created_at.desc())
+    if since:
+        stmt = stmt.where(Search.created_at >= since)
+    if has_email:
+        stmt = stmt.where(Search.email.is_not(None))
+    return stmt
+
+
+# ---------------------------------------------------------------------------
+# Searches table + CSV
+# ---------------------------------------------------------------------------
+
+@router.get("/searches", response_class=HTMLResponse)
+def admin_searches(
+    request: Request,
+    _user: Annotated[str, Depends(require_admin)],
+    since: str | None = None,
+    has_email: str | None = None,
+    page: int = 1,
+    db: Session = Depends(get_db),
+) -> HTMLResponse:
+    page = max(1, page)
+    page_size = 20
+    since_date = _parse_since_date(since)
+    has_email_bool = (has_email or "").lower() == "true"
+
+    stmt = _searches_base_query(since_date, has_email_bool)
+    total = db.execute(
+        select(func.count()).select_from(stmt.order_by(None).subquery())
+    ).scalar_one()
+    rows = db.execute(stmt.offset((page - 1) * page_size).limit(page_size)).scalars().all()
+
+    total_pages = max(1, (total + page_size - 1) // page_size)
+    return templates.TemplateResponse(
+        request,
+        "admin/searches.html",
+        {
+            "rows": rows,
+            "page": page,
+            "total_pages": total_pages,
+            "total": total,
+            "since": since or "",
+            "has_email": has_email_bool,
+        },
+    )
+
+
+@router.get("/searches.csv")
+def admin_searches_csv(
+    _user: Annotated[str, Depends(require_admin)],
+    since: str | None = None,
+    has_email: str | None = None,
+    db: Session = Depends(get_db),
+) -> StreamingResponse:
+    since_date = _parse_since_date(since)
+    has_email_bool = (has_email or "").lower() == "true"
+    stmt = _searches_base_query(since_date, has_email_bool)
+
+    rows = db.execute(stmt).scalars().all()
+
+    def iter_csv():
+        buf = io.StringIO()
+        writer = csv.writer(buf)
+        writer.writerow([
+            "created_at", "nif", "razon_social", "cnae", "tamano",
+            "provincia", "finalidad", "email", "ip_hash", "user_agent",
+        ])
+        # Yield UTF-8 BOM so Excel opens correctly, then the header row
+        yield "﻿"
+        yield buf.getvalue()
+        buf.seek(0)
+        buf.truncate()
+        for r in rows:
+            writer.writerow([
+                r.created_at.isoformat() if r.created_at else "",
+                r.nif,
+                r.razon_social or "",
+                r.cnae,
+                r.tamano,
+                r.provincia,
+                ",".join(r.finalidad or []),
+                r.email or "",
+                r.ip_hash or "",
+                r.user_agent or "",
+            ])
+            yield buf.getvalue()
+            buf.seek(0)
+            buf.truncate()
+
+    headers = {
+        "Content-Disposition": 'attachment; filename="searches.csv"',
+    }
+    return StreamingResponse(iter_csv(), media_type="text/csv; charset=utf-8", headers=headers)
+
+
+# ---------------------------------------------------------------------------
+# Subscriptions table + deactivation
+# ---------------------------------------------------------------------------
+
+@router.get("/subscriptions", response_class=HTMLResponse)
+def admin_subscriptions(
+    request: Request,
+    _user: Annotated[str, Depends(require_admin)],
+    db: Session = Depends(get_db),
+) -> HTMLResponse:
+    subs = db.execute(
+        select(AlertSubscription).order_by(AlertSubscription.created_at.desc())
+    ).scalars().all()
+    return templates.TemplateResponse(
+        request,
+        "admin/subscriptions.html",
+        {"subs": subs},
+    )
+
+
+@router.post("/subscriptions/{sub_id}/deactivate")
+def admin_deactivate_subscription(
+    sub_id: UUID,
+    _user: Annotated[str, Depends(require_admin)],
+    db: Session = Depends(get_db),
+) -> RedirectResponse:
+    sub = db.execute(
+        select(AlertSubscription).where(AlertSubscription.id == sub_id)
+    ).scalar_one_or_none()
+    if sub is None:
+        raise HTTPException(status_code=404, detail="Suscripción no encontrada")
+    sub.active = False
+    db.commit()
+    return RedirectResponse(url="/admin/subscriptions", status_code=303)
+
+
+# ---------------------------------------------------------------------------
+# Logout
+# ---------------------------------------------------------------------------
 
 @router.get("/logout", response_class=HTMLResponse)
 def admin_logout() -> HTMLResponse:

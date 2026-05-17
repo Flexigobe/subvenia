@@ -1,0 +1,47 @@
+{% extends "admin/_base.html" %}
+{% block admin_content %}
+<div class="space-y-4">
+  <header class="flex items-baseline justify-between">
+    <h1 class="text-2xl font-bold">Suscripciones a alertas</h1>
+    <div class="text-xs text-gray-500">{{ subs|length }} totales</div>
+  </header>
+
+  <div class="bg-white border border-gray-200 rounded-2xl overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
+        <tr>
+          <th class="px-3 py-2 text-left">Fecha alta</th>
+          <th class="px-3 py-2 text-left">Email</th>
+          <th class="px-3 py-2 text-left">Perfil</th>
+          <th class="px-3 py-2 text-left">Activa</th>
+          <th class="px-3 py-2 text-left">Último envío</th>
+          <th class="px-3 py-2 text-left">Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in subs %}
+        <tr class="border-t border-gray-100">
+          <td class="px-3 py-1.5 whitespace-nowrap text-gray-600">{{ s.created_at.strftime("%d/%m/%Y") }}</td>
+          <td class="px-3 py-1.5"><strong>{{ s.email }}</strong></td>
+          <td class="px-3 py-1.5 text-xs text-gray-600 max-w-md break-all">{{ s.perfil | tojson }}</td>
+          <td class="px-3 py-1.5">
+            {% if s.active %}<span class="text-green-700 font-semibold">Sí</span>
+            {% else %}<span class="text-gray-400">No</span>{% endif %}
+          </td>
+          <td class="px-3 py-1.5 text-gray-600">{{ s.last_sent_at.strftime("%d/%m/%Y %H:%M") if s.last_sent_at else "—" }}</td>
+          <td class="px-3 py-1.5">
+            {% if s.active %}
+            <form method="post" action="/admin/subscriptions/{{ s.id }}/deactivate" onsubmit="return confirm('Desactivar {{ s.email }}?');">
+              <button type="submit" class="text-red-700 hover:underline text-xs">Desactivar</button>
+            </form>
+            {% else %}—{% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="px-3 py-6 text-center text-gray-400">Sin suscripciones</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

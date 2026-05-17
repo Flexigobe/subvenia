@@ -187,3 +187,128 @@ def test_dashboard_shows_top_finalidades_when_data(admin_creds, db_session):
     assert response.status_code == 200
     # "digitalizacion" must appear in the rendered top finalidades list
     assert "digitalizacion" in response.text
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Plan 4 Task 3 — admin tables + CSV
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def test_admin_searches_lists_paginated(admin_creds, db_session):
+    from app.db.models import Search
+    # Seed 22 rows (>20 to verify pagination)
+    for i in range(22):
+        db_session.add(Search(
+            nif="B12345674", cnae="6201", tamano="pequena", provincia="08",
+            finalidad=["digitalizacion"],
+        ))
+    db_session.commit()
+
+    response = client.get(
+        "/admin/searches",
+        headers=_basic_header(admin_creds["user"], admin_creds["password"]),
+    )
+    assert response.status_code == 200
+    assert "22 resultados" in response.text or "22" in response.text
+    assert "Página 1 de 2" in response.text
+
+    response2 = client.get(
+        "/admin/searches?page=2",
+        headers=_basic_header(admin_creds["user"], admin_creds["password"]),
+    )
+    assert response2.status_code == 200
+    assert "Página 2 de 2" in response2.text
+
+
+def test_admin_searches_csv_has_bom_and_headers(admin_creds, db_session):
+    from app.db.models import Search
+    db_session.add(Search(
+        nif="B12345674", cnae="6201", tamano="pequena", provincia="08",
+        finalidad=["digitalizacion", "i+d"], email="user@example.com",
+    ))
+    db_session.commit()
+
+    response = client.get(
+        "/admin/searches.csv",
+        headers=_basic_header(admin_creds["user"], admin_creds["password"]),
+    )
+    assert response.status_code == 200
+    assert "text/csv" in response.headers["content-type"]
+    body = response.text
+    # UTF-8 BOM first
+    assert body.startswith("﻿") or body.startswith("created_at")  # depending on streaming order
+    # All required columns present in the header line
+    for col in ["nif", "razon_social", "cnae", "tamano", "provincia", "finalidad", "email"]:
+        assert col in body
+    # The seeded data appears
+    assert "B12345674" in body
+    assert "digitalizacion,i+d" in body
+    assert "user@example.com" in body
+
+
+def test_admin_searches_csv_respects_has_email_filter(admin_creds, db_session):
+    from app.db.models import Search
+    db_session.add(Search(
+        nif="WITH-EMAIL", cnae="6201", tamano="pequena", provincia="08",
+        finalidad=["digitalizacion"], email="user@example.com",
+    ))
+    db_session.add(Search(
+        nif="WITHOUT-EMAIL", cnae="6201", tamano="pequena", provincia="08",
+        finalidad=["digitalizacion"],
+    ))
+    db_session.commit()
+
+    response = client.get(
+        "/admin/searches.csv?has_email=true",
+        headers=_basic_header(admin_creds["user"], admin_creds["password"]),
+    )
+    assert response.status_code == 200
+    body = response.text
+    assert "WITH-EMAIL" in body
+    assert "WITHOUT-EMAIL" not in body
+
+
+def test_admin_subscriptions_lists(admin_creds, db_session):
+    from app.db.models import AlertSubscription
+    db_session.add(AlertSubscription(
+        email="sub@example.com",
+        perfil={"cnae": "6201", "tamano": "pequena", "provincia": "08", "finalidad": []},
+        unsubscribe_token="tok-abc",
+    ))
+    db_session.commit()
+
+    response = client.get(
+        "/admin/subscriptions",
+        headers=_basic_header(admin_creds["user"], admin_creds["password"]),
+    )
+    assert response.status_code == 200
+    assert "sub@example.com" in response.text
+    assert "Desactivar" in response.text  # active subs have the button
+
+
+def test_admin_deactivate_subscription_works(admin_creds, db_session):
+    from app.db.models import AlertSubscription
+    from sqlalchemy import select as _select
+
+    sub = AlertSubscription(
+        email="bye@example.com",
+        perfil={"cnae": "6201", "tamano": "pequena", "provincia": "08", "finalidad": []},
+        unsubscribe_token="tok-deactivate",
+    )
+    db_session.add(sub)
+    db_session.commit()
+
+    response = client.post(
+        f"/admin/subscriptions/{sub.id}/deactivate",
+        headers=_basic_header(admin_creds["user"], admin_creds["password"]),
+        follow_redirects=False,
+    )
+    assert response.status_code == 303
+    assert response.headers["location"] == "/admin/subscriptions"
+
+    # Verify DB updated — expire all cached state and re-query
+    db_session.expire_all()
+    updated = db_session.execute(
+        _select(AlertSubscription).where(AlertSubscription.email == "bye@example.com")
+    ).scalar_one()
+    assert updated.active is False
