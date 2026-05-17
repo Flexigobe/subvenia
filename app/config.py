@@ -26,7 +26,7 @@ class Settings(BaseSettings):
 
     # Gemini LLM scoring
     gemini_api_key: str = ""
-    gemini_model: str = "gemini-2.5-flash"
+    gemini_model: str = "gemini-2.0-flash"  # 1500 RPD free tier vs 250 RPD on 2.5-flash
 
 
 @lru_cache
