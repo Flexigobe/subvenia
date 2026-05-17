@@ -20,7 +20,7 @@ _NIVEL1_TO_AMBITO: dict[str, str] = {
     "AUTONÓMICA": "autonomico",
     "AUTONOMICA": "autonomico",
     "LOCAL": "local",
-    "EUROPEA": "europeo",
+    "EUROPEA": "ue",
 }
 
 
