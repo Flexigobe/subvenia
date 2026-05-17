@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Admin · subvenciones-app{% endblock %}
+{% block content %}
+<div class="flex flex-col md:flex-row gap-6">
+  <aside class="md:w-56 bg-white border border-gray-200 rounded-2xl p-4 h-fit md:sticky md:top-4">
+    <div class="text-xs font-semibold text-gray-500 uppercase mb-3">Panel admin</div>
+    <nav class="flex flex-col gap-1 text-sm">
+      <a href="/admin" class="px-3 py-2 rounded hover:bg-gray-100">Dashboard</a>
+      <a href="/admin/searches" class="px-3 py-2 rounded hover:bg-gray-100">Búsquedas</a>
+      <a href="/admin/subscriptions" class="px-3 py-2 rounded hover:bg-gray-100">Suscripciones</a>
+      <a href="/admin/sync" class="px-3 py-2 rounded hover:bg-gray-100">Sync</a>
+      <a href="/admin/outbox" class="px-3 py-2 rounded hover:bg-gray-100">Outbox</a>
+      <a href="/admin/health" class="px-3 py-2 rounded hover:bg-gray-100">Salud</a>
+      <a href="/admin/logout" class="px-3 py-2 rounded hover:bg-red-50 text-red-700 mt-2">Cerrar sesión</a>
+    </nav>
+  </aside>
+  <main class="flex-1">
+    {% block admin_content %}{% endblock %}
+  </main>
+</div>
+{% endblock %}

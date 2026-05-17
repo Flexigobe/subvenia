@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import secrets
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -19,9 +20,33 @@ settings = get_settings()
 logging.basicConfig(level=settings.log_level)
 logger = logging.getLogger(__name__)
 
+# Process-level admin override for dev when ADMIN_PASS is empty.
+# DO NOT use this in production — set real values via env vars.
+_DEV_ADMIN: dict[str, str] = {}
+
+
+def _get_admin_credentials() -> tuple[str, str]:
+    """Return (user, pass) — env-set values if present, else dev fallback dict."""
+    settings = get_settings()
+    if settings.admin_pass:
+        return settings.admin_user or "admin", settings.admin_pass
+    if _DEV_ADMIN:
+        return _DEV_ADMIN["user"], _DEV_ADMIN["pass"]
+    return "", ""
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Dev-only admin fallback: generate random creds if none configured.
+    if not settings.admin_pass and not _DEV_ADMIN:
+        _DEV_ADMIN["user"] = "admin"
+        _DEV_ADMIN["pass"] = secrets.token_urlsafe(16)
+        logger.warning(
+            "[ADMIN DEV] ADMIN_PASS not set. Generated dev credentials: "
+            "user=%s pass=%s  — set ADMIN_USER/ADMIN_PASS in .env to fix.",
+            _DEV_ADMIN["user"], _DEV_ADMIN["pass"],
+        )
+
     scheduler = build_scheduler()
     scheduler.start()
     logger.info("Scheduler started")
@@ -38,6 +63,10 @@ app.include_router(browse_router)
 app.include_router(news_router)
 app.include_router(enrich_router)
 app.include_router(alerts_router)
+
+from app.web.routes_admin import router as admin_router  # noqa: E402
+
+app.include_router(admin_router)
 
 
 @app.get("/healthz")
