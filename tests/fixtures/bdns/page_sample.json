@@ -1,0 +1,34 @@
+{
+  "content": [
+    {
+      "id": 1107676,
+      "mrr": false,
+      "numeroConvocatoria": "906115",
+      "descripcion": "CONVENIO DE COLABORACIÓN CON EL GREMIO DE HOSTELERIA PARA LA DINAMIZACIÓN DE LA HOSTELERIA 2026",
+      "descripcionLeng": null,
+      "fechaRecepcion": "2026-01-15",
+      "nivel1": "LOCAL",
+      "nivel2": "CERDANYOLA DEL VALLÈS",
+      "nivel3": "AYUNTAMIENTO DE CERDANYOLA DEL VALLÈS",
+      "codigoInvente": null
+    }
+  ],
+  "pageable": {
+    "sort": {"sorted": false, "unsorted": true, "empty": true},
+    "pageNumber": 0,
+    "pageSize": 100,
+    "offset": 0,
+    "paged": true,
+    "unpaged": false
+  },
+  "last": false,
+  "totalElements": 9279,
+  "totalPages": 93,
+  "first": true,
+  "sort": {"sorted": false, "unsorted": true, "empty": true},
+  "numberOfElements": 1,
+  "size": 100,
+  "number": 0,
+  "empty": false,
+  "advertencia": null
+}

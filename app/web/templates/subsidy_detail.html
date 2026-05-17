@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+<a href="javascript:history.back()" class="text-sm text-gray-500 hover:underline">← Volver</a>
+
+<div class="bg-white rounded-2xl border border-gray-200 p-8 mt-4">
+  <div class="text-xs uppercase text-gray-500 mb-2">
+    {{ sub.organismo or "Organismo no especificado" }}
+    · {{ sub.ambito|capitalize }}{% if sub.ccaa %} · {{ sub.ccaa }}{% endif %}
+  </div>
+  <h1 class="text-2xl font-bold mb-3">{{ sub.titulo }}</h1>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+    <div>
+      <div class="text-xs text-gray-500 uppercase">Importe máx.</div>
+      <div class="font-semibold">{% if sub.importe_max_beneficiario %}{{ "{:,.0f}".format(sub.importe_max_beneficiario) }}€{% else %}—{% endif %}</div>
+    </div>
+    <div>
+      <div class="text-xs text-gray-500 uppercase">% Subvención</div>
+      <div class="font-semibold">{% if sub.porcentaje %}{{ sub.porcentaje }}%{% else %}—{% endif %}</div>
+    </div>
+    <div>
+      <div class="text-xs text-gray-500 uppercase">Apertura</div>
+      <div class="font-semibold">{% if sub.fecha_inicio %}{{ sub.fecha_inicio.strftime("%d/%m/%Y") }}{% else %}—{% endif %}</div>
+    </div>
+    <div>
+      <div class="text-xs text-gray-500 uppercase">Cierre</div>
+      <div class="font-semibold">{% if sub.fecha_fin %}{{ sub.fecha_fin.strftime("%d/%m/%Y") }}{% else %}—{% endif %}</div>
+    </div>
+  </div>
+
+  {% if sub.descripcion %}
+  <section class="mb-6">
+    <h2 class="text-xs font-semibold text-gray-500 uppercase mb-2">Descripción</h2>
+    <p class="whitespace-pre-line text-gray-800">{{ sub.descripcion }}</p>
+  </section>
+  {% endif %}
+
+  {% if sub.cnae_elegible %}
+  <section class="mb-6">
+    <h2 class="text-xs font-semibold text-gray-500 uppercase mb-2">CNAE elegibles</h2>
+    <div class="flex flex-wrap gap-1">
+      {% for c in sub.cnae_elegible %}<span class="text-xs bg-gray-100 px-2 py-0.5 rounded">{{ c }}</span>{% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  {% if sub.finalidad %}
+  <section class="mb-6">
+    <h2 class="text-xs font-semibold text-gray-500 uppercase mb-2">Finalidad</h2>
+    <div class="flex flex-wrap gap-1">
+      {% for f in sub.finalidad %}<span class="text-xs bg-blue-50 text-blue-800 px-2 py-0.5 rounded">{{ f }}</span>{% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  {% if sub.enlace_oficial %}
+  <a href="{{ sub.enlace_oficial }}" target="_blank" rel="noopener" class="inline-block bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-3 rounded-lg">
+    Ver convocatoria oficial →
+  </a>
+  {% endif %}
+
+  <p class="text-xs text-gray-500 mt-6">Información orientativa generada automáticamente. Consulta siempre la convocatoria oficial.</p>
+</div>
+{% endblock %}
