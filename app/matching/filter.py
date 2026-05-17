@@ -88,6 +88,12 @@ def find_candidates(session: Session, perfil: EmpresaProfile, limit: int = 30) -
     today = date.today()
     stmt = stmt.where((Subvencion.fecha_fin.is_(None)) | (Subvencion.fecha_fin >= today))
 
+    # Excluir records regulatorios (ordenanzas, reglamentos, bases reguladoras, decretos, leyes)
+    # — son marcos legales, no convocatorias accionables.
+    stmt = stmt.where(
+        ~Subvencion.titulo.op("~*")(r"^(ordenanza|reglamento|bases reguladoras|real decreto|decreto|ley )")
+    )
+
     # CNAE: matching jerárquico CNAE-2009. Los records BDNS suelen guardar prefijos
     # (`['62']` significa "todo el sector 62: actividades de informática") y los códigos
     # van hasta 4 dígitos. Match si el cnae_elegible incluye CUALQUIER prefijo del cnae

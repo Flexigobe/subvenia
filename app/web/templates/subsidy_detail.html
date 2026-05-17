@@ -11,8 +11,12 @@
 
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
     <div>
-      <div class="text-xs text-gray-500 uppercase">Importe máx.</div>
-      <div class="font-semibold">{% if sub.importe_max_beneficiario %}{{ "{:,.0f}".format(sub.importe_max_beneficiario) }}€{% else %}—{% endif %}</div>
+      <div class="text-xs text-gray-500 uppercase">Presupuesto total</div>
+      <div class="font-semibold">
+        {% if sub.importe_total %}{{ "{:,.0f}".format(sub.importe_total) }}€
+        {% elif sub.importe_max_beneficiario %}{{ "{:,.0f}".format(sub.importe_max_beneficiario) }}€ <span class="text-xs text-gray-500">(máx. por beneficiario)</span>
+        {% else %}—{% endif %}
+      </div>
     </div>
     <div>
       <div class="text-xs text-gray-500 uppercase">% Subvención</div>
