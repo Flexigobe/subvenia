@@ -1,0 +1,51 @@
+{% extends "admin/_base.html" %}
+{% block admin_content %}
+<div class="space-y-4">
+  <header><h1 class="text-2xl font-bold">Sync</h1></header>
+
+  {% if msg %}
+  <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-sm">{{ msg }}</div>
+  {% endif %}
+
+  <section class="bg-white border border-gray-200 rounded-2xl p-4">
+    <h2 class="text-xs font-semibold text-gray-500 uppercase mb-3">Estado por fuente</h2>
+    <table class="w-full text-sm">
+      <thead class="text-xs text-gray-500 uppercase">
+        <tr>
+          <th class="text-left py-1">Source</th>
+          <th class="text-left py-1">Records</th>
+          <th class="text-left py-1">Última actualización</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in sync_rows %}
+        <tr class="border-t border-gray-100">
+          <td class="py-1.5"><strong>{{ r.source }}</strong></td>
+          <td class="py-1.5">{{ "{:,}".format(r.count) }}</td>
+          <td class="py-1.5 text-gray-600">{{ r.last_update.strftime("%d/%m/%Y %H:%M UTC") if r.last_update else "—" }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="3" class="py-3 text-gray-400">Sin datos</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <section class="bg-white border border-gray-200 rounded-2xl p-4">
+    <h2 class="text-xs font-semibold text-gray-500 uppercase mb-3">Forzar ahora</h2>
+    <p class="text-sm text-gray-600 mb-4">
+      Cada botón encola la tarea en background. Refresca esta página en ~30s o mira los logs
+      del servidor para ver el resultado.
+    </p>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+      {% for job in jobs %}
+      <form method="post" action="/admin/sync/{{ job }}">
+        <button type="submit" class="w-full bg-green-700 hover:bg-green-800 text-white text-sm font-semibold py-2 px-3 rounded">
+          {{ job|upper }}
+        </button>
+      </form>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}

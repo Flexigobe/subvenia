@@ -312,3 +312,100 @@ def test_admin_deactivate_subscription_works(admin_creds, db_session):
         _select(AlertSubscription).where(AlertSubscription.email == "bye@example.com")
     ).scalar_one()
     assert updated.active is False
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Plan 4 Task 4 — sync admin + outbox viewer
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def test_admin_sync_page_renders_with_status(admin_creds, db_session):
+    """Sync page shows last update per source + force-now buttons."""
+    response = client.get(
+        "/admin/sync",
+        headers=_basic_header(admin_creds["user"], admin_creds["password"]),
+    )
+    assert response.status_code == 200
+    assert "Sync" in response.text
+    assert "Forzar ahora" in response.text
+    # Buttons for known jobs
+    for job in ["BDNS", "EU", "ENRICHER", "CATALOGS", "ALERTS"]:
+        assert job in response.text
+
+
+def test_admin_sync_run_schedules_known_job(admin_creds, monkeypatch):
+    """POST /admin/sync/{job} returns 303 and schedules a background task for known jobs."""
+    # Replace the actual coroutines with no-op stubs to avoid hitting real APIs.
+    import app.web.routes_admin as routes_mod
+
+    async def _noop():
+        return None
+    monkeypatch.setitem(routes_mod._JOB_CALLABLES, "bdns", _noop)
+
+    response = client.post(
+        "/admin/sync/bdns",
+        headers=_basic_header(admin_creds["user"], admin_creds["password"]),
+        follow_redirects=False,
+    )
+    assert response.status_code == 303
+    assert "/admin/sync?msg=" in response.headers["location"]
+
+
+def test_admin_sync_run_unknown_job_returns_404(admin_creds):
+    response = client.post(
+        "/admin/sync/nope",
+        headers=_basic_header(admin_creds["user"], admin_creds["password"]),
+        follow_redirects=False,
+    )
+    assert response.status_code == 404
+
+
+def test_admin_outbox_lists_with_filter(admin_creds, db_session):
+    from app.db.models import EmailOutbox
+    db_session.add(EmailOutbox(to_email="a@b.com", subject="S1", body_html="<p>1</p>", status="pending"))
+    db_session.add(EmailOutbox(to_email="c@d.com", subject="S2", body_html="<p>2</p>", status="sent"))
+    db_session.add(EmailOutbox(to_email="e@f.com", subject="S3", body_html="<p>3</p>", status="dead"))
+    db_session.commit()
+
+    response = client.get(
+        "/admin/outbox?status=dead",
+        headers=_basic_header(admin_creds["user"], admin_creds["password"]),
+    )
+    assert response.status_code == 200
+    assert "e@f.com" in response.text
+    # The other two should NOT appear (status filter)
+    assert "a@b.com" not in response.text
+    assert "c@d.com" not in response.text
+
+
+def test_admin_outbox_retry_dead_resets_attempts(admin_creds, db_session):
+    from app.db.models import EmailOutbox
+    from sqlalchemy import select as _select
+
+    db_session.add(EmailOutbox(
+        to_email="dead@example.com", subject="S", body_html="<p>x</p>",
+        status="dead", attempts=5, last_error="some error",
+    ))
+    db_session.add(EmailOutbox(
+        to_email="sent@example.com", subject="S", body_html="<p>x</p>",
+        status="sent", attempts=1,
+    ))
+    db_session.commit()
+
+    response = client.post(
+        "/admin/outbox/retry-dead",
+        headers=_basic_header(admin_creds["user"], admin_creds["password"]),
+        follow_redirects=False,
+    )
+    assert response.status_code == 303
+    assert "/admin/outbox?status=pending" in response.headers["location"]
+
+    db_session.expire_all()
+    rows = db_session.execute(_select(EmailOutbox).order_by(EmailOutbox.to_email)).scalars().all()
+    by_email = {r.to_email: r for r in rows}
+    assert by_email["dead@example.com"].status == "pending"
+    assert by_email["dead@example.com"].attempts == 0
+    assert by_email["dead@example.com"].last_error is None
+    # 'sent' row not touched
+    assert by_email["sent@example.com"].status == "sent"
+    assert by_email["sent@example.com"].attempts == 1

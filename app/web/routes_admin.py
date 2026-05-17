@@ -4,8 +4,10 @@ para evitar dejar el panel abierto por accidente."""
 
 from __future__ import annotations
 
+import asyncio
 import csv
 import io
+import logging
 import secrets as _secrets
 from datetime import date as _date
 from datetime import datetime, timedelta, timezone
@@ -13,13 +15,14 @@ from pathlib import Path
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request, status
 from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
+from app.alerts.dispatcher import dispatch_alerts, flush_outbox
 from app.config import get_settings
 from app.db.models import (
     AlertSubscription,
@@ -27,7 +30,13 @@ from app.db.models import (
     Search,
     Subvencion,
 )
-from app.db.session import get_db
+from app.db.session import SessionLocal, get_db
+from app.sync.bdns_enricher import enrich_existing
+from app.sync.bdns_puller import sync_all as bdns_sync_all
+from app.sync.catalogs import sync_catalogs
+from app.sync.eu_puller import sync_all as eu_sync_all
+
+_log = logging.getLogger(__name__)
 
 TEMPLATES_DIR = Path(__file__).resolve().parent / "templates"
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
@@ -360,4 +369,164 @@ def admin_logout() -> HTMLResponse:
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Sesión cerrada",
         headers={"WWW-Authenticate": 'Basic realm="admin"'},
+    )
+
+
+# ---------------------------------------------------------------------------
+# Force-sync jobs
+# ---------------------------------------------------------------------------
+
+async def _run_bdns() -> None:
+    from datetime import date, timedelta
+    with SessionLocal() as session:
+        result = await bdns_sync_all(session, since=date.today() - timedelta(days=30))
+    _log.info("admin force-sync bdns done: %s", result)
+
+
+async def _run_eu() -> None:
+    with SessionLocal() as session:
+        result = await eu_sync_all(session, max_pages=10)
+    _log.info("admin force-sync eu done: %s", result)
+
+
+async def _run_enricher() -> None:
+    with SessionLocal() as session:
+        result = await enrich_existing(session, max_records=500)
+    _log.info("admin force-sync enricher done: %s", result)
+
+
+async def _run_catalogs() -> None:
+    with SessionLocal() as session:
+        result = await sync_catalogs(session)
+    _log.info("admin force-sync catalogs done: %s", result)
+
+
+async def _run_alerts() -> None:
+    with SessionLocal() as session:
+        result = await dispatch_alerts(session)
+    _log.info("admin force-sync alerts done: %s", result)
+
+
+_JOB_CALLABLES = {
+    "bdns": _run_bdns,
+    "eu": _run_eu,
+    "enricher": _run_enricher,
+    "catalogs": _run_catalogs,
+    "alerts": _run_alerts,
+}
+
+
+@router.get("/sync", response_class=HTMLResponse)
+def admin_sync_status(
+    request: Request,
+    _user: Annotated[str, Depends(require_admin)],
+    msg: str | None = None,
+    db: Session = Depends(get_db),
+) -> HTMLResponse:
+    """Sync status page with force-now buttons."""
+    sync_rows = db.execute(
+        select(
+            Subvencion.source,
+            func.count().label("c"),
+            func.max(Subvencion.updated_at).label("last_update"),
+        ).group_by(Subvencion.source)
+    ).all()
+    return templates.TemplateResponse(
+        request,
+        "admin/sync.html",
+        {
+            "sync_rows": [
+                {"source": r.source, "count": r.c, "last_update": r.last_update}
+                for r in sync_rows
+            ],
+            "msg": msg,
+            "jobs": list(_JOB_CALLABLES.keys()),
+        },
+    )
+
+
+@router.post("/sync/{job}")
+async def admin_sync_run(
+    job: str,
+    _user: Annotated[str, Depends(require_admin)],
+    background_tasks: BackgroundTasks,
+) -> RedirectResponse:
+    """Schedule a sync job as fire-and-forget background task."""
+    callable_ = _JOB_CALLABLES.get(job)
+    if callable_ is None:
+        raise HTTPException(status_code=404, detail=f"Job '{job}' no existe")
+
+    async def _runner():
+        try:
+            await callable_()
+        except Exception as exc:
+            _log.exception("Force-sync %s failed: %s", job, exc)
+
+    background_tasks.add_task(_runner)
+    return RedirectResponse(
+        url=f"/admin/sync?msg=Tarea+{job}+encolada+en+segundo+plano",
+        status_code=303,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Outbox viewer + retry-dead
+# ---------------------------------------------------------------------------
+
+@router.get("/outbox", response_class=HTMLResponse)
+def admin_outbox(
+    request: Request,
+    _user: Annotated[str, Depends(require_admin)],
+    status: str = "all",
+    page: int = 1,
+    db: Session = Depends(get_db),
+) -> HTMLResponse:
+    page = max(1, page)
+    page_size = 25
+
+    stmt = select(EmailOutbox).order_by(EmailOutbox.created_at.desc())
+    if status in ("pending", "sent", "dead"):
+        stmt = stmt.where(EmailOutbox.status == status)
+
+    total = db.execute(
+        select(func.count()).select_from(stmt.order_by(None).subquery())
+    ).scalar_one()
+    rows = db.execute(stmt.offset((page - 1) * page_size).limit(page_size)).scalars().all()
+    total_pages = max(1, (total + page_size - 1) // page_size)
+
+    status_counts_rows = db.execute(
+        select(EmailOutbox.status, func.count()).group_by(EmailOutbox.status)
+    ).all()
+    status_counts = {r[0]: r[1] for r in status_counts_rows}
+
+    return templates.TemplateResponse(
+        request,
+        "admin/outbox.html",
+        {
+            "rows": rows,
+            "page": page,
+            "total_pages": total_pages,
+            "total": total,
+            "status": status,
+            "status_counts": status_counts,
+        },
+    )
+
+
+@router.post("/outbox/retry-dead")
+def admin_outbox_retry_dead(
+    _user: Annotated[str, Depends(require_admin)],
+    db: Session = Depends(get_db),
+) -> RedirectResponse:
+    dead = db.execute(select(EmailOutbox).where(EmailOutbox.status == "dead")).scalars().all()
+    n = 0
+    for m in dead:
+        m.status = "pending"
+        m.attempts = 0
+        m.last_error = None
+        n += 1
+    db.commit()
+    return RedirectResponse(
+        url=f"/admin/outbox?status=pending&msg=Reactivados+{n}+emails+dead",
+        status_code=303,
     )
