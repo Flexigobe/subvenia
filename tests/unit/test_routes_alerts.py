@@ -103,3 +103,43 @@ def test_subscribe_reactivates_previously_inactive(db_session):
 
     sub = db_session.execute(select(AlertSubscription).where(AlertSubscription.email == "reactivate@example.com")).scalar_one()
     assert sub.active is True
+
+
+def test_unsubscribe_deactivates_subscription(db_session):
+    db_session.add(AlertSubscription(
+        email="bye@example.com",
+        perfil={"cnae": "6201", "tamano": "pequena", "provincia": "08", "finalidad": []},
+        unsubscribe_token="known-token-123",
+    ))
+    db_session.commit()
+
+    response = client.get("/unsubscribe/known-token-123")
+    assert response.status_code == 200
+    assert "bye@example.com" in response.text
+    assert "Baja confirmada" in response.text or "baja" in response.text.lower()
+
+    sub = db_session.execute(select(AlertSubscription).where(AlertSubscription.email == "bye@example.com")).scalar_one()
+    assert sub.active is False
+
+
+def test_unsubscribe_returns_404_for_unknown_token():
+    response = client.get("/unsubscribe/this-token-does-not-exist")
+    assert response.status_code == 404
+
+
+def test_unsubscribe_is_idempotent(db_session):
+    """Visiting the link twice keeps the sub inactive (no error)."""
+    db_session.add(AlertSubscription(
+        email="twice@example.com",
+        perfil={"cnae": "6201", "tamano": "pequena", "provincia": "08", "finalidad": []},
+        unsubscribe_token="idempotent-token",
+    ))
+    db_session.commit()
+
+    r1 = client.get("/unsubscribe/idempotent-token")
+    r2 = client.get("/unsubscribe/idempotent-token")
+    assert r1.status_code == 200
+    assert r2.status_code == 200
+
+    sub = db_session.execute(select(AlertSubscription).where(AlertSubscription.email == "twice@example.com")).scalar_one()
+    assert sub.active is False

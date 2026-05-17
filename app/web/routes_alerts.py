@@ -141,3 +141,20 @@ async def subscribe(
         "partials/subscribe_form.html",
         {"success": True, "email": email},
     )
+
+
+@router.get("/unsubscribe/{token}", response_class=HTMLResponse)
+def unsubscribe(request: Request, token: str, db: Session = Depends(get_db)) -> HTMLResponse:
+    sub = db.execute(
+        select(AlertSubscription).where(AlertSubscription.unsubscribe_token == token)
+    ).scalar_one_or_none()
+    if sub is None:
+        raise HTTPException(status_code=404, detail="Token de baja no encontrado")
+
+    sub.active = False
+    db.commit()
+    return templates.TemplateResponse(
+        request,
+        "unsubscribed.html",
+        {"email": sub.email},
+    )
