@@ -1,0 +1,554 @@
+{
+  "apiVersion": "2.146",
+  "totalResults": 644362,
+  "pageNumber": 1,
+  "pageSize": 3,
+  "results": [
+    {
+      "apiVersion": "2.146",
+      "reference": "43046674ResearchandInnovationaction1589846400000bg",
+      "url": "https://ec.europa.eu/info/funding-tenders/opportunities/data/topicDetails/SC1-PHE-CORONAVIRUS-2020-2D.json",
+      "title": null,
+      "contentType": "text/plain",
+      "language": "bg",
+      "databaseLabel": "SEDIA",
+      "database": "SEDIA",
+      "summary": "Pan-European COVID-19 cohorts",
+      "weight": 1.0,
+      "groupById": "3",
+      "accessRestriction": false,
+      "pages": null,
+      "metadata": {
+        "es_SortDate": [
+          "2020-05-19T00:00:00.000+0000"
+        ],
+        "keywords": [
+          "Medical biotechnology related ethics",
+          "Immunology",
+          "Health sciences",
+          "Other clinical medicine subjects",
+          "Gender",
+          "Tissue banks",
+          "Health care sciences and services (including hospi",
+          "Open Innovation",
+          "Epidemiology",
+          "Human genetics",
+          "Public and environmental health",
+          "Social sciences and humanities",
+          "Parasitology",
+          "Infectious diseases",
+          "Coronavirus",
+          "Covid",
+          "COVID-19",
+          "Covid-19"
+        ],
+        "workProgrammepart": [],
+        "language": [
+          "bg"
+        ],
+        "type": [
+          "1"
+        ],
+        "focusArea": [],
+        "destinationDetails": [],
+        "typeOfMGAs": [],
+        "callIdentifier": [
+          "H2020-SC1-PHE-CORONAVIRUS-2020-2"
+        ],
+        "callccm2Id": [
+          "43046746"
+        ],
+        "DATASOURCE": [
+          "SEDIA"
+        ],
+        "links": [
+          "[]"
+        ],
+        "callTitle": [
+          "Second call for an Expression of Interest for innovative and rapid health-related approaches to respond to COVID-19 and to deliver quick results for society for a higher level of preparedness of health systems"
+        ],
+        "frameworkProgramme": [
+          "31045243"
+        ],
+        "descriptionByte": [
+          "<SPAN class=\"topicdescriptionkind\">Specific Challenge</SPAN>:<p>The COVID-19 pandemic created an urgent demand for evidence-based innovative and rapid solutions to deal with health and health-related ..."
+        ],
+        "identifier": [
+          "SC1-PHE-CORONAVIRUS-2020-2D"
+        ],
+        "additionalInfos": [
+          "{\"staticAdditionalInfo\":\"<p>This second call for an Expression of Interest implements Action 3 of the <a href=\"http://ec.europa.eu/info/sites/info/files/research_and_innovation/research_by_area/documents/ec_rtd_era-vs-corona_0.pdf\">ERAvsCorona Action Plan</a>, which resulted from dialogues between the Commission services and the national ministries over the period March-April 2020. The full title of Action 3 is ‘New funding for innovative and rapid health-related approaches that respond to COVID-19 and deliver quick results relevant to society and a higher level of preparedness of health systems’. In line with the Pledge for the Coronavirus Global Response launched on 4 May 2020, it is of paramount importance that new solutions need to be available and affordable for all.</p><p>This second call for an expression of interest complements the first expression of interest that the European Commission published in January 2020, which led to the funding of <a href=\"http://ec.europa.eu/info/sites/info/files/research_and_innovation/research_by_area/documents/ec_rtd_cv-projects.pdf\">18 projects</a> in March 2020. The first expression of interest focused on advancing the knowledge on SARS-CoV-2 and its impact on infected persons, with the aim of contributing to an efficient patient management and/or public health preparedness and response.</p><p>Since then, it has become even more vital to rapidly deliver innovative solutions to contain and mitigate the outbreak and to better care for patients, survivors, vulnerable groups, frontline (health) care staff and their communities – especially in the coming 18 months. Policy makers (at all levels), care providers and other employers urgently need practical evidence-based guidelines to deal with problems resulting from current containment and mitigation measures to control the outbreak. Studies of cohort(s) could rapidly identify what factors influence the susceptibility to infection, clinical manifestation, therapeutic response and clinical outcomes. The quick development and deployment of innovative, adaptive, resilient production methods and solutions (IT-or other) could quickly address immediate needs in health and social care provision.</p><p><strong>Considering the huge impact of the pandemic, the scope of this expression of interest has five focus topics;</strong></p><ul level=\"0\"><li>Repurposing of manufacturing for vital medical supplies and equipment.</li><li>Medical technologies, Digital tools and Artificial Intelligence analytics to improve surveillance and care at high Technology Readiness Levels.</li><li>Behavioural, social and economic impacts of the outbreak response.</li><li>Pan-European COVID-19 cohorts.</li><li>Networking of existing EU and international cohorts of relevance to COVID-19.</li> </ul><p>This Call of expression of interest is funded through actions of the \"SC1 Health, demographic change and wellbeing\" of Horizon2020. This expression of interest invites proposals for R&amp;I activities that aim for a wide scale, rapid (in general within 3-24 months) application of health-based solutions to respond quickly to the COVID-19 pandemic, taking into account the wide variety of approaches how care is delivered across Europe.</p><p>Proposals should consider the strong involvement of end-users (including civil society organisations) and/or strategic partners during the course of the project. Possible end-users and strategic partners are; local or regional health authorities or other types of care delivery organisations (also in their role as employers), civil society organisations, as well as public and private organisations, such as investors and innovation accelerators.</p><p>Proposals will contribute to making healthcare systems and societies more resilient to pandemics in terms of prevention, protection and treatment of the population and COVID-19 patients. Projects could make significant and immediate impacts in improving the quality of life of the most vulnerable and the, well-being and operational capacity of frontline workers. In addition, this expression of interest encourages proposals to come forward that lead to increasing short term production and distribution capacities and proposals that facilitate new effective approaches for multi-level cooperation between, local, regional Member States and EU-levels. Actions must demonstrate how they bring about a faster, more impactful, cost-effective and larger scale implementation of innovative (technological and non-technological) solutions to respond to the COVID-19 pandemic.</p><p>Gender-related issues are an important crosscutting focus of this expression of interest. All data should be sex- and gender-disaggregated, and indirect effects of the pandemic on gender equality should also be considered. In addition, attention should be paid to critical social factors intersecting with sex/gender, such as age, social origin, ethnicity/migration, and disability.</p><p>Therefore, the focus of this expression of interest is <strong>not to develop new diagnostics, therapeutics or vaccine compounds or solutions, but rather to complete and deploy readily available solutions</strong>.</p><p>International Cooperation through the participation of legal entities from third countries, and/or regions including those not automatically eligible for funding in accordance with General Annex A, is encouraged in the current call, within the terms of the Rules for Participation and of the mentioned General Annex A.</p>\n<p>All deadlines are at 17.00.00 Brussels local time. Any change in the deadlines will be duly communicated.</p><p>The signature of the grant agreements and the grant amounts are subject to the adoption of the revised financing decision for the year 2020 expected for late May 2020.</p><p>Beneficiaries in grants awarded under actions relating to this Public Health Emergency will be allowed to charge the cost of clinical studies on the basis of unit costs established in line with a methodology set up in the Commission Decision C(2016) 7553, which is available on the Funding and tenders Portal.</p><p>Please note that expenditures can be covered from the date of submission of the proposal, but at the applicant’s own risk. Proposals can be concise and should focus on the essential information to facilitate an appropriate evaluation.</p>\n\"}"
+        ],
+        "es_ContentType": [
+          "text/plain"
+        ],
+        "programmePeriod": [
+          "2014 - 2020"
+        ],
+        "deadlineDate": [
+          "2020-06-11T00:00:00.000+0000"
+        ],
+        "es_Combine": [
+          "3"
+        ],
+        "esST_URL": [
+          "https://ec.europa.eu/info/funding-tenders/opportunities/data/topicDetails/SC1-PHE-CORONAVIRUS-2020-2D.json"
+        ],
+        "tags": [
+          "COVID-19",
+          "Covid-19",
+          "Coronavirus",
+          "Covid"
+        ],
+        "esDA_QueueDate": [
+          "2024-08-05T15:07:45.204+0200"
+        ],
+        "destinationDescription": [],
+        "actions": [
+          "[{\"status\":{\"id\":31094503,\"abbreviation\":\"Closed\",\"description\":\"Closed\"},\"types\":[{\"typeOfAction\":\"RIA Research and Innovation action\",\"typeOfMGA\":[]}],\"plannedOpeningDate\":\"19 May 2020\",\"submissionProcedure\":{\"id\":31094504,\"abbreviation\":\"single-stage\",\"description\":\"single-stage\"},\"deadlineDates\":[\"11 June 2020\"]}]"
+        ],
+        "startDate": [
+          "2020-05-19T00:00:00.000+0000"
+        ],
+        "deadlineModel": [
+          "single-stage"
+        ],
+        "status": [
+          "31094503"
+        ],
+        "supportInfo": [
+          "<p><span style=\"color: rgb(0, 51, 102);\"><a href=\"https://ec.europa.eu/research/participants/docs/h2020-funding-guide/index_en.htm\" target=\"_blank\"><strong>H2020 Online Manual</strong></a> </span>is your guide on the procedures from proposal submission to managing your grant.</p>\r\n<p><a href=\"https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/support/faq;type=undefined;categories=;programme=H2020;actions=;keyword=\" target=\"_blank\"><strong><span style=\"color: rgb(0, 51, 102);\">Funding &amp; Tenders Portal FAQ</span></strong></a> &ndash; Submission of proposals.</p>\r\n<p><a href=\"https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/support/ncp\" target=\"_blank\"><span style=\"color: rgb(0, 51, 102);\"><strong>National Contact Points (NCP)</strong></span></a> <span style=\"display: inline !important; float: none; background-color: transparent; color: rgb(0, 0, 0); font-family: Arial,Verdana,sans-serif; font-size: 12px; font-style: normal; font-variant: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: left; text-decoration: none; text-indent: 0px; text-transform: none; -webkit-text-stroke-width: 0px; white-space: normal; word-spacing: 0px;\">&ndash;</span> contact your NCP for further assistance in your national language(s).</p>\r\n<p><a href=\"https://ec.europa.eu/info/research-and-innovation/contact/research-enquiry-service-and-participant-validation_en\" target=\"_blank\"><span style=\"color: rgb(0, 51, 102);\"><strong>Research Enquiry Service</strong></span></a> &ndash; ask questions about any aspect of European research in general and the EU Research Framework Programmes in particular.</p>\r\n<p><span style=\"color: rgb(0, 51, 102);\"><strong><a href=\"https://een.ec.europa.eu/\" target=\"_blank\">Enterprise Europe Network</a> </strong></span>&ndash; contact your EEN national contact for advice to businesses with special focus on SMEs. The support includes guidance on the EU research funding.</p>\r\n<p><b><a href=\"https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/support/helpdesks/contact-form\" target=\"_blank\"><span style=\"color: rgb(0, 51, 102);\">IT Helpdesk</span></a> </b><span style=\"display: inline !important; float: none; background-color: transparent; color: rgb(0, 0, 0); font-family: Arial,Verdana,sans-serif; font-size: 12px; font-style: normal; font-variant: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: left; text-decoration: none; text-indent: 0px; text-transform: none; -webkit-text-stroke-width: 0px; white-space: normal; word-spacing: 0px;\">&ndash;</span> contact the Funding &amp; Tenders Portal IT helpdesk for questions such as forgotten passwords, access rights and roles, technical aspects of submission of proposals, etc.</p>\r\n<p><span style=\"color: rgb(0, 51, 102);\"><strong>Ethics</strong></span> &ndash; for compliance with ethical issues, see the <a href=\"https://ec.europa.eu/research/participants/docs/h2020-funding-guide/cross-cutting-issues/ethics_en.htm\" target=\"_blank\">Online Manual</a> and <a href=\"https://ec.europa.eu/research/swafs/index.cfm?pg=policy&amp;lib=ethics\" target=\"_blank\">Science and Society Portal</a>.</p>\r\n<p><a href=\"https://www.iprhelpdesk.eu/\" target=\"_blank\"><span style=\"color: rgb(0, 51, 102);\"><strong>European IPR Helpdesk</strong></span></a> assists you on intellectual property issues.</p>\r\n<p><a href=\"https://www.cencenelec.eu/research/Pages/default.aspx\" target=\"_blank\"><span style=\"color: rgb(0, 51, 102);\"><strong>CEN</strong></span><strong> <span style=\"color: rgb(0, 51, 102);\">and</span> </strong><span style=\"color: rgb(0, 51, 102);\"><strong>CENELEC</strong></span></a>, the <span style=\"color: rgb(0, 51, 102);\"><strong>European Standards Organisations</strong></span>, advise you how to tackle standardisation in your project proposal. Contact CEN-CENELEC Research Helpdesk at <span style=\"color: rgb(0, 0, 255);\">research@cencenelec.eu.</span></p>\r\n<p><a href=\"https://euraxess.ec.europa.eu/sites/default/files/am509774cee_en_e4.pdf\" target=\"_blank\"><span style=\"color: rgb(0, 51, 102);\"><strong>The European Charter for Researchers and the Code of Conduct for their recruitment</strong></span></a></p>\r\n<p><a href=\"https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/how-to-participate/partner-search\" target=\"_blank\"><span style=\"color: rgb(0, 51, 102);\"><strong>Partner Search Services</strong></span></a> help you find a partner organisation for your proposal.</p>"
+        ],
+        "missionDetails": [],
+        "sepTemplate": [
+          "<p>To access the Electronic Submission Service, please click on the submission-button next to the type of action that corresponds to your proposal. You will then be asked to confirm your choice of the type of action and topic, as these cannot be changed in the submission system. Upon confirmation, you will be linked to the correct entry point.</p>\r\n<p>To access existing draft proposals for this topic, please login to the Funding &amp; Tenders Portal and select the My Proposals page of the My Area section.</p>"
+        ],
+        "sortStatus": [
+          "3"
+        ],
+        "topicConditions": [
+          "<p><span style=\"color: rgb(0, 51, 102);\"><strong>1. Eligible countries:</strong></span><span style=\"color: rgb(0, 0, 128);\"><strong> </strong></span>described in <a href=\"https://ec.europa.eu/research/participants/data/ref/h2020/other/wp/2018-2020/annexes/h2020-wp1820-annex-a-countries-rules_en.pdf\" target=\"_blank\">Annex A</a> of the Work Programme.</p>\n<p><br />\r\n<span style=\"color: rgb(0, 51, 102);\"><strong>2. Eligibility and admissibility conditions:</strong></span> described in <a href=\"https://ec.europa.eu/research/participants/data/ref/h2020/other/wp/2018-2020/annexes/h2020-wp1820-annex-b-adm_en.pdf\" target=\"_blank\">Annex B</a> and <a href=\"https://ec.europa.eu/research/participants/data/ref/h2020/other/wp/2018-2020/annexes/h2020-wp1820-annex-c-elig_en.pdf\" target=\"_blank\">Annex C</a> of the Work Programme.</p>\n<p><span style=\"color: rgb(0, 51, 102);\"><strong>Proposal page limits:</strong> </span>under this topic, the limit for a full proposal is 45 pages.</p>\r\n<p><span style=\"color: rgb(0, 51, 102);\"><strong>Proposal layout: </strong></span>please refer to Part B of the proposal template in the submission system below.</p>\n<p><span style=\"color: rgb(0, 51, 102);\"><strong><br />\r\n3. Evaluation:</strong></span></p>\r\n<ul>\r\n    <li><strong>Evaluation criteria, scoring and threshold</strong>s are described in <a href=\"https://ec.europa.eu/research/participants/data/ref/h2020/other/wp/2018-2020/annexes/h2020-wp1820-annex-h-esacrit_en.pdf\" target=\"_blank\">Annex H</a> of the Work Programme.</li>\r\n    <li><strong>Submission and evaluation processes</strong> are described in the <a href=\"https://ec.europa.eu/research/participants/docs/h2020-funding-guide/grants/applying-for-funding/submit-proposals_en.htm\" target=\"_blank\">Online Manual</a>.</li>\r\n</ul>\r\n<p>The thresholds for each criterion will be 4 (Excellence), 4 (Impact) and  4 (Implementation). The cumulative threshold will be 12.</p>\n<p><span style=\"color: rgb(0, 51, 102);\"><strong><br />\r\n4. Indicative time for evaluation and grant agreements:</strong></span></p>\r\n<p>Information on the outcome of evaluation (Public Health Emergency): 2 months from the deadline for submission.<br />\r\nSignature of grant agreements: 4 months from the deadline for submission.</p>\n<p><span style=\"color: rgb(0, 51, 102);\"><strong><br />\r\n5. Proposal templates, evaluation forms and model grant agreements (MGA): </strong></span></p>\r\n<p><strong>Research and Innovation Action:</strong></p>\r\n<p><a href=\"https://ec.europa.eu/research/participants/data/ref/h2020/other/wp/2018-2020/annexes/h2020-wp1820-annex-d-ria_en.pdf\" target=\"_blank\">Specific provisions and funding rates</a> <br />\r\n<a href=\"https://ec.europa.eu/research/participants/data/ref/h2020/call_ptef/pt/2018-2020/h2020-call-pt-ria-ia-2018-20_en.pdf\" target=\"_blank\">Standard proposal template</a><br />\r\n<a href=\"https://ec.europa.eu/research/participants/data/ref/h2020/call_ptef/ef/2018-2020/h2020-call-ef-ria-ia-csa-2018-20_en.pdf\" target=\"_blank\">Standard evaluation form</a><br />\r\n<a href=\"https://ec.europa.eu/research/participants/data/ref/h2020/mga/gga/h2020-mga-gga-multi_en.pdf\" target=\"_blank\">General MGA - Multi-Beneficiary </a><br />\r\n<a href=\"https://ec.europa.eu/research/participants/data/ref/h2020/grants_manual/amga/h2020-amga_en.pdf\" target=\"_blank\">Annotated Grant Agreement</a></p>\r\n<p>These documents are for reference only; for submission of proposals, the  documents provided in the submission system should be used.</p>\n<p><span style=\"color: rgb(0, 51, 102);\"><strong><br />\r\n6. Additional provisions:</strong></span></p>\r\n<p><a href=\"https://ec.europa.eu/research/participants/data/ref/h2020/other/wp/2018-2020/annexes/h2020-wp1820-annex-i-budgflex_en.pdf\" target=\"_blank\">Horizon 2020 budget flexibility </a><br />\r\n<a href=\"https://ec.europa.eu/research/participants/data/ref/h2020/other/wp/2018-2020/annexes/h2020-wp1820-annex-j-classinfo_en.pdf\" target=\"_blank\">Classified information</a><br />\r\n<a href=\"https://ec.europa.eu/research/participants/data/ref/h2020/other/wp/2018-2020/annexes/h2020-wp1820-annex-g-trl_en.pdf\" target=\"_blank\">Technology readiness levels (TRL)</a> &ndash; where a topic description refers to TRL, these definitions apply.<br />\r\n<a href=\"https://ec.europa.eu/research/participants/data/ref/h2020/other/wp/2018-2020/annexes/h2020-wp1820-annex-k-fs3p_en.pdf\" target=\"_blank\">Annex K</a> of the Work Programme on Actions involving financial support to third parties.</p>\n<p>Members of consortium are required to conclude a consortium agreement, in principle prior to the signature of the grant agreement.</p>\n<p><strong><span style=\"color: rgb(0, 51, 102);\"><br />\r\n7. Additional obligations</span></strong></p>\r\n<p><strong>Data sharing<br />\r\n</strong>Beneficiaries in grants awarded under this call for expression of interest must make available their research data, at the latest within 30 days after it has been generated, through open access or, if agreed by the Commission, by giving access rights to those third parties that need the research data to address the public health emergency. Therefore the relevant option of Article 29.3 (option 1c) of the H2020 Model Grant Agreement will apply.</p>\r\n<p>The use of harmonised protocols in collaboration with other actors is recommended for this purpose.</p>\r\n<p>Beneficiaries must make the research data accessible and re-usable through appropriate platforms (such as the <a href=\"http://www.covid19dataportal.org\" target=\"_blank\">data-sharing platform</a>), following guidelines communicated by the Commission.</p>\r\n<p>The relevant option of Article 29.1 of the H2020 Model Grant Agreement will apply.</p>\r\n<p>It is expected that quality-controlled data are shared in accordance with the <a href=\"https://www.force11.org/group/fairgroup/fairprinciples\" target=\"_blank\">FAIR</a> principles.</p>\r\n<p>A <strong>draft data management plan (DMP)</strong> must be submitted preferably with the proposal and at the latest before the signature of the grant agreement. The DMP should address the relevant aspects of making the data FAIR &ndash; findable, accessible, interoperable and re-usable, including what data the project will generate, whether and how the data will be made accessible for verification and re-use, and how it will be circulated and preserved. A template for such a plan is given in the guidelines on data management in the <a href=\"https://ec.europa.eu/research/participants/docs/h2020-funding-guide/index_en.htm\" target=\"_blank\">H2020 Online Manual</a>.</p>\r\n<p>Costs related to data management and data sharing are eligible for reimbursement if incurred during the project duration under the conditions set out in the grant agreement.<br />\r\n<br />\r\n<strong>Exploitation obligations</strong><br />\r\nIn the context of the public health emergency, additional exploitation obligations apply, to ensure that results or resulting products/services (i.e. products or services developed based on results generated in the action) will be available and accessible, as soon as possible and at fair conditions. This will include an obligation to license on a non-exclusive basis and at fair and reasonable conditions.</p>\r\n<p>The scope of the additional exploitation obligations will be discussed in more detail with successful applicants/participants at due time.</p>\r\n<p>To enhance the exploitation of results, beneficiaries must provide a &quot;results ownership list&quot; (ROL) together with the final report and use the Horizon results platform.</p>\r\n<p>The option of Article 28.1 of the Model Grant Agreement will apply and the necessary provisions will be inserted in Annex 1.<br />\r\n<br />\r\n<strong>Right to object to transfers of ownership and exclusive licences</strong><br />\r\nThe relevant option of Article 30.3 of the H2020 Model Grant Agreement will apply.</p>\n<p><span style=\"color: rgb(0, 51, 102);\"><strong><br />\r\n8. Additional documents:</strong></span></p>\r\n<p><a href=\"https://ec.europa.eu/research/participants/data/ref/h2020/wp/2018-2020/main/h2020-wp1820-intro_en.pdf\" target=\"_blank\">Introduction WP 2018-20</a><br />\r\n<a href=\"https://ec.europa.eu/research/participants/data/ref/h2020/wp/2018-2020/main/h2020-wp1820-health_en.pdf\" target=\"_blank\">Health, demographic change and well-being WP 2018-20</a><br />\r\n<a href=\"https://ec.europa.eu/research/participants/data/ref/h2020/other/wp/2018-2020/annexes/h2020-wp1820-annex-ga_en.pdf\" target=\"_blank\">General annexes to the Work Programme 2018-2020</a></p>\r\n<p><a href=\"https://ec.europa.eu/research/participants/data/ref/h2020/legal_basis/fp/h2020-eu-establact_en.pdf\" target=\"_blank\">Legal basis: Horizon 2020 Regulation of Establishment </a><br />\r\n<a href=\"https://ec.europa.eu/research/participants/data/ref/h2020/legal_basis/rules_participation/h2020-rules-participation_en.pdf\" target=\"_blank\">Legal basis: Horizon 2020 Rules for Participation</a><br />\r\n<a href=\"https://ec.europa.eu/research/participants/data/ref/h2020/legal_basis/sp/h2020-sp_en.pdf\" target=\"_blank\">Legal basis: Horizon 2020 Specific Programme </a></p>"
+        ],
+        "title": [
+          "Pan-European COVID-19 cohorts"
+        ],
+        "missionDescription": [],
+        "esST_checksum": [
+          "AEE7044B7F95995F7C8C75F3BA5A1887E2B2233634E1AE937A3FA47DB948C477"
+        ],
+        "infoPackDossiers": [
+          "[]"
+        ],
+        "esST_FileName": [
+          "file.txt"
+        ],
+        "ccm2Id": [
+          "43046674"
+        ],
+        "REFERENCE": [
+          "43046674ResearchandInnovationaction1589846400000bg"
+        ],
+        "programmeDivision": [
+          "31047894",
+          "31047893",
+          "31045244",
+          "31047895",
+          "31047899",
+          "31047903",
+          "31047909"
+        ],
+        "crossCuttingPriorities": [
+          "Gender",
+          "OpenInnovation",
+          "SSH"
+        ],
+        "esDA_IngestDate": [
+          "2024-08-05T15:07:45.460+0200"
+        ],
+        "typesOfAction": [
+          "Research and Innovation action"
+        ],
+        "callUpdates": [
+          "[{\"approvalDate\":\"Aug 11, 2020 12:48:08 PM\",\"lastChangeDate\":\"Aug 11, 2020 12:48:08 PM\",\"content\":\"\\u003cp\\u003e\\u003cspan lang\\u003d\\\"EN-GB\\\" style\\u003d\\\"margin: 0px;\\\"\\u003e\\u003cfont face\\u003d\\\"Calibri\\\" size\\u003d\\\"3\\\"\\u003eThe evaluation of proposals under this call is now finished. A flash Call info is available under the \\u0026quot;Topic conditions and documents\\u0026quot; section of each topic.\\u003c/font\\u003e\\u003c/span\\u003e\\u003c/p\\u003e\\r\\n\\u003cp\\u003e\\u0026nbsp;\\u003c/p\\u003e\"},{\"approvalDate\":\"Jun 12, 2020 3:09:27 PM\",\"lastChangeDate\":\"Jun 12, 2020 3:09:27 PM\",\"content\":\"\\u003cp\\u003eThe submission of proposals to topics \\u003cstrong\\u003eSC1-PHE-CORONAVIRUS-2020-2A, SC1-PHE-CORONAVIRUS-2020-2B, SC1-PHE-CORONAVIRUS-2020-2C, SC1-PHE-CORONAVIRUS-2020-2D, SC1-PHE-CORONAVIRUS-2020-2E\\u003c/strong\\u003e closed on Thursday 11 June 2020. More information is now available under the \\u0026quot;Topic conditions and documents\\u0026quot; section of each topic.\\u003c/p\\u003e\"},{\"approvalDate\":\"Jun 3, 2020 5:28:59 PM\",\"lastChangeDate\":\"Jun 3, 2020 5:28:59 PM\",\"content\":\"\\u003cp\\u003e\\u003cspan lang\\u003d\\\"EN-GB\\\" style\\u003d\\\"background-color: transparent; color: rgb(0, 0, 0); font-family: \\u0026amp;quot;Arial\\u0026amp;quot;,sans-serif; font-size: 16px; font-style: normal; font-variant: normal; font-weight: 400; letter-spacing: normal; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; margin-top: 0px; orphans: 2; text-align: left; text-decoration: none; text-indent: 0px; text-transform: none; -webkit-text-stroke-width: 0px; white-space: normal; word-spacing: 0px;\\\"\\u003eTo clarify the previous update please note that given the short timeline (3-24 months) to generate results, clinical trials are not expected to be covered under topic SC1-PHE-CORONAVIRUS-2020-2B, although clinical validation of already existing solutions can be addressed in sections 1-3 of Part B. \\u003c/span\\u003e\\u003cspan lang\\u003d\\\"EN-GB\\\" style\\u003d\\\"background-color: transparent; color: rgb(0, 0, 0); font-family: \\u0026amp;quot;Arial\\u0026amp;quot;,sans-serif; font-size: 16px; font-style: normal; font-variant: normal; font-weight: 400; letter-spacing: normal; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; margin-top: 0px; orphans: 2; text-align: left; text-decoration: none; text-indent: 0px; text-transform: none; -webkit-text-stroke-width: 0px; white-space: normal; word-spacing: 0px;\\\"\\u003eTherefore, under section 5 of the SEP Submission tool, please answer \\u0026ldquo;no\\u0026rdquo; to the question on clinical trials.\\u003c/span\\u003e\\u003c/p\\u003e\"},{\"approvalDate\":\"Jun 3, 2020 8:55:20 AM\",\"lastChangeDate\":\"Jun 3, 2020 8:55:20 AM\",\"content\":\"\\u003cp\\u003e\\u003cu\\u003e\\u003cstrong\\u003e\\u003cspan style\\u003d\\\"mso-ansi-language:EN-GB\\\" lang\\u003d\\\"EN-GB\\\"\\u003eNB:\\u003c/span\\u003e\\u003c/strong\\u003e\\u003c/u\\u003e\\u003cspan style\\u003d\\\"mso-ansi-language:EN-GB\\\" lang\\u003d\\\"EN-GB\\\"\\u003e Regarding the question under SEP submission tool concerning clinical trials, please \\u003cspan style\\u003d\\\"color:black\\\"\\u003enote that clinical trials are not expected for\\u003cstrong\\u003e topic SC1-PHE-Coronavirus-2020-2B\\u0026nbsp;\\u003c/strong\\u003e and therefore the answer to the question on this issue that appears under \\u003c/span\\u003esection 5 of the SEP Submission tool should be \\u003cstrong\\u003e\\u0026ldquo;no\\u0026rdquo;\\u003c/strong\\u003e.\\u003c/span\\u003e\\u003c/p\\u003e\"},{\"approvalDate\":\"May 19, 2020 1:04:40 AM\",\"lastChangeDate\":\"May 19, 2020 1:04:40 AM\",\"content\":\"The submission session is now available for: SC1-PHE-CORONAVIRUS-2020-2C(RIA), SC1-PHE-CORONAVIRUS-2020-2E(CSA), SC1-PHE-CORONAVIRUS-2020-2D(RIA)\"},{\"approvalDate\":\"May 19, 2020 1:04:40 AM\",\"lastChangeDate\":\"May 19, 2020 1:04:40 AM\",\"content\":\"The submission session is now available for: SC1-PHE-CORONAVIRUS-2020-2A(IA)\"},{\"approvalDate\":\"May 14, 2020 12:00:00 AM\",\"lastChangeDate\":\"May 14, 2020 12:00:00 AM\",\"content\":\"The submission session is now available for: SC1-PHE-CORONAVIRUS-2020-2B(IA)\"}]"
+        ],
+        "url": [
+          "https://ec.europa.eu/info/funding-tenders/opportunities/data/topicDetails/SC1-PHE-CORONAVIRUS-2020-2D.json"
+        ],
+        "additionalDossiers": [
+          "[{\"callId\":52392667504,\"id\":165958354,\"title\":\"Call update: Proposal numbers\",\"sectionId\":52392667504,\"translationFiles\":[{\"language\":\"en\",\"mimeType\":\"application/pdf\",\"fileSize\":251924,\"docPath\":\"https://ec.europa.eu/info/funding-tenders/opportunities/docs/cap/h2020/sc1-phe-coronavirus-2020-2d/1897600-call_update_-_proposal_numbers_en.pdf\",\"id\":1897600,\"fileName\":\"Call Update - Proposal numbers_en.pdf\",\"common\":false,\"crc32\":2697864133}]},{\"callId\":52392667504,\"id\":165958355,\"title\":\"Flash Call info\",\"sectionId\":52392667504,\"translationFiles\":[{\"language\":\"en\",\"mimeType\":\"application/pdf\",\"fileSize\":219724,\"docPath\":\"https://ec.europa.eu/info/funding-tenders/opportunities/docs/cap/h2020/sc1-phe-coronavirus-2020-2d/1902602-sc1-phe-coronavirus-2020-2d-flash_call_info_en.pdf\",\"id\":1902602,\"fileName\":\"SC1-PHE-CORONAVIRUS-2020-2D-Flash call info_en.pdf\",\"common\":false,\"crc32\":2821905541}]}]"
+        ],
+        "allowPartnerSearch": [
+          "true"
+        ],
+        "budgetOverview": [
+          "{\"budgetTopicActionMap\":{\"3304058\":[{\"action\":\"SC1-PHE-CORONAVIRUS-2020-2D - RIA Research and Innovation action\",\"plannedOpeningDate\":\"19 May 2020\",\"deadlineModel\":\"single-stage\",\"deadlineDates\":[\"11 June 2020\"],\"budgetYearMap\":{\"2020\":20000000},\"budgetTopicActionMap\":{}}],\"3304059\":[{\"action\":\"SC1-PHE-CORONAVIRUS-2020-2C - RIA Research and Innovation action\",\"plannedOpeningDate\":\"19 May 2020\",\"deadlineModel\":\"single-stage\",\"deadlineDates\":[\"11 June 2020\"],\"budgetYearMap\":{\"2020\":20000000},\"budg..."
+        ]
+      },
+      "children": [],
+      "score": 1.0
+    },
+    {
+      "apiVersion": "2.146",
+      "reference": "31071089ResearchandInnovationaction1475539200000bg",
+      "url": "https://ec.europa.eu/info/funding-tenders/opportunities/data/topicDetails/ENG-GLOBALLY-01-2017.json",
+      "title": null,
+      "contentType": "text/plain",
+      "language": "bg",
+      "databaseLabel": "SEDIA",
+      "database": "SEDIA",
+      "summary": "Strengthening Europe's position in the global context: science diplomacy and intercultural relations",
+      "weight": 1.0,
+      "groupById": "3",
+      "accessRestriction": false,
+      "pages": null,
+      "metadata": {
+        "es_SortDate": [
+          "2016-10-04T00:00:00.000+0000"
+        ],
+        "keywords": [
+          "Political systems and institutions, governance",
+          "International cooperation",
+          "Global and transnational governance, international",
+          "Common Foreign Security Policy (CFSP)",
+          "Cultural studies, cultural diversity",
+          "Religious studies",
+          "(science) communication",
+          "Social sciences and humanities",
+          "Myth, ritual, symbolic representations, religious",
+          "Colonial and post-colonial history, global and tra",
+          "Violence, conflict and conflict resolution",
+          "Social structure, inequalities, social mobility, i",
+          "International relations",
+          "(scientific) culture",
+          "Social sciences",
+          "humanities",
+          "exclusion",
+          "international relations",
+          "Islam",
+          "minority",
+          "intercultural relations",
+          "secularism",
+          "religion",
+          "science diplomacy",
+          "radicalisation"
+        ],
+        "workProgrammepart": [
+          "{\"id\":62,\"ccm_id\":31072292,\"wp_part\":\"H2020-SC6-2016-2017\",\"wp_year\":\"H2020-2016-2017\",\"wp_title\":\"Europe in a changing world – inclusive, innovative and reflective Societies\",\"wp_website\":\"http://ec.europa.eu/programmes/horizon2020/en/h2020-section/europe-changing-world-inclusive-innovative-and-reflective-societies\",\"wp_document\":\"http://ec.europa.eu/research/participants/data/ref/h2020/wp/2016_2017/main/h2020-wp1617-societies_en.pdf\"}"
+        ],
+        "language": [
+          "bg"
+        ],
+        "type": [
+          "1"
+        ],
+        "focusArea": [],
+        "destinationDetails": [],
+        "typeOfMGAs": [],
+        "callIdentifier": [
+          "H2020-SC6-ENG-GLOBALLY-2016-2017"
+        ],
+        "callccm2Id": [
+          "31071098"
+        ],
+        "DATASOURCE": [
+          "SEDIA"
+        ],
+        "links": [
+          "[]"
+        ],
+        "callTitle": [
+          "ENGAGING TOGETHER GLOBALLY"
+        ],
+        "frameworkProgramme": [
+          "31045243"
+        ],
+        "descriptionByte": [
+          "<SPAN class=\"topicdescriptionkind\">Specific Challenge</SPAN>:<p>Europe is faced with numerous challenges that are increasingly global in nature and that have become of more immediate importance: peace..."
+        ],
+        "identifier": [
+          "ENG-GLOBALLY-01-2017"
+        ],
+        "additionalInfos": [
+          "{\"additionalInfo\":\"<p>CALL : H2020-SC6-ENG-GLOBALLY-2016-2017<br />\r\n&nbsp;</p>\r\n<p>The call deadline was Thursday 2 of February 17 Pm 2017. A total of 111 proposals were submitted in response to this call. The number of proposals for each topic is shown below including the indicative budget of the topic:</p>\r\n<p>ENG-GLOBALLY-1:RIA: 15 submitted<br />\r\nENG-GLOBALLY-2: RIA:14 submitted<br />\r\nENG-GLOBALLY-3: RIA:25 submitted<br />\r\nENG-GLOBALLY-5:RIA: 5 submitted<br />\r\nENG-GLOBALLY-6: RIA:8 submitted<br />\r\nENG-GLOBALLY-10:RIA: 4 submitted<br />\r\n(indicative budget: for topics 1,2,3,5,6,10 : 27 M&euro;)<br />\r\nENG-GLOBALLY-8: RIA: 17 submitted (indicative budget: 2,5 M&euro;)<br />\r\nENG-GLOBALLY-4: CSA : 10 proposals (indicative budget: 1,5 M&euro;)<br />\r\nENG-GLOBALLY-7: CSA : 13 proposals (indicative budget: 1,5 M&euro;)<br />\r\n&nbsp;</p>\"}"
+        ],
+        "es_ContentType": [
+          "text/plain"
+        ],
+        "programmePeriod": [
+          "2014 - 2020"
+        ],
+        "deadlineDate": [
+          "2017-02-02T00:00:00.000+0000"
+        ],
+        "es_Combine": [
+          "3"
+        ],
+        "esST_URL": [
+          "https://ec.europa.eu/info/funding-tenders/opportunities/data/topicDetails/ENG-GLOBALLY-01-2017.json"
+        ],
+        "tags": [
+          "intercultural relations",
+          "exclusion",
+          "religion",
+          "Islam",
+          "humanities",
+          "science diplomacy",
+          "international relations",
+          "secularism",
+          "minority",
+          "Social sciences",
+          "radicalisation"
+        ],
+        "esDA_QueueDate": [
+          "2024-08-05T15:08:14.805+0200"
+        ],
+        "destinationDescription": [],
+        "actions": [
+          "[{\"status\":{\"id\":31094503,\"abbreviation\":\"Closed\",\"description\":\"Closed\"},\"types\":[{\"typeOfAction\":\"RIA Research and Innovation action\",\"typeOfMGA\":[]}],\"plannedOpeningDate\":\"04 October 2016\",\"submissionProcedure\":{\"id\":31094504,\"abbreviation\":\"single-stage\",\"description\":\"single-stage\"},\"deadlineDates\":[\"02 February 2017\"]}]"
+        ],
+        "startDate": [
+          "2016-10-04T00:00:00.000+0000"
+        ],
+        "deadlineModel": [
+          "single-stage"
+        ],
+        "status": [
+          "31094503"
+        ],
+        "supportInfo": [
+          "<p><strong><a href=\"http://ec.europa.eu/research/participants/portal4/desktop/en/funding/guide.html\">H2020 Online Manual</a></strong> your online guide on the procedures from proposal submission to managing your grant.<br />\r\n<br />\r\n<strong><span><a href=\"http://ec.europa.eu/research/participants/portal/desktop/en/support/faq.html\">Participant Portal FAQ</a> </span></strong><span>&ndash; Submission of proposals.</span><br />\r\n<strong><br />\r\n<span><a href=\"http://ec.europa.eu/research/participants/portal4/desktop/en/support/national_contact_points.html\">National Contact Points (NCP)</a>&nbsp;-&nbsp;</span></strong><span>contact your NCP for further assistance.</span><br />\r\n<strong><br />\r\n<span><a href=\"http://ec.europa.eu/research/index.cfm?lg=en&amp;pg=enquiries\">Research Enquiry Service</a></span></strong><span> &ndash; ask questions about any aspect of European research in general and the EU Research Framework Programmes in particular.</span><br />\r\n<a href=\"http://een.ec.europa.eu/\"><br />\r\n<strong>Enterprise Europe Network</strong></a> &ndash; contact your EEN national contact for advice to businesses with special focus on SMEs. The support includes guidance on the EU research funding.<br />\r\n<a href=\"http://ec.europa.eu/research/participants/api/contact/index.html\"><br />\r\n<strong>IT Helpdesk</strong></a>- contact the Participant Portal IT helpdesk for questions such as forgotten passwords, access rights and roles, technical aspects of submission of proposals, etc.<br />\r\n<strong><br />\r\n</strong><strong>Ethics</strong> &ndash; for compliance with ethical issues, see the<a href=\"http://ec.europa.eu/research/participants/docs/h2020-funding-guide/cross-cutting-issues/ethics_en.htm\"> Participant Portal</a>&nbsp;and&nbsp;<a href=\"http://ec.europa.eu/research/science-society/index.cfm?fuseaction=public.topic&amp;id=1289&amp;lang=1\">Science and Society Portal</a><br />\r\n<a href=\"http://www.iprhelpdesk.eu/\"><br />\r\n<strong>European IPR Helpdesk</strong></a> assists you on intellectual property issues<br />\r\n<a href=\"http://www.cen.eu/cen/Services/Innovation/Pages/default.aspx\"><br />\r\n<strong>CEN</strong></a> and <a href=\"http://www.cenelec.eu/aboutcenelec/whatwestandfor/fosterinnovation/randd.html\"><strong>CENELEC</strong></a>, the European Standards Organisations, advise you how to tackle standardisation in your project proposal. Contact CEN-CENELEC Research Helpdesk at <a href=\"mailto:research@cencenelec.eu\">research@cencenelec.eu</a>.<br />\r\n<a href=\"http://ec.europa.eu/euraxess/pdf/brochure_rights/am509774CEE_EN_E4.pdf\"><br />\r\n<strong>The European Charter for Researchers and the Code of Conduct for their recruitment</strong></a><br />\r\n<strong><br />\r\n<a href=\"http://ec.europa.eu/research/participants/docs/h2020-funding-guide/grants/applying-for-funding/find-partners_en.htm\">Partner Search Services</a></strong> help you find a partner organisation for your proposal<br />\r\n&nbsp;</p>"
+        ],
+        "missionDetails": [],
+        "sepTemplate": [
+          "<p>To access the Electronic Submission Service of the topic, please select the <strong>type of action</strong> that is most relevant to your proposal from the list below and click on the <strong>'Start Submission' </strong>button. You will then be asked to confirm your choice of the type of action and topic, as these cannot be changed in the submission system. Upon confirmation you will be linked to the correct entry point.</p>\r\n<p>To access existing draft proposals for this topic, please login to the Participant Portal and select the My Proposals page of the My Area section.</p>"
+        ],
+        "sortStatus": [
+          "3"
+        ],
+        "topicConditions": [
+          "<p>Please read carefully all provisions below before the preparation of your application.</p>\r\n<ol>\r\n    <li><strong><span style=\"color: rgb(0,51,102)\">List of countries and applicable rules for funding: </span></strong>described in <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/other/wp/2016-2017/annexes/h2020-wp1617-annex-a-countries-rules_en.pdf\">part A of the General Annexes</a> of the General Work Programme.<br />\r\n    Note also that a number of non-EU/non-Associated Countries that are not automatically eligible for funding have made specific provisions for making funding available for their participants in Horizon 2020 projects. See the information in the <a target=\"_blank\" href=\"http://ec.europa.eu/research/participants/docs/h2020-funding-guide/cross-cutting-issues/international-cooperation_en.htm#support-non-eu-countries\">Online Manual</a>.<br />\r\n    <br />\r\n    &nbsp;</li>\r\n    <li><strong><span style=\"color: rgb(0,51,102)\">Eligibility and admissibility conditions:</span></strong> described in <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/other/wp/2016_2017/annexes/h2020-wp1617-annex-b-adm_en.pdf\">part B</a> and <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/other/wp/2016_2017/annexes/h2020-wp1617-annex-c-elig_en.pdf\">C of the General Annexes</a> of the General Work Programme<br />\r\n    <br />\r\n    <strong><span style=\"color: rgb(0,51,102)\">Proposal page limits and layout:</span></strong> Please refer to Part B of the standard proposal template.<br />\r\n    <br />\r\n    &nbsp;</li>\r\n    <li><strong><span style=\"color: rgb(0,51,102)\">Evaluation </span></strong><br />\r\n    <br />\r\n    <strong><span style=\"color: rgb(0,51,102)\">3.1&nbsp; Evaluation criteria and procedure, scoring and threshold:</span></strong> described in <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/other/wp/2016_2017/annexes/h2020-wp1617-annex-h-esacrit_en.pdf\">part H of the General Annexes</a> of the General Work Programme<br />\r\n    <br />\r\n    <span style=\"color: #003366\"><strong>3.2 Specific evaluation procedure:</strong> </span>At least 1 proposal per topic will be selected for funding provided it passes all evaluation thresholds.<br />\r\n    <br />\r\n    <strong><span style=\"color: rgb(0,51,102)\">3.3&nbsp;Submission and evaluation process:</span></strong> <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/grants_manual/pse/h2020-guide-pse_en.pdf\">Guide to the submission and evaluation process</a><br />\r\n    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>\r\n    <li><span style=\"color: rgb(0,51,102)\"><strong>Indicative timetable for evaluation and grant agreement:</strong></span><br />\r\n    <br />\r\n    Information on the outcome of <strong>single-stage</strong> evaluation: maximum 5 months from the deadline for submission.<br />\r\n    Signature of grant agreements: maximum 8 months from the deadline for submission.<br />\r\n    &nbsp;</li>\r\n    <li><strong><span style=\"color: rgb(0,51,102)\">Provisions, proposal templates and evaluation forms for the type(s) of action(s) under this topic: </span></strong><br />\r\n    <br />\r\n    <u>Research and Innovation Action:</u><br />\r\n    <br />\r\n    <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/other/wp/2016_2017/annexes/h2020-wp1617-annex-d-ria_en.pdf\">Specific provisions and funding rates</a> <br />\r\n    Proposal templates are available after entering the submission tool below.<br />\r\n    <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/call_ptef/ef/2016-2017/h2020-call-ef-ria-ia-csa-2016-17_en.pdf\">Standard evaluation form</a><br />\r\n    <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/mga/gga/h2020-mga-gga-multi_en.pdf\">H2020 General MGA -Multi-Beneficiary</a> <br />\r\n    <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/grants_manual/amga/h2020-amga_en.pdf\">Annotated Grant Agreement</a><br />\r\n    &nbsp;</li>\r\n    <li><strong><span style=\"color: rgb(0,51,102)\">Additional provisions:</span></strong><br />\r\n    <br />\r\n    <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/other/wp/2016_2017/annexes/h2020-wp1617-annex-i-budgflex_en.pdf\">Horizon 2020 budget flexibility</a> <br />\r\n    <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/other/wp/2016_2017/annexes/h2020-wp1617-annex-j-classinfo_en.pdf\">Classified information</a><br />\r\n    <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/other/wp/2016_2017/annexes/h2020-wp1617-annex-g-trl_en.pdf\">Technology readiness levels (TRL)</a> &ndash; where a topic description refers to TRL, these definitions apply.<br />\r\n    <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/other/wp/2016_2017/annexes/h2020-wp1617-annex-k-fs3p_en.pdf\">Financial support to Third Parties</a> &ndash; where a topic description foresees financial support to Third Parties, these provisions apply.<br />\r\n    <br />\r\n    &nbsp;</li>\r\n    <li><strong><span style=\"color: rgb(0,51,102)\"><a target=\"_blank\" href=\"http://ec.europa.eu/research/participants/docs/h2020-funding-guide/cross-cutting-issues/open-access-data-management/open-access_en.htm\">Open access must be granted to all scientific publications </a></span></strong><span style=\"color: rgb(0,51,102)\">resulting from Horizon 2020 actions.\r\n    <p>Where relevant, proposals should also provide information on how the participants will manage the research data generated and/or collected during the project, such as details on what types of data the project will generate, whether and how this data will be exploited or made accessible for verification and re-use, and how it will be curated and preserved.</p>\r\n    <p>Open access to research data<br />\r\n    The Open Research Data Pilot has been extended to cover all Horizon 2020 topics for which the submission is opened on 26 July 2016 or later. Projects funded under this topic will therefore by default provide open access to the research data they generate, except if they decide to opt-out under the conditions described in annex L of the Work Programme. Projects can opt-out at any stage, that is both before and after the grant signature.</p>\r\n    <p>Note that the evaluation phase proposals will not be evaluated more favourably because they plan to open or share their data, and will not be penalised for opting out.</p>\r\n    <p>Open research data sharing applies to the data needed to validate the results presented in scientific publications. Additionally, projects can choose to make other data available open access and need to describe their approach in a Data Management Plan.</p>\r\n    <p>- Projects need to create a Data Management Plan (DMP), except if they opt-out of making their research data open access. A first version of the DMP must be provided as an early deliverable within six months of the project and should be updated during the project as appropriate. The Commission already provides guidance documents, including a template for DMPs.</p>\r\n    <p>- Eligibility of costs: costs related to data management and data sharing are eligible for reimbursement during the project duration.</p>\r\n    <p>The legal requirements for projects participating in this pilot are in the <a target=\"_blank\" href=\"http://ec.europa.eu/research/participants/data/ref/h2020/mga/gga/h2020-mga-gga-multi_en.pdf#page=66\">article 29.3 of the Model Grant Agreement.</a><br />\r\n    &nbsp;</p>\r\n    </span></li>\r\n    <li><strong><span style=\"color: rgb(0,51,102)\">Additional documents:</span></strong><br />\r\n    <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/wp/2016_2017/main/h2020-wp1617-intro_en.pdf\"><br />\r\n    H2020 Work Programme 2016-17: Introduction</a><br />\r\n    <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/wp/2016_2017/main/h2020-wp1617-societies_en.pdf\">H2020 Work Programme 2016-17: Europe in a changing world - inclusive, innovative and reflective societies</a><br />\r\n    <a href=\"http://ttp://ec.europa.eu/research/participants/data/ref/h2020/wp/2016_2017/main/h2020-wp1617-comm-diss_en.pdf\">H2020 Work Programme 2016-17: Dissemination, Exploitation and Evaluation</a><br />\r\n    <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/other/wp/2016-2017/annexes/h2020-wp1617-annex-ga_en.pdf\">H2020 Work Programme 2016-17: General Annexes</a><br />\r\n    <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/legal_basis/fp/h2020-eu-establact_en.pdf\">Legal basis: Horizon 2020 - Regulation of Establishment</a> <br />\r\n    <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/legal_basis/rules_participation/h2020-rules-participation_en.pdf\">Legal basis: Horizon 2020 Rules for Participation</a> <br />\r\n    <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/legal_basis/sp/h2020-sp_en.pdf\">Legal basis: Horizon 2020 Specific Programme</a></li>\r\n</ol>"
+        ],
+        "title": [
+          "Strengthening Europe's position in the global context: science diplomacy and intercultural relations"
+        ],
+        "missionDescription": [],
+        "esST_checksum": [
+          "1B2E720E66E222418A92F1DE8224C9188B905C9EA49C4EC8F0DC2B09AFE7FFB4"
+        ],
+        "infoPackDossiers": [
+          "[]"
+        ],
+        "esST_FileName": [
+          "file.txt"
+        ],
+        "ccm2Id": [
+          "31071089"
+        ],
+        "REFERENCE": [
+          "31071089ResearchandInnovationaction1475539200000bg"
+        ],
+        "programmeDivision": [
+          "31047893",
+          "31045244",
+          "31047995",
+          "31048001",
+          "31048005"
+        ],
+        "crossCuttingPriorities": [
+          "IntlCoop",
+          "SSH"
+        ],
+        "esDA_IngestDate": [
+          "2024-08-05T15:08:14.925+0200"
+        ],
+        "typesOfAction": [
+          "Research and Innovation action"
+        ],
+        "callUpdates": [
+          "[{\"approvalDate\":\"Jun 8, 2017 7:02:03 PM\",\"lastChangeDate\":\"Jun 8, 2017 7:02:03 PM\",\"content\":\"\\u003cp\\u003eCALL : H2020-SC6-ENG-GLOBALLY-2016-2017\\u003c/p\\u003e\\r\\n\\u003cp\\u003eAn overview of the evaluation results (flash call info) is now available\\u0026nbsp; under the \\u0026lsquo;Topic conditions \\u0026amp; documents\\u0026rsquo; section on the topic page of the following topics:\\u003c/p\\u003e\\r\\n\\u003cp\\u003eENG-GLOBALLY-1:RIA\\u003cbr /\\u003e\\r\\nENG-GLOBALLY-2:RIA\\u003cbr /\\u003e\\r\\nENG-GLOBALLY-3:RIA\\u003cbr /\\u003e\\r\\nENG-GLOBALLY-5:RIA\\u003cbr /\\u003e\\r\\nENG-GLOBALLY-6:RIA\\u003cbr /\\u003e\\r\\nENG-GLOBALLY-10:RIA\\u003cbr /\\u003e\\r\\nENG-GLOBALLY-8: RIA\\u003cbr /\\u003e\\r\\nENG-GLOBALLY-4: CSA \\u003cbr /\\u003e\\r\\nENG-GLOBALLY-7: CSA\\u003c/p\\u003e\\r\\n\\u003cp\\u003e\\u003cbr /\\u003e\\r\\nThe submission session is now available for: ENG-GLOBALLY-02-2017(RIA), ENG-GLOBALLY-07-2017(CSA), ENG-GLOBALLY-04-2017(CSA), ENG-GLOBALLY-03-2017(RIA), ENG-GLOBALLY-06-2017(RIA), ENG-GLOBALLY-01-2017(RIA), ENG-GLOBALLY-05-2017(RIA), ENG-GLOBALLY-08-2016-2017(RIA), ENG-GLOBALLY-10-2017(RIA)\\u003c/p\\u003e\\r\\n\\u003cp\\u003eCALL : H2020-SC6-ENG-GLOBALLY-2016-2017\\u003cbr /\\u003e\\r\\n\\u0026nbsp;\\u003c/p\\u003e\\r\\n\\u003cp\\u003eThe call deadline was Thursday 2 of February 17 Pm 2017. A total of 111 proposals were submitted in response to this call. The number of proposals for each topic is shown below including the indicative budget of the topic:\\u003c/p\\u003e\\r\\n\\u003cp\\u003eENG-GLOBALLY-1:RIA: 15 submitted\\u003cbr /\\u003e\\r\\nENG-GLOBALLY-2: RIA:14 submitted\\u003cbr /\\u003e\\r\\nENG-GLOBALLY-3: RIA:25 submitted\\u003cbr /\\u003e\\r\\nENG-GLOBALLY-5:RIA: 5 submitted\\u003cbr /\\u003e\\r\\nENG-GLOBALLY-6: RIA:8 submitted\\u003cbr /\\u003e\\r\\nENG-GLOBALLY-10:RIA: 4 submitted\\u003cbr /\\u003e\\r\\n(indicative budget: for topics 1,2,3,5,6,10 : 27 M\\u0026euro;)\\u003cbr /\\u003e\\r\\nENG-GLOBALLY-8: RIA: 17 submitted (indicative budget: 2,5 M\\u0026euro;)\\u003cbr /\\u003e\\r\\nENG-GLOBALLY-4: CSA : 10 proposals (indicative budget: 1,5 M\\u0026euro;)\\u003cbr /\\u003e\\r\\nENG-GLOBALLY-7: CSA : 13 proposals (indicative budget: 1,5 M\\u0026euro;)\\u003cbr /\\u003e\\r\\n\\u0026nbsp;\\u003c/p\\u003e\"},{\"approvalDate\":\"Feb 7, 2017 2:34:05 PM\",\"lastChangeDate\":\"Feb 7, 2017 2:34:05 PM\",\"content\":\"\\u003cp\\u003eThe submission session is now available for: ENG-GLOBALLY-02-2017(RIA), ENG-GLOBALLY-07-2017(CSA), ENG-GLOBALLY-04-2017(CSA), ENG-GLOBALLY-03-2017(RIA), ENG-GLOBALLY-06-2017(RIA), ENG-GLOBALLY-01-2017(RIA), ENG-GLOBALLY-05-2017(RIA), ENG-GLOBALLY-08-2016-2017(RIA), ENG-GLOBALLY-10-2017(RIA)\\u003c/p\\u003e\\r\\n\\u003cp\\u003eCALL : H2020-SC6-ENG-GLOBALLY-2016-2017\\u003cbr /\\u003e\\r\\n\\u0026nbsp;\\u003c/p\\u003e\\r\\n\\u003cp\\u003eThe call deadline was Thursday 2 of February 17 Pm 2017. A total of 111 proposals were submitted in response to this call. The number of proposals for each topic is shown below including the indicative budget of the topic:\\u003c/p\\u003e\\r\\n\\u003cp\\u003eENG-GLOBALLY-1:RIA: 15 submitted\\u003cbr /\\u003e\\r\\nENG-GLOBALLY-2: RIA:14 submitted\\u003cbr /\\u003e\\r\\nENG-GLOBALLY-3: RIA:25 submitted\\u003cbr /\\u003e\\r\\nENG-GLOBALLY-5:RIA: 5 submitted\\u003cbr /\\u003e\\r\\nENG-GLOBALLY-6: RIA:8 submitted\\u003cbr /\\u003e\\r\\nENG-GLOBALLY-10:RIA: 4 submitted\\u003cbr /\\u003e\\r\\n(indicative budget: for topics 1,2,3,5,6,10 : 27 M\\u0026euro;)\\u003cbr /\\u003e\\r\\nENG-GLOBALLY-8: RIA: 17 submitted (indicative budget: 2,5 M\\u0026euro;)\\u003cbr /\\u003e\\r\\nENG-GLOBALLY-4: CSA : 10 proposals (indicative budget: 1,5 M\\u0026euro;)\\u003cbr /\\u003e\\r\\nENG-GLOBALLY-7: CSA : 13 proposals (indicative budget: 1,5 M\\u0026euro;)\\u003cbr /\\u003e\\r\\n\\u0026nbsp;\\u003c/p\\u003e\"},{\"approvalDate\":\"Feb 6, 2017 2:43:49 PM\",\"lastChangeDate\":\"Feb 6, 2017 2:43:49 PM\",\"content\":\"\\u003cp\\u003eThe submission session is now available for: ENG-GLOBALLY-02-2017(RIA), ENG-GLOBALLY-07-2017(CSA), ENG-GLOBALLY-04-2017(CSA), ENG-GLOBALLY-03-2017(RIA), ENG-GLOBALLY-06-2017(RIA), ENG-GLOBALLY-01-2017(RIA), ENG-GLOBALLY-05-2017(RIA), ENG-GLOBALLY-08-2016-2017(RIA), ENG-GLOBALLY-10-2017(RIA)\\u003c/p\\u003e\"},{\"approvalDate\":\"Oct 4, 2016 12:30:01 AM\",\"lastChangeDate\":\"Oct 4, 2016 12:30:01 AM\",\"content\":\"The submission session is now available for: ENG-GLOBALLY-02-2017(RIA), ENG-GLOBALLY-07-2017(CSA), ENG-GLOBALLY-04-2017(CSA), ENG-GLOBALLY-03-2017(RIA), ENG-GLOBALLY-06-2017(RIA), ENG-GLOBALLY-01-2017(RIA), ENG-GLOBALLY-05-2017(RIA), ENG-GLOBALLY-08-2016-2017(RIA), ENG-GLOBALLY-10-2017(RIA)\"},{\"approvalDate\":\"Jul 26, 2016 3:41:06 PM\",\"lastChangeDate\":\"Jul 26, 2016 3:41:06 PM\",\"content\":\"\\u003cp\\u003eA revised version of the Work programme has been adopted for 2016-2017.\\u003c/p\\u003e\\r\\n\\u003cp\\u003eThe main changes concern:\\u003c/p\\u003e\\r\\n\\u003cp\\u003e \\u003cstrong\\u003eCall H2020-SC6-CO-CREATION-2016-2017 - CO-CREATION FOR GROWTH AND INCLUSION\\u003c/strong\\u003e\\u003c/p\\u003e\\r\\n\\u003cul\\u003e\\r\\n    \\u003cli\\u003eTopics CO-CREATION 2 \\u0026amp; CO-CREATION-3-2016): those topics were cancelled due to an error in the description of the topic conditions in the Work programme (i.e. it did not explicitly make reference to Annex K of the Work Programme which provides the possibility for actions to foresee financial support to third parties). They have now been republished in their correct form with the additional missing information and a new deadline on 15 November 2016.\\u003c/li\\u003e\\r\\n    \\u003cli\\u003eTopic CO-CREATION-6-2017 (RIA): increase of budget from 11 m to 11.5 m\\u003c/li\\u003e\\r\\n\\u003c/ul\\u003e\\r\\n\\u003cp\\u003e \\u003cstrong\\u003eCall H2020-SC6-ENG-GLOBALLY-2016-2017 - ENGAGING TOGETHER GLOBALLY\\u003c/strong\\u003e\\u003c/p\\u003e\\r\\n\\u003cul\\u003e\\r\\n    \\u003cli\\u003eA topic on migration has been added: ENG-GLOBALLY-10-2017 (RIA): Migration and asylum systems\\u003c/li\\u003e\\r\\n\\u003c/ul\\u003e\\r\\n\\u003cp\\u003e \\u003cstrong\\u003eCall H2020-SC6-CULT-COOP-2016-2017 - UNDERSTANDING EUROPE - PROMOTING THE EUROPEAN PUBLIC AND CULTURAL SPACE\\u003c/strong\\u003e\\u003c/p\\u003e\\r\\n\\u003cul\\u003e\\r\\n    \\u003cli\\u003eA two-stage evaluation was introduced for all RIA topics in 2017 except for CULT-COOP-11-2017\\u003c/li\\u003e\\r\\n    \\u003cli\\u003eA topic was added: CULT-COOP-12-2017 (RIA) - The significance of cultural and core values for the migration challenge\\u003c/li\\u003e\\r\\n\\u003c/ul\\u003e\\r\\n\\u003cp\\u003e \\u003cstrong\\u003eCall H2020-SC6-REV-INEQUAL-2016-2017 - REVERSING INEQUALITIES AND PROMOTING FAIRNESS\\u003c/strong\\u003e\\u003c/p\\u003e\\r\\n\\u003cp\\u003eThree additional topics have been added:\\u003c/p\\u003e\\r\\n\\u003cul\\u003e\\r\\n    \\u003cli\\u003eREV-INEQUAL-11-2017 (CSA) - Current European and cross-national comparative research and research actions on Migration\\u003c/li\\u003e\\r\\n    \\u003cli\\u003eREV-INEQUAL-12-2017 (CSA) - Research Social Platform on Migration and Asylum\\u003c/li\\u003e\\r\\n    \\u003cli\\u003eREV-INEQUAL-13-2017 (RIA) - Research on employability, skills and labour market integration of migrants\\u003c/li\\u003e\\r\\n\\u003c/ul\\u003e\\r\\n\\u003cp\\u003e \\u003cstrong\\u003eSME INSTRUMENT\\u003c/strong\\u003e\\u003c/p\\u003e\\r\\n\\u003cul\\u003e\\r\\n    \\u003cli\\u003eCorrection of the number of the SME instrument (H2020-SMEInst-12-2016-2017-SC6-CULT-COOP instead of H2020-SMEInst-62-2016-2017-SC6-CULT-COOP)\\u003c/li\\u003e\\r\\n\\u003c/ul\\u003e\\r\\n\\u003cp\\u003e \\u003cstrong\\u003eOTHER ACTIONS\\u003c/strong\\u003e\\u003c/p\\u003e\\r\\n\\u003cul\\u003e\\r\\n    \\u003cli\\u003eNew action added (13): Support to Research and Innovation policy making\\u003c/li\\u003e\\r\\n    \\u003cli\\u003eNew action added (26): Expert Group to advise in designing, developing and testing a pilot European Innovation Council (EIC)\\u003c/li\\u003e\\r\\n    \\u003cli\\u003eNew action added (31): Presidency Conference \\u0026lsquo;Expanding Excellent Science for the Benefit of Society\\u0026rsquo;\\u003c/li\\u003e\\r\\n\\u003c/ul\\u003e\"},{\"approvalDate\":\"May 26, 2016 12:59:58 PM\",\"lastChangeDate\":\"May 26, 2016 12:59:58 PM\",\"content\":\"\\u003cp\\u003eA total number of 36 proposals were submitted in response to this call. The number of proposals for each topic/type of action is shown below:\\u003cbr /\\u003e\\r\\n\\u0026nbsp;\\u003c/p\\u003e\\r\\n\\u003cp\\u003eENG-GLOBALLY-08 - 7\\u003c/p\\u003e\\r\\n\\u003cp\\u003eENG-GLOBALLY-09 - 29\\u003cbr /\\u003e\\r\\n\\u0026nbsp;\\u003c/p\\u003e\"},{\"approvalDate\":\"Dec 8, 2015 12:30:00 AM\",\"lastChangeDate\":\"Dec 8, 2015 12:30:00 AM\",\"content\":\"The submission session is now available for: ENG-GLOBALLY-08-2016/2017(CSA), ENG-GLOBALLY-09-2016(CSA)\"}]"
+        ],
+        "url": [
+          "https://ec.europa.eu/info/funding-tenders/opportunities/data/topicDetails/ENG-GLOBALLY-01-2017.json"
+        ],
+        "additionalDossiers": [
+          "[{\"callId\":52392481953,\"id\":165741240,\"title\":\"H2020-SC6-ENG-GLOBALLY-2016-2017- Flash Call Info (call results)_EN.pdf\",\"sectionId\":52392481953,\"translationFiles\":[]}]"
+        ],
+        "allowPartnerSearch": [
+          "true"
+        ],
+        "budgetOverview": [
+          "{\"budgetTopicActionMap\":{\"3207294\":[{\"action\":\"ENG-GLOBALLY-08-2016-2017 - CSA Coordination and support action\",\"plannedOpeningDate\":\"08 December 2015\",\"deadlineModel\":\"single-stage\",\"deadlineDates\":[\"14 April 2016\"],\"budgetYearMap\":{\"2016\":1500000},\"budgetTopicActionMap\":{}}],\"3207295\":[{\"action\":\"ENG-GLOBALLY-09-2016 - CSA Coordination and support action\",\"plannedOpeningDate\":\"08 December 2015\",\"deadlineModel\":\"single-stage\",\"deadlineDates\":[\"14 April 2016\"],\"budgetYearMap\":{\"2016\":10000000},\"..."
+        ]
+      },
+      "children": [],
+      "score": 1.0
+    },
+    {
+      "apiVersion": "2.146",
+      "reference": "31073002ResearchandInnovationaction1450310400000bg",
+      "url": "https://ec.europa.eu/info/funding-tenders/opportunities/data/topicDetails/S2R-CFM-IP5-03-2015.json",
+      "title": null,
+      "contentType": "text/plain",
+      "language": "bg",
+      "databaseLabel": "SEDIA",
+      "database": "SEDIA",
+      "summary": "Freight Propulsion concepts",
+      "weight": 1.0,
+      "groupById": "3",
+      "accessRestriction": false,
+      "pages": null,
+      "metadata": {
+        "es_SortDate": [
+          "2015-12-17T00:00:00.000+0000"
+        ],
+        "keywords": [
+          "Rail Transport",
+          "Intermodal freight transport",
+          "Propulsion systems engineering",
+          "Mechanical and manufacturing engineering (shaping,",
+          "last mile freight distribution",
+          "long freight trains",
+          "autonomous driving"
+        ],
+        "workProgrammepart": [
+          "{\"id\":78,\"ccm_id\":31073070,\"wp_part\":\"H2020-JTI-Shift2Rail-2015\",\"wp_year\":\"H2020-JTI-Shift2Rail-2015\",\"wp_title\":\"Shift2Rail Work Plan 2015\",\"wp_website\":\"http://www.shift2rail.org/\",\"wp_document\":\"http://ec.europa.eu/research/participants/data/ref/h2020/other/wp/jtis/h2020-wp15-shift2rail_en.pdf\"}"
+        ],
+        "language": [
+          "bg"
+        ],
+        "type": [
+          "1"
+        ],
+        "focusArea": [],
+        "destinationDetails": [],
+        "typeOfMGAs": [],
+        "callIdentifier": [
+          "H2020-S2RJU-2015-01"
+        ],
+        "callccm2Id": [
+          "31073015"
+        ],
+        "DATASOURCE": [
+          "SEDIA"
+        ],
+        "links": [
+          "[]"
+        ],
+        "callTitle": [
+          "SHIFT2RAIL JOINT UNDERTAKING CALL FOR PROPOSALS 2015"
+        ],
+        "frameworkProgramme": [
+          "31045243"
+        ],
+        "descriptionByte": [
+          "<SPAN class=\"topicdescriptionkind\">Specific Challenge</SPAN>:<p>For the full topic description, please refer to Annex I (2015 Call for proposals for the JU members) of the 2015 Annual Work Plan.</p>\n..."
+        ],
+        "identifier": [
+          "S2R-CFM-IP5-03-2015"
+        ],
+        "additionalInfos": [
+          "{\"additionalInfo\":\"<p>&nbsp;</p>\r\n<p>The Shift2Rail Joint Undertaking launched the first calls for proposals for S2R JU members (CFM) and non-JU members (OC), aimed at driving innovation in railways under Horizon 2020.</p>\r\n<p>Indicative budget: &euro;90 million&nbsp;EU funding <br />\r\nEstimated projects value, including in kind contributions by the members, other than the Union and/or their affiliated entities: &euro;170 million</p>\r\n<p>&nbsp;</p>\r\n<p>&nbsp;</p>\"}"
+        ],
+        "es_ContentType": [
+          "text/plain"
+        ],
+        "programmePeriod": [
+          "2014 - 2020"
+        ],
+        "deadlineDate": [
+          "2016-03-17T00:00:00.000+0000"
+        ],
+        "es_Combine": [
+          "3"
+        ],
+        "esST_URL": [
+          "https://ec.europa.eu/info/funding-tenders/opportunities/data/topicDetails/S2R-CFM-IP5-03-2015.json"
+        ],
+        "tags": [
+          "autonomous driving",
+          "last mile freight distribution",
+          "long freight trains"
+        ],
+        "esDA_QueueDate": [
+          "2024-08-05T15:08:46.088+0200"
+        ],
+        "destinationDescription": [],
+        "actions": [
+          "[{\"status\":{\"id\":31094503,\"abbreviation\":\"Closed\",\"description\":\"Closed\"},\"types\":[{\"typeOfAction\":\"Shift2Rail-RIA Research and Innovation action\",\"typeOfMGA\":[]}],\"plannedOpeningDate\":\"17 December 2015\",\"submissionProcedure\":{\"id\":31094504,\"abbreviation\":\"single-stage\",\"description\":\"single-stage\"},\"deadlineDates\":[\"17 March 2016\"]}]"
+        ],
+        "startDate": [
+          "2015-12-17T00:00:00.000+0000"
+        ],
+        "deadlineModel": [
+          "single-stage"
+        ],
+        "status": [
+          "31094503"
+        ],
+        "supportInfo": [
+          "<p><strong>Shift2Rail JU Call Helpdesk: <a href=\"mailto:info-call@shift2rail.europa.eu\">info-call@shift2rail.europa.eu</a>. </strong>Please note that the deadline for addressing queries related to S2R JU calls for proposals to the Q&amp;A functional mailbox (info-call@shift2rail.europa.eu) is Tuesday 8 March 2016 (eob). <br />\r\n<br />\r\n<a href=\"http://ec.europa.eu/research/participants/api/contact/index.html\"><strong>IT helpdesk </strong></a>for questions such as forgotten passwords, access rights and roles, technical aspects of submission of proposals, etc. <br />\r\n<span style=\"color: #0000ff\"><br />\r\n</span><span style=\"color: #0000ff\"><strong><a href=\"http://ec.europa.eu/research/participants/portal4/desktop/en/funding/guide.html\">H2020 Online Manual</a></strong> </span>your online guide on the procedures from proposal submission to managing your grant.<br />\r\n<br />\r\n<strong><span><a href=\"http://ec.europa.eu/research/participants/portal/desktop/en/support/faq.html\">Participant Portal FAQ</a> </span></strong><span>&ndash; Submission of proposals.</span><br />\r\n<strong><br />\r\n<span><a href=\"http://ec.europa.eu/research/participants/portal4/desktop/en/support/national_contact_points.html\">National Contact Points (NCP)</a>&nbsp;<br />\r\n</span></strong><strong><br />\r\n<span><a href=\"http://ec.europa.eu/research/index.cfm?lg=en&amp;pg=enquiries\">Research Enquiry Service</a></span></strong><span> &ndash; ask questions about any aspect of European research in general and the EU Research Framework Programmes in particular.</span><br />\r\n<a href=\"http://een.ec.europa.eu/\"><br />\r\n<strong>Enterprise Europe Network</strong></a> &ndash; contact your EEN national contact for advice to businesses with special focus on SMEs. The support includes guidance on the EU research funding.<br />\r\n<strong><br />\r\nEthics</strong> &ndash; for compliance with ethical issues, see the<a href=\"http://ec.europa.eu/research/participants/docs/h2020-funding-guide/cross-cutting-issues/ethics_en.htm\"> Participant Portal</a>&nbsp;and&nbsp;<a href=\"http://ec.europa.eu/research/science-society/index.cfm?fuseaction=public.topic&amp;id=1289&amp;lang=1\">Science and Society Portal</a><br />\r\n<a href=\"http://www.iprhelpdesk.eu/\"><br />\r\n<strong>European IPR Helpdesk</strong></a> assists you on intellectual property issues<br />\r\n<a href=\"http://www.cen.eu/cen/Services/Innovation/Pages/default.aspx\"><br />\r\n<strong>CEN</strong></a> and <a href=\"http://www.cenelec.eu/aboutcenelec/whatwestandfor/fosterinnovation/randd.html\"><strong>CENELEC</strong></a>, the European Standards Organisations, advise you how to tackle standardisation in your project proposal. Contact CEN-CENELEC Research Helpdesk at <a href=\"mailto:research@cencenelec.eu\">research@cencenelec.eu</a>.<br />\r\n<a href=\"http://ec.europa.eu/euraxess/pdf/brochure_rights/am509774CEE_EN_E4.pdf\"><br />\r\n<strong>The European Charter for Researchers and the Code of Conduct for their recruitment</strong></a><br />\r\n<strong><br />\r\n<a href=\"http://ec.europa.eu/research/participants/docs/h2020-funding-guide/grants/applying-for-funding/find-partners_en.htm\">Partner Search Services</a></strong> help you find a partner organisation for your proposal</p>"
+        ],
+        "missionDetails": [],
+        "sepTemplate": [
+          "<p>To access the Electronic Submission Service of the topic, please select the <strong>type of action</strong> that is most relevant to your proposal from the list below and click on the <strong>'Start Submission' </strong>button. You will then be asked to confirm your choice of the type of action and topic, as these cannot be changed in the submission system. Upon confirmation you will be linked to the correct entry point.</p>\r\n<p>To access existing draft proposals for this topic, please login to the Participant Portal and select the My Proposals page of the My Area section.</p>"
+        ],
+        "sortStatus": [
+          "3"
+        ],
+        "topicConditions": [
+          "<p><span style=\"color: rgb(51,153,102)\"><strong>[Shift2Rail JU 2015 call for proposals]</strong></span></p>\r\n<p><strong>Topic for S2R JU Members</strong><br />\r\nPlease read carefully all provisions below before the preparation of your application.<br />\r\n&nbsp;</p>\r\n<p><span style=\"color: #000080\"><strong>Full description of the topics</strong></span>: <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/other/wp/jtis/h2020-wp15-shift2rail_en.pdf\">Shift2Rail JU 2015 Annual Work Plan</a> (Annex I call for S2R members, Annex II call for non-members)<br />\r\n&nbsp;</p>\r\n<ol>\r\n    <li><strong><span style=\"color: rgb(0,51,102)\">List of countries and applicable rules for funding: </span></strong>described in <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/wp/2014_2015/annexes/h2020-wp1415-annex-a-countries-rules_en.pdf\">part A of the General Annexes </a>of the main H2020 Work Programme and the Shift2Rail JU 2015 Annual Work Plan.<br />\r\n    &nbsp;</li>\r\n    <li><strong><span style=\"color: rgb(0,51,102)\">Eligibility and admissibility conditions: </span></strong>described in <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/wp/2014_2015/annexes/h2020-wp1415-annex-b-adm_en.pdf\">part B </a>and <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/wp/2014_2015/annexes/h2020-wp1415-annex-c-elig_en.pdf\">C of the General Annexes</a> of the main H2020 Work Programme and the <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/other/wp/jtis/h2020-wp15-shift2rail_en.pdf\">Shift2Rail JU 2015 Annual Work Plan</a>. <br />\r\n    <br />\r\n    <strong><span style=\"color: rgb(0,51,102)\">Proposal page limits and layout: </span></strong>Please refer to Part B of the standard proposal template.<br />\r\n    &nbsp;</li>\r\n    <li><strong><span style=\"color: rgb(0,51,102)\">Evaluation</span></strong> <br />\r\n    <br />\r\n    <strong><span style=\"color: rgb(0,51,102)\">3.1 Evaluation criteria, scoring and threshold: </span></strong>described in <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/wp/2014_2015/annexes/h2020-wp1415-annex-h-esacrit_en.pdf\">part H of the General Annexes&nbsp;</a>and the Shift2Rail JU 2015 Annual Work Plan.<br />\r\n    <br />\r\n    <strong><span style=\"color: rgb(0,51,102)\">3.2 Submission and evaluation process:</span></strong> <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/grants_manual/pse/h2020-guide-pse_en.pdf\">Guide to the submission and evaluation process</a>&nbsp;and the Shift2Rail JU 2015 Annual Work Plan.<br />\r\n    &nbsp;</li>\r\n    <li><strong><span style=\"color: rgb(0,51,102)\">Indicative timetable for evaluation and grant agreement:</span></strong><br />\r\n    <br />\r\n    maximum 8 months from the deadline for submission.<br />\r\n    &nbsp;</li>\r\n    <li><strong><span style=\"color: rgb(0,51,102)\">Provisions, proposal templates and evaluation forms:</span></strong> <br />\r\n    <br />\r\n    Proposal templates for Shift2Rail JU members and non-members are available after entering the SEP submission tool <br />\r\n    <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/other/mga/jtis/h2020-mga-multi-shift2rail-ju_en.pdf\">Shift2Rail Multi-Beneficiary Model Grant Agreement&nbsp;<br />\r\n    </a><a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/other/mga/jtis/h2020-mga-mono-shift2rail-ju_en.pdf\">Shift2Rail Mono-Beneficiary Model Grant Agreement <br />\r\n    </a><a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/grants_manual/amga/h2020-amga_en.pdf\">H2020 Annotated Grant Agreement</a> (for information)<br />\r\n    <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/call_ptef/ef/h2020-call-ef-ria-ia-csa_en.pdf\">Standard evaluation form&nbsp;</a><br />\r\n    &nbsp;</li>\r\n    <li><strong><span style=\"color: rgb(0,51,102)\">Additional provisions:</span></strong><br />\r\n    <br />\r\n    <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/wp/2014_2015/annexes/h2020-wp1415-annex-i-budgflex_en.pdf\">Horizon 2020 budget flexibility </a><br />\r\n    <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/wp/2014_2015/annexes/h2020-wp1415-annex-g-trl_en.pdf\">Technology readiness levels (TRL) </a>&ndash; where a topic description refers to TRL, these definitions apply.<br />\r\n    <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/other/wp/2016_2017/annexes/h2020-wp1617-annex-k-fs3p_en.pdf\">Financial support to third parties</a> - where a topic description foresees financial support to Third Parties, these provisions apply.<br />\r\n    &nbsp;</li>\r\n    <li><strong><span style=\"color: rgb(0,51,102)\">Additional documents</span></strong><br />\r\n    <br />\r\n    <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/other/wp/jtis/h2020-wp15-shift2rail_en.pdf\">Shift2Rail JU 2015 Annual Work Plan&nbsp;<br />\r\n    </a><a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/other/wp/jtis/h2020-masterplan-shift2rail_en.pdf\">Shift2Rail Master Plan</a> <br />\r\n    <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/other/wp/jtis/h2020-maap-shift2rail_en.pdf\">Shift2Rail Multi Annual Action Plan (MAAP) </a><br />\r\n    <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/other/legal/jtis/h2020-s2r-establact_en.pdf\">Shift2Rail Establishment Regulation </a><br />\r\n    <a href=\"http://www.shift2rail.org/wp-content/uploads/2016/01/List-of-S2R-JU-members.pdf\">Shift2Rail Joint Undertaking Members</a><br />\r\n    <br />\r\n    <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/legal_basis/rules_participation/h2020-rules-participation_en.pdf\">Horizon 2020 Rules for Participation</a> <br />\r\n    <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/legal_basis/fp/h2020-eu-establact_en.pdf\">Horizon 2020 Regulation of Establishment </a><br />\r\n    <a href=\"http://ec.europa.eu/research/participants/data/ref/h2020/legal_basis/sp/h2020-sp_en.pdf\">Horizon 2020 Specific Programme</a></li>\r\n</ol>\r\n<p>&nbsp;</p>"
+        ],
+        "title": [
+          "Freight Propulsion concepts"
+        ],
+        "missionDescription": [],
+        "esST_checksum": [
+          "8B90C504FAFF9DB5697E26A182BE62867AB51EE99090BFA18661A280CF20F44A"
+        ],
+        "infoPackDossiers": [
+          "[]"
+        ],
+        "esST_FileName": [
+          "file.txt"
+        ],
+        "ccm2Id": [
+          "31073002"
+        ],
+        "REFERENCE": [
+          "31073002ResearchandInnovationaction1450310400000bg"
+        ],
+        "programmeDivision": [
+          "31047893",
+          "31045244",
+          "31047956",
+          "31072230",
+          "31072228"
+        ],
+        "crossCuttingPriorities": [],
+        "esDA_IngestDate": [
+          "2024-08-05T15:08:46.234+0200"
+        ],
+        "typesOfAction": [
+          "Research and Innovation action"
+        ],
+        "callUpdates": [
+          "[{\"approvalDate\":\"Mar 31, 2016 4:04:56 PM\",\"lastChangeDate\":\"Mar 31, 2016 4:04:46 PM\",\"content\":\"\\u003cp\\u003ePress Release on the applications to the Shift2Rail Call for Proposals is available at: http://www.shift2rail.org/projects-worth-222m-euros-proposed-under-the-first-shift2rail-call-for-research/\\u003c/p\\u003e\\r\\n\\u003cp\\u003e\\u0026nbsp;\\u003c/p\\u003e\"},{\"approvalDate\":\"Mar 11, 2016 5:02:08 PM\",\"lastChangeDate\":\"Mar 11, 2016 4:59:42 PM\",\"content\":\"\\u003cp\\u003eAn update of the \\u003cstrong\\u003eQuestions \\u0026amp; Answers \\u003c/strong\\u003edocument has been published in the Additional Documents Section.\\u003c/p\\u003e\\r\\n\\u003cp\\u003e\\u0026nbsp;\\u003c/p\\u003e\"},{\"approvalDate\":\"Mar 4, 2016 10:46:18 AM\",\"lastChangeDate\":\"Mar 4, 2016 10:44:56 AM\",\"content\":\"\\u003cp\\u003eAn \\u003cstrong\\u003eupdate of the Questions \\u0026amp; Answers \\u003c/strong\\u003edocument has been published in the Additional Documents Section.\\u003c/p\\u003e\\r\\n\\u003cp\\u003ePlease note that the \\u003cstrong\\u003edeadline\\u003c/strong\\u003e for addressing queries related to S2R JU calls for proposals to the \\u003cstrong\\u003eQ\\u0026amp;A functional mailbox \\u003c/strong\\u003e(info-call@shift2rail.europa.eu) is Tuesday \\u003cstrong\\u003e8 March 2016\\u003c/strong\\u003e (eob).\\u003c/p\\u003e\"},{\"approvalDate\":\"Mar 2, 2016 5:12:58 PM\",\"lastChangeDate\":\"Mar 2, 2016 5:12:44 PM\",\"content\":\"\\u003cp\\u003eERRATUM: Please refer to the corrected topic description for topic S2R-OC-IP5-03-2015, included in the S2R Annual Work Plan 2015, for the appropriate TRL, which is \\u003cu\\u003eTRL5.\\u003c/u\\u003e\\u003c/p\\u003e\\r\\n\\u003cp\\u003eERRATUM: Please note the corrected title under \\u0027conditions and documents\\u0027 for S2R-OC-CCA-01-2015 (topic for non-JU members).\\u003c/p\\u003e\\r\\n\\u003cp\\u003eCLARIFICATION: Please refer to the clarification of eligibility conditions to participate in S2R JU calls for proposals, regarding JU members in the form of a consortium or grouping, and the addition of Annex IV listing all JU members (founding and associated) other than the Union, included in the S2R Annual Work Plan 2015 as well as in the S2R Annual Work Plan 2016.\\u003c/p\\u003e\"},{\"approvalDate\":\"Feb 19, 2016 5:59:47 PM\",\"lastChangeDate\":\"Feb 19, 2016 5:59:26 PM\",\"content\":\"\\u003cp\\u003eERRATUM: Please refer to the corrected topic description for topic S2R-OC-IP5-03-2015, included in the S2R Annual Work Plan 2015, for the appropriate TRL, which is \\u003cu\\u003eTRL5.\\u003c/u\\u003e\\u003c/p\\u003e\\r\\n\\u003cp\\u003eERRATUM: Please note the corrected title under \\u0027conditions and documents\\u0027 for S2R-OC-CCA-01-2015 (topic for non-JU members).\\u003c/p\\u003e\"},{\"approvalDate\":\"Feb 1, 2016 2:20:21 PM\",\"lastChangeDate\":\"Feb 1, 2016 2:20:09 PM\",\"content\":\"\\u003cp\\u003eERRATUM: Please refer to the corrected topic description for topic S2R-OC-IP5-03-2015, included in the S2R Annual Work Plan 2015, for the appropriate TRL, which is \\u003cu\\u003eTRL5.\\u003c/u\\u003e\\u003c/p\\u003e\"},{\"approvalDate\":\"Dec 17, 2015 12:30:02 AM\",\"lastChangeDate\":\"Dec 17, 2015 12:30:02 AM\",\"content\":\"The submission session is now available for: S2R-OC-IP2-03-2015(Shift2Rail-RIA), S2R-OC-IP5-02-2015(Shift2Rail-RIA), S2R-OC-IP2-01-2015(Shift2Rail-RIA), S2R-OC-CCA-03-2015(Shift2Rail-RIA), S2R-OC-IP5-03-2015(Shift2Rail-RIA), S2R-OC-CCA-01-2015(Shift2Rail-RIA), S2R-OC-CCA-04-2015(Shift2Rail-RIA), S2R-OC-CCA-02-2015(Shift2Rail-RIA), S2R-OC-IP5-01-2015(Shift2Rail-RIA), S2R-OC-IP2-02-2015(Shift2Rail-RIA)\"},{\"approvalDate\":\"Dec 17, 2015 12:30:00 AM\",\"lastChangeDate\":\"Dec 17, 2015 12:30:00 AM\",\"content\":\"The submission session is now available for: S2R-CFM-CCA-03-2015(Shift2Rail-RIA), S2R-CFM-CCA-01-2015(Shift2Rail-CSA-Shift2Rail-RIA), S2R-CFM-IP4-02-2015(Shift2Rail-IA), S2R-CFM-IP2-01-2015(Shift2Rail-RIA), S2R-CFM-CCA-02-2015(Shift2Rail-RIA), S2R-CFM-IP4-01-2015(Shift2Rail-IA), S2R-CFM-IP5-03-2015(Shift2Rail-RIA), S2R-CFM-IP5-02-2015(Shift2Rail-RIA), S2R-CFM-IP5-01-2015(Shift2Rail-RIA), S2R-CFM-CCA-03-2015(Shift2Rail-RIA), S2R-CFM-CCA-01-2015(Shift2Rail-RIA), S2R-CFM-IP4-02-2015(Shift2Rail-IA), S2R-CFM-IP2-01-2015(Shift2Rail-RIA), S2R-CFM-CCA-02-2015(Shift2Rail-RIA), S2R-CFM-IP4-01-2015(Shift2Rail-IA), S2R-CFM-IP5-03-2015(Shift2Rail-RIA), S2R-CFM-IP5-02-2015(Shift2Rail-RIA), S2R-CFM-IP5-01-2015(Shift2Rail-RIA)\"}]"
+        ],
+        "url": [
+          "https://ec.europa.eu/info/funding-tenders/opportunities/data/topicDetails/S2R-CFM-IP5-03-2015.json"
+        ],
+        "additionalDossiers": [
+          "[{\"callId\":1047783272,\"id\":673743,\"title\":\"S2R Call Q&A\",\"sectionId\":1047783272,\"translationFiles\":[{\"language\":\"en\",\"mimeType\":\"application/pdf\",\"fileSize\":587924,\"docPath\":\"https://ec.europa.eu/info/funding-tenders/opportunities/docs/cap/h2020/s2r-cfm-ip5-03-2015/1707622-s2r_call_qa_110316_en.pdf\",\"id\":1707622,\"fileName\":\"S2R call_QA_110316_EN.pdf\",\"common\":false,\"crc32\":2516388521}]}]"
+        ],
+        "allowPartnerSearch": [
+          "true"
+        ],
+        "budgetOverview": [
+          "{\"budgetTopicActionMap\":{\"3202399\":[{\"action\":\"S2R-OC-IP5-01-2015 - Shift2Rail-RIA Research and Innovation action\",\"plannedOpeningDate\":\"17 December 2015\",\"deadlineModel\":\"single-stage\",\"deadlineDates\":[\"17 March 2016\"],\"budgetYearMap\":{\"2015\":1000000},\"budgetTopicActionMap\":{}}],\"3202400\":[{\"action\":\"S2R-OC-IP5-02-2015 - Shift2Rail-RIA Research and Innovation action\",\"plannedOpeningDate\":\"17 December 2015\",\"deadlineModel\":\"single-stage\",\"deadlineDates\":[\"17 March 2016\"],\"budgetYearMap\":{\"2015\":..."
+        ]
+      },
+      "children": [],
+      "score": 1.0
+    }
+  ]
+}
