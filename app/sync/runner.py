@@ -10,6 +10,7 @@ from apscheduler.triggers.cron import CronTrigger
 
 from app.config import get_settings
 from app.db.session import SessionLocal
+from app.sync.bdns_enricher import enrich_existing
 from app.sync.bdns_puller import sync_all
 
 logger = logging.getLogger(__name__)
@@ -30,6 +31,14 @@ async def run_bdns_sync() -> None:
     )
 
 
+async def run_bdns_enricher() -> None:
+    """Backfill incremental: enriquece records BDNS que aún tengan campos vacíos."""
+    logger.info("Starting BDNS enrichment pass")
+    with SessionLocal() as session:
+        stats = await enrich_existing(session, max_records=1000)
+    logger.info("BDNS enrichment done: %s", stats)
+
+
 def build_scheduler() -> AsyncIOScheduler:
     settings = get_settings()
     scheduler = AsyncIOScheduler(timezone="Europe/Madrid")
@@ -37,6 +46,12 @@ def build_scheduler() -> AsyncIOScheduler:
         run_bdns_sync,
         CronTrigger(hour=settings.bdns_sync_hour, minute=settings.bdns_sync_minute),
         id="bdns_sync",
+        replace_existing=True,
+    )
+    scheduler.add_job(
+        run_bdns_enricher,
+        CronTrigger(hour=3, minute=30),
+        id="bdns_enricher",
         replace_existing=True,
     )
     return scheduler

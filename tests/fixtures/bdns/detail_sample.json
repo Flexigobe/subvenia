@@ -1,0 +1,72 @@
+{
+  "id": 1107676,
+  "organo": {
+    "nivel1": "LOCAL",
+    "nivel2": "CERDANYOLA DEL VALLÈS",
+    "nivel3": "AYUNTAMIENTO DE CERDANYOLA DEL VALLÈS"
+  },
+  "sedeElectronica": null,
+  "codigoBDNS": "906115",
+  "fechaRecepcion": "2026-05-17",
+  "instrumentos": [
+    {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+    }
+  ],
+  "tipoConvocatoria": "Concesión directa - instrumental",
+  "presupuestoTotal": 9513,
+  "mrr": false,
+  "descripcion": "CONVENIO DE COLABORACIÓN CON EL GREMIO DE HOSTELERIA PARA LA DINAMIZACIÓN DE LA HOSTELERIA 2026",
+  "descripcionLeng": null,
+  "tiposBeneficiarios": [
+    {
+      "descripcion": "PERSONAS JURÍDICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+    }
+  ],
+  "sectores": [
+    {
+      "descripcion": "Comercio al por menor",
+      "codigo": "47"
+    }
+  ],
+  "regiones": [
+    {
+      "descripcion": "ES511 - Barcelona"
+    }
+  ],
+  "descripcionFinalidad": "Comercio, Turismo y Pymes",
+  "descripcionBasesReguladoras": "BASES REGULADORES CONVENIS PROMOCIÓ ECONÒMICA",
+  "urlBasesReguladoras": "https://www.cerdanyola.cat/sites/default/files/fitxers/bases_execucio_pressupot_2025.pdf",
+  "sePublicaDiarioOficial": false,
+  "abierto": true,
+  "fechaInicioSolicitud": null,
+  "fechaFinSolicitud": null,
+  "textInicio": null,
+  "textFin": null,
+  "ayudaEstado": null,
+  "urlAyudaEstado": null,
+  "fondos": [],
+  "reglamento": null,
+  "objetivos": [],
+  "sectoresProductos": [],
+  "documentos": [
+    {
+      "id": 1455894,
+      "descripcion": "Texto en otra lengua de la convocatoria",
+      "nombreFic": "Conveni_GREMI_HOSTALERIA_DINAM_2026.pdf",
+      "long": 70179,
+      "datMod": "2026-05-17",
+      "datPublicacion": "2026-05-17"
+    },
+    {
+      "id": 1455893,
+      "descripcion": "Texto en castellano de la convocatoria",
+      "nombreFic": "Convenio_ACCEDE_GREMIO_HOSTELERIA_DINAM_2026_Castellano.pdf",
+      "long": 235686,
+      "datMod": "2026-05-17",
+      "datPublicacion": "2026-05-17"
+    }
+  ],
+  "anuncios": [],
+  "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+}
