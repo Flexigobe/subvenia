@@ -75,3 +75,74 @@ def test_parse_item_handles_missing_optional_fields():
     assert parsed["importe_total"] is None
     assert parsed["cnae_elegible"] == []
     assert parsed["finalidad"] == []
+
+
+from sqlalchemy import select
+
+from app.db.models import Subvencion
+
+
+def test_upsert_inserts_new_subvencion(db_session):
+    from app.sync.bdns_puller import upsert_subvencion
+
+    parsed = {
+        "source": "bdns",
+        "external_id": "BDNS-NEW",
+        "titulo": "Nueva ayuda",
+        "ambito": "estatal",
+        "ccaa": None,
+        "fecha_inicio": None,
+        "fecha_fin": None,
+        "importe_total": None,
+        "importe_max_beneficiario": None,
+        "porcentaje": None,
+        "beneficiarios": None,
+        "cnae_elegible": ["6201"],
+        "finalidad": ["digitalizacion"],
+        "descripcion": None,
+        "enlace_oficial": None,
+        "raw_payload": {"id": "BDNS-NEW"},
+        "organismo": None,
+    }
+
+    created = upsert_subvencion(db_session, parsed)
+    db_session.commit()
+
+    rows = db_session.execute(select(Subvencion).where(Subvencion.external_id == "BDNS-NEW")).all()
+    assert len(rows) == 1
+    assert created is True
+
+
+def test_upsert_updates_existing(db_session):
+    from app.sync.bdns_puller import upsert_subvencion
+
+    parsed = {
+        "source": "bdns",
+        "external_id": "BDNS-DUPE",
+        "titulo": "Original",
+        "ambito": "estatal",
+        "ccaa": None,
+        "fecha_inicio": None,
+        "fecha_fin": None,
+        "importe_total": None,
+        "importe_max_beneficiario": None,
+        "porcentaje": None,
+        "beneficiarios": None,
+        "cnae_elegible": [],
+        "finalidad": [],
+        "descripcion": None,
+        "enlace_oficial": None,
+        "raw_payload": {},
+        "organismo": None,
+    }
+
+    upsert_subvencion(db_session, parsed)
+    db_session.commit()
+
+    parsed["titulo"] = "Modificado"
+    created = upsert_subvencion(db_session, parsed)
+    db_session.commit()
+
+    assert created is False
+    row = db_session.execute(select(Subvencion).where(Subvencion.external_id == "BDNS-DUPE")).scalar_one()
+    assert row.titulo == "Modificado"

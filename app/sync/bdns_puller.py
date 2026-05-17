@@ -6,8 +6,11 @@ from datetime import date, date as date_t
 from typing import Any
 
 import httpx
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from app.config import get_settings
+from app.db.models import Subvencion
 
 settings = get_settings()
 
@@ -66,3 +69,53 @@ def parse_item(raw: dict[str, Any]) -> dict[str, Any]:
         "enlace_oficial": raw.get("enlaceOficial"),
         "raw_payload": raw,
     }
+
+
+def upsert_subvencion(session: Session, parsed: dict[str, Any]) -> bool:
+    """Inserta o actualiza una subvención por (source, external_id).
+
+    Returns:
+        True si se creó nueva, False si se actualizó existente.
+    """
+    existing = session.execute(
+        select(Subvencion).where(
+            Subvencion.source == parsed["source"],
+            Subvencion.external_id == parsed["external_id"],
+        )
+    ).scalar_one_or_none()
+
+    if existing is None:
+        session.add(Subvencion(**parsed))
+        return True
+
+    for key, value in parsed.items():
+        setattr(existing, key, value)
+    return False
+
+
+async def sync_all(session: Session, since: date) -> dict[str, int]:
+    """Descarga todas las páginas BDNS desde `since` y hace upsert.
+
+    Returns:
+        {"created": N, "updated": M, "total": N+M}
+    """
+    created = 0
+    updated = 0
+    page = 1
+    while True:
+        payload = await fetch_page(page=page, since=since)
+        items = payload.get("items", [])
+        if not items:
+            break
+        for raw in items:
+            parsed = parse_item(raw)
+            if upsert_subvencion(session, parsed):
+                created += 1
+            else:
+                updated += 1
+        session.commit()
+        total_pages = payload.get("totalPages", 1)
+        if page >= total_pages:
+            break
+        page += 1
+    return {"created": created, "updated": updated, "total": created + updated}
