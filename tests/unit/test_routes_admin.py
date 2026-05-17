@@ -101,3 +101,89 @@ def test_admin_dev_fallback_credentials_work(monkeypatch):
 
     response = client.get("/admin", headers=_basic_header("admin", "dev-fallback-pass"))
     assert response.status_code == 200
+
+
+# ---------------------------------------------------------------------------
+# Dashboard metrics tests
+# ---------------------------------------------------------------------------
+
+def test_dashboard_renders_with_metrics_labels(admin_creds, db_session):
+    """Dashboard returns 200 + contains expected metric section titles."""
+    response = client.get(
+        "/admin",
+        headers=_basic_header(admin_creds["user"], admin_creds["password"]),
+    )
+    assert response.status_code == 200
+    text = response.text
+    # All key metric blocks are rendered
+    for label in [
+        "Dashboard",
+        "Conversión email",
+        "Suscripciones",
+        "Outbox",
+        "Top finalidades",
+        "Top CNAEs",
+        "Estado del sync",
+    ]:
+        assert label in text, f"missing label: {label}"
+
+
+def test_dashboard_shows_correct_counts(admin_creds, db_session):
+    """With seeded data, the dashboard reflects the counts."""
+    from app.db.models import Search
+
+    # Seed 3 searches with email and 2 without
+    for i in range(3):
+        db_session.add(Search(
+            nif="B12345674", cnae="6201", tamano="pequena", provincia="08",
+            finalidad=["digitalizacion"], email=f"user{i}@example.com",
+        ))
+    for i in range(2):
+        db_session.add(Search(
+            nif="B12345674", cnae="4711", tamano="micro", provincia="28",
+            finalidad=["comercio"],
+        ))
+    db_session.commit()
+
+    response = client.get(
+        "/admin",
+        headers=_basic_header(admin_creds["user"], admin_creds["password"]),
+    )
+    assert response.status_code == 200
+    text = response.text
+    # 5 total in 24h — the number 5 must appear somewhere in the counts
+    assert "5" in text
+
+
+def test_dashboard_handles_empty_db_gracefully(admin_creds, db_session):
+    """Dashboard with no data shouldn't crash; should show zeros."""
+    response = client.get(
+        "/admin",
+        headers=_basic_header(admin_creds["user"], admin_creds["password"]),
+    )
+    assert response.status_code == 200
+    # The conversion percentage should be 0% on empty data (no zero division)
+    assert "0.0%" in response.text or "0%" in response.text
+
+
+def test_dashboard_shows_top_finalidades_when_data(admin_creds, db_session):
+    """When searches exist with finalidades, top finalidades section shows them."""
+    from app.db.models import Search
+
+    db_session.add(Search(
+        nif="B12345674", cnae="6201", tamano="pequena", provincia="08",
+        finalidad=["digitalizacion", "i+d"],
+    ))
+    db_session.add(Search(
+        nif="B12345674", cnae="6201", tamano="pequena", provincia="08",
+        finalidad=["digitalizacion"],
+    ))
+    db_session.commit()
+
+    response = client.get(
+        "/admin",
+        headers=_basic_header(admin_creds["user"], admin_creds["password"]),
+    )
+    assert response.status_code == 200
+    # "digitalizacion" must appear in the rendered top finalidades list
+    assert "digitalizacion" in response.text

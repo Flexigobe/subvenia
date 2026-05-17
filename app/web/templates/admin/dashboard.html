@@ -1,0 +1,101 @@
+{% extends "admin/_base.html" %}
+{% block admin_content %}
+<div class="space-y-6">
+  <header class="flex items-baseline justify-between">
+    <h1 class="text-2xl font-bold">Dashboard</h1>
+    <p class="text-xs text-gray-500">Datos en vivo · {{ now.strftime("%d/%m/%Y %H:%M UTC") }}</p>
+  </header>
+
+  <!-- Búsquedas -->
+  <section class="grid grid-cols-2 md:grid-cols-4 gap-3">
+    {% for label, val in [
+      ("Últimas 24h", searches_24h),
+      ("Últimos 7d", searches_7d),
+      ("Últimos 30d", searches_30d),
+      ("Total histórico", total_searches),
+    ] %}
+    <div class="bg-white border border-gray-200 rounded-2xl p-4">
+      <div class="text-xs text-gray-500 uppercase">{{ label }}</div>
+      <div class="text-3xl font-bold mt-1">{{ "{:,}".format(val) }}</div>
+      <div class="text-xs text-gray-400 mt-1">búsquedas</div>
+    </div>
+    {% endfor %}
+  </section>
+
+  <!-- Conversion + Subs + Outbox -->
+  <section class="grid grid-cols-1 md:grid-cols-3 gap-3">
+    <div class="bg-white border border-gray-200 rounded-2xl p-4">
+      <div class="text-xs text-gray-500 uppercase">Conversión email (30d)</div>
+      <div class="text-3xl font-bold mt-1">{{ conversion_pct }}%</div>
+      <div class="text-xs text-gray-400 mt-1">{{ emails_30d }} emails / {{ searches_30d }} búsquedas</div>
+    </div>
+    <div class="bg-white border border-gray-200 rounded-2xl p-4">
+      <div class="text-xs text-gray-500 uppercase">Suscripciones</div>
+      <div class="text-3xl font-bold mt-1">{{ subs_active }}</div>
+      <div class="text-xs text-gray-400 mt-1">activas · {{ subs_inactive }} inactivas · {{ subs_total }} totales</div>
+    </div>
+    <div class="bg-white border border-gray-200 rounded-2xl p-4">
+      <div class="text-xs text-gray-500 uppercase">Outbox</div>
+      <div class="text-sm mt-2 space-y-0.5">
+        <div>Pending: <strong>{{ outbox_counts.get("pending", 0) }}</strong></div>
+        <div>Sent: <strong>{{ outbox_counts.get("sent", 0) }}</strong></div>
+        <div class="text-red-700">Dead: <strong>{{ outbox_counts.get("dead", 0) }}</strong></div>
+      </div>
+      {% if avg_send_seconds is not none %}
+      <div class="text-xs text-gray-400 mt-2">Avg envío: {{ "%.1f"|format(avg_send_seconds) }}s</div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- Top lists -->
+  <section class="grid grid-cols-1 md:grid-cols-3 gap-3">
+    <div class="bg-white border border-gray-200 rounded-2xl p-4">
+      <h2 class="text-xs font-semibold text-gray-500 uppercase mb-2">Top finalidades (30d)</h2>
+      {% if top_finalidades %}
+      <ul class="text-sm space-y-1">
+        {% for v, c in top_finalidades %}<li class="flex justify-between"><span>{{ v }}</span><strong>{{ c }}</strong></li>{% endfor %}
+      </ul>
+      {% else %}<p class="text-xs text-gray-400">—</p>{% endif %}
+    </div>
+    <div class="bg-white border border-gray-200 rounded-2xl p-4">
+      <h2 class="text-xs font-semibold text-gray-500 uppercase mb-2">Top CNAEs (30d)</h2>
+      {% if top_cnaes %}
+      <ul class="text-sm space-y-1">
+        {% for v, c in top_cnaes %}<li class="flex justify-between"><span>{{ v }}</span><strong>{{ c }}</strong></li>{% endfor %}
+      </ul>
+      {% else %}<p class="text-xs text-gray-400">—</p>{% endif %}
+    </div>
+    <div class="bg-white border border-gray-200 rounded-2xl p-4">
+      <h2 class="text-xs font-semibold text-gray-500 uppercase mb-2">Tamaño empresa (30d)</h2>
+      {% if distrib_tamano %}
+      <ul class="text-sm space-y-1">
+        {% for v, c in distrib_tamano %}<li class="flex justify-between"><span>{{ v }}</span><strong>{{ c }}</strong></li>{% endfor %}
+      </ul>
+      {% else %}<p class="text-xs text-gray-400">—</p>{% endif %}
+    </div>
+  </section>
+
+  <!-- Sync state -->
+  <section class="bg-white border border-gray-200 rounded-2xl p-4">
+    <h2 class="text-xs font-semibold text-gray-500 uppercase mb-3">Estado del sync</h2>
+    <table class="w-full text-sm">
+      <thead class="text-xs text-gray-500 uppercase">
+        <tr>
+          <th class="text-left py-1">Source</th>
+          <th class="text-left py-1">Records</th>
+          <th class="text-left py-1">Última actualización</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in sync_state %}
+        <tr class="border-t border-gray-100">
+          <td class="py-1.5"><strong>{{ row.source }}</strong></td>
+          <td class="py-1.5">{{ "{:,}".format(row.count) }}</td>
+          <td class="py-1.5 text-gray-600">{{ row.last_update.strftime("%d/%m/%Y %H:%M UTC") if row.last_update else "—" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+</div>
+{% endblock %}
