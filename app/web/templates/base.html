@@ -12,9 +12,13 @@
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen">
   <header class="bg-white border-b border-gray-200">
-    <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="max-w-5xl mx-auto px-6 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
       <a href="/" class="font-bold text-lg">Buscador de subvenciones</a>
-      <span class="text-xs text-gray-500">España · BDNS oficial</span>
+      <nav class="flex flex-wrap items-center gap-4 text-sm">
+        <a href="/" class="text-gray-700 hover:text-green-700 hover:underline">Buscar a medida</a>
+        <a href="/subvenciones" class="text-gray-700 hover:text-green-700 hover:underline">Todas las subvenciones</a>
+        <a href="/noticias" class="text-gray-700 hover:text-green-700 hover:underline">Fuentes y novedades</a>
+      </nav>
     </div>
   </header>
   <main class="max-w-5xl mx-auto px-6 py-8">

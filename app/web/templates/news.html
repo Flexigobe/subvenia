@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Fuentes y novedades de subvenciones{% endblock %}
+{% block content %}
+
+<!-- Intro -->
+<div class="mb-8">
+  <h1 class="text-2xl font-bold mb-2">Fuentes y novedades</h1>
+  <p class="text-gray-700 max-w-2xl">
+    Esta página recoge las fuentes oficiales donde se publican las convocatorias de subvenciones en España y la Unión Europea.
+    Para una búsqueda personalizada según tu empresa, usa el <a href="/" class="text-green-700 hover:underline font-medium">buscador a medida</a>.
+    Para explorar todas las convocatorias ya indexadas en nuestra base de datos, visita el
+    <a href="/subvenciones" class="text-green-700 hover:underline font-medium">directorio de subvenciones</a>.
+  </p>
+</div>
+
+<!-- Groups -->
+{% for group in groups %}
+<section class="mb-10">
+  <h2 class="text-lg font-bold text-gray-900 mb-1">{{ group.title }}</h2>
+  <p class="text-sm text-gray-600 mb-4">{{ group.description }}</p>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {% for item in group.sources %}
+    <div class="bg-white border border-gray-200 rounded-2xl p-5 hover:shadow-md transition">
+      <a
+        href="{{ item.url }}"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="font-semibold text-green-700 hover:underline block mb-1"
+      >{{ item.name }}</a>
+      <p class="text-sm text-gray-600">{{ item.desc }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endfor %}
+
+{% endblock %}

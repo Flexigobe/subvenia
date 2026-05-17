@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Todas las subvenciones{% endblock %}
+{% block content %}
+
+<!-- Header -->
+<div class="mb-6">
+  <h1 class="text-2xl font-bold">Todas las subvenciones</h1>
+  <p class="text-gray-600 text-sm mt-1">{{ total_count }} convocatorias en base de datos</p>
+</div>
+
+<!-- Filter form -->
+<form method="get" action="/subvenciones" class="bg-white border border-gray-200 rounded-2xl p-4 mb-6">
+  <div class="flex flex-wrap gap-3 items-end">
+    <div class="flex-1 min-w-[180px]">
+      <label for="q" class="block text-xs font-medium text-gray-600 mb-1">Texto</label>
+      <input
+        id="q"
+        type="text"
+        name="q"
+        value="{{ q }}"
+        placeholder="Buscar por título o descripción…"
+        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+      >
+    </div>
+    <div class="min-w-[160px]">
+      <label for="ambito" class="block text-xs font-medium text-gray-600 mb-1">Ámbito</label>
+      <select id="ambito" name="ambito" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+        {% for value, label in ambito_choices %}
+        <option value="{{ value }}" {% if ambito == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="min-w-[140px]">
+      <label for="estado" class="block text-xs font-medium text-gray-600 mb-1">Estado</label>
+      <select id="estado" name="estado" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+        {% for value, label in estado_choices %}
+        <option value="{{ value }}" {% if estado == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <button type="submit" class="bg-green-700 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-green-800 transition">Filtrar</button>
+    </div>
+  </div>
+</form>
+
+<!-- Table or empty state -->
+{% if items %}
+<div class="bg-white border border-gray-200 rounded-2xl overflow-hidden mb-6">
+  <table class="w-full text-sm">
+    <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
+      <tr>
+        <th class="px-4 py-3 text-left">Convocatoria</th>
+        <th class="px-4 py-3 text-left hidden md:table-cell">Organismo</th>
+        <th class="px-4 py-3 text-left hidden md:table-cell">Ámbito</th>
+        <th class="px-4 py-3 text-left hidden md:table-cell">Recibida</th>
+        <th class="px-4 py-3 text-left">Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for sub in items %}
+      <tr class="border-t border-gray-100 hover:bg-gray-50">
+        <td class="px-4 py-3">
+          <a href="/subsidy/{{ sub.id }}" class="font-medium hover:underline hover:text-green-700">
+            {{ (sub.titulo or "")[:80] }}{% if (sub.titulo or "")|length > 80 %}…{% endif %}
+          </a>
+        </td>
+        <td class="px-4 py-3 text-gray-600 hidden md:table-cell">{{ sub.organismo or "—" }}</td>
+        <td class="px-4 py-3 text-gray-600 hidden md:table-cell">{{ sub.ambito|capitalize }}</td>
+        <td class="px-4 py-3 text-gray-500 hidden md:table-cell">
+          {% if sub.fecha_inicio %}{{ sub.fecha_inicio.strftime("%d/%m/%Y") }}{% else %}—{% endif %}
+        </td>
+        <td class="px-4 py-3">
+          {% if sub.estado == "abierta" %}
+          <span class="inline-block bg-green-100 text-green-800 text-xs font-semibold px-2 py-0.5 rounded">Abierta</span>
+          {% elif sub.estado == "cerrada" %}
+          <span class="inline-block bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded">Cerrada</span>
+          {% else %}
+          <span class="inline-block bg-yellow-100 text-yellow-800 text-xs font-semibold px-2 py-0.5 rounded">Próximamente</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-center mb-6">
+  <p class="font-semibold mb-1">No hay subvenciones que coincidan con esos filtros.</p>
+  <p class="text-sm text-gray-700">Prueba a cambiar el texto de búsqueda, el ámbito o el estado.</p>
+</div>
+{% endif %}
+
+<!-- Pagination footer -->
+{% if total_pages > 1 %}
+<div class="flex items-center justify-between text-sm">
+  <div>
+    {% if page > 1 %}
+    <a href="/subvenciones?q={{ q }}&ambito={{ ambito }}&estado={{ estado }}&page={{ page - 1 }}"
+       class="inline-block border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-100 transition">← Anterior</a>
+    {% endif %}
+  </div>
+  <span class="text-gray-600 font-medium">Página {{ page }} de {{ total_pages }}</span>
+  <div>
+    {% if page < total_pages %}
+    <a href="/subvenciones?q={{ q }}&ambito={{ ambito }}&estado={{ estado }}&page={{ page + 1 }}"
+       class="inline-block border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-100 transition">Siguiente →</a>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}
