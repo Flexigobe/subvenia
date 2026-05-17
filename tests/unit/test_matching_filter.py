@@ -118,3 +118,29 @@ def test_filter_respects_limit(db_session, perfil_pyme_digital):
 
     results = find_candidates(db_session, perfil_pyme_digital, limit=30)
     assert len(results) == 30
+
+
+def test_filter_includes_subvencion_with_empty_finalidad_too(db_session, perfil_pyme_digital):
+    """Records sin finalidad clasificada (BDNS detail con descripcionFinalidad vacía o
+    sin keyword conocida) deben aparecer en resultados pero con menor score que los que
+    sí matchean finalidad. Esto evita que toda la web quede a 0 resultados cuando el
+    enrichment no clasifica todos los records."""
+    from app.matching.filter import find_candidates
+
+    matches = _make_subvencion(
+        external_id="MATCHES", cnae_elegible=["6201"], finalidad=["digitalizacion"]
+    )
+    generic = _make_subvencion(
+        external_id="GENERIC", cnae_elegible=["6201"], finalidad=[]
+    )
+    db_session.add_all([matches, generic])
+    db_session.commit()
+
+    results = find_candidates(db_session, perfil_pyme_digital, limit=30)
+    ids = [c.subvencion.external_id for c in results]
+
+    # Both should appear
+    assert "TEST-MATCHES" in ids
+    assert "TEST-GENERIC" in ids
+    # The one that matches finalidad must come FIRST
+    assert ids.index("TEST-MATCHES") < ids.index("TEST-GENERIC")

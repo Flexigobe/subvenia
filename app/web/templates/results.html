@@ -19,6 +19,7 @@
         </span>
       </div>
       <h3 class="font-bold text-lg">{{ r.subvencion.titulo }}</h3>
+      {% if r.razon %}<p class="text-xs text-gray-700 italic mt-1">{{ r.razon }}</p>{% endif %}
       <p class="text-sm text-gray-600 mt-1">
         {{ r.subvencion.organismo or "Organismo no especificado" }}
         {% if r.subvencion.importe_max_beneficiario %} · Hasta {{ "{:,.0f}".format(r.subvencion.importe_max_beneficiario) }}€{% endif %}

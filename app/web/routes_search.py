@@ -64,7 +64,7 @@ def home(request: Request) -> HTMLResponse:
 
 
 @router.post("/search", response_class=HTMLResponse)
-def search(
+async def search(
     request: Request,
     nif: Annotated[str, Form()],
     cnae: Annotated[str, Form()],
@@ -103,7 +103,7 @@ def search(
 
     # Matching
     perfil = EmpresaProfile(cnae=cnae, tamano=tamano, provincia=provincia, finalidad=finalidad)
-    ranked = rank_for(db, perfil, limit=30)
+    ranked = await rank_for(db, perfil, limit=30)
 
     # Persistir search_results
     for r in ranked:

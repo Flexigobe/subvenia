@@ -1,11 +1,18 @@
 from datetime import date, timedelta
 
+import pytest
+
 from app.db.models import Subvencion
 from app.matching.filter import EmpresaProfile
 from app.matching.service import rank_for
 
 
-def test_rank_for_returns_ranked_results(db_session):
+@pytest.mark.asyncio
+async def test_rank_for_returns_ranked_results(db_session, monkeypatch):
+    # Disable LLM by clearing API key — uses deterministic score
+    from app.config import get_settings
+    monkeypatch.setattr(get_settings(), "gemini_api_key", "")
+
     db_session.add(
         Subvencion(
             source="bdns",
@@ -21,10 +28,12 @@ def test_rank_for_returns_ranked_results(db_session):
     )
     db_session.commit()
 
-    perfil = EmpresaProfile(cnae="6201", tamano="pequena", provincia="08", finalidad=["digitalizacion"])
-    results = rank_for(db_session, perfil, limit=10)
+    perfil = EmpresaProfile(
+        cnae="6201", tamano="pequena", provincia="08", finalidad=["digitalizacion"]
+    )
+    results = await rank_for(db_session, perfil, limit=10)
 
     assert len(results) == 1
     assert results[0].rank == 1
     assert results[0].score > 0
-    assert results[0].razon is None
+    assert results[0].razon is None  # no LLM, so razon stays None

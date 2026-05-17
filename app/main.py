@@ -12,6 +12,7 @@ from app.sync.runner import build_scheduler
 from app.web.routes_search import router as search_router
 from app.web.routes_browse import router as browse_router  # noqa: E402
 from app.web.routes_news import router as news_router  # noqa: E402
+from app.web.routes_enrich import router as enrich_router  # noqa: E402
 
 settings = get_settings()
 logging.basicConfig(level=settings.log_level)
@@ -34,6 +35,7 @@ app = FastAPI(title="Buscador de subvenciones", lifespan=lifespan)
 app.include_router(search_router)
 app.include_router(browse_router)
 app.include_router(news_router)
+app.include_router(enrich_router)
 
 
 @app.get("/healthz")

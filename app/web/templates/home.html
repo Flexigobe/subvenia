@@ -12,11 +12,17 @@
       <div>
         <label class="block text-sm mb-1">NIF / CIF</label>
         <input type="text" name="nif" required pattern=".{8,10}" placeholder="B12345678"
-               class="w-full border border-gray-300 rounded px-3 py-2">
+               class="w-full border border-gray-300 rounded px-3 py-2"
+               hx-get="/api/enrich"
+               hx-trigger="change, keyup changed delay:500ms"
+               hx-target="#enrich-status"
+               hx-swap="innerHTML"
+               hx-include="this">
+        <div id="enrich-status" class="mt-1"></div>
       </div>
       <div>
         <label class="block text-sm mb-1">Razón social <span class="text-gray-400 text-xs">(opcional)</span></label>
-        <input type="text" name="razon_social" class="w-full border border-gray-300 rounded px-3 py-2">
+        <input type="text" name="razon_social" id="razon_social" class="w-full border border-gray-300 rounded px-3 py-2">
       </div>
       <div>
         <label class="block text-sm mb-1">CNAE (código de actividad)</label>

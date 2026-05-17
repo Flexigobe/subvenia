@@ -94,9 +94,13 @@ def find_candidates(session: Session, perfil: EmpresaProfile, limit: int = 30) -
         | (func.cardinality(Subvencion.cnae_elegible) == 0)
     )
 
-    # Finalidad (al menos una en común)
+    # Finalidad: lenient — solapa con la del perfil O record sin finalidad clasificada
+    # (los que no solapan obtienen score bajo en _compute_score y caen al final del ranking)
     if perfil.finalidad:
-        stmt = stmt.where(Subvencion.finalidad.overlap(perfil.finalidad))
+        stmt = stmt.where(
+            (Subvencion.finalidad.overlap(perfil.finalidad))
+            | (func.cardinality(Subvencion.finalidad) == 0)
+        )
 
     # Ámbito
     ccaa = perfil.ccaa

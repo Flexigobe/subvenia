@@ -104,3 +104,16 @@ class SearchResult(Base):
 
     search: Mapped[Search] = relationship(back_populates="results")
     subvencion: Mapped[Subvencion] = relationship()
+
+
+class BdnsCatalog(Base):
+    __tablename__ = "bdns_catalog"
+
+    kind: Mapped[str] = mapped_column(String(32), primary_key=True)
+    payload: Mapped[dict | list] = mapped_column(JSONB, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+    )

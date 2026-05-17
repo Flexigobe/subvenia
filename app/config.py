@@ -24,6 +24,10 @@ class Settings(BaseSettings):
     # Matching
     matching_candidate_limit: int = 30
 
+    # Gemini LLM scoring
+    gemini_api_key: str = ""
+    gemini_model: str = "gemini-2.5-flash"
+
 
 @lru_cache
 def get_settings() -> Settings:

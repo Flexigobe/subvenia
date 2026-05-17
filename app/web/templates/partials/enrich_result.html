@@ -1,0 +1,13 @@
+{% if data and data.razon_social %}
+<input
+  type="text"
+  name="razon_social"
+  id="razon_social"
+  value="{{ data.razon_social }}"
+  class="w-full border border-gray-300 rounded px-3 py-2 bg-green-50"
+  hx-swap-oob="true"
+/>
+<span class="text-xs text-green-700">✓ Encontrado: {{ data.razon_social }}{% if data.provincia_text %} · {{ data.provincia_text }}{% endif %}</span>
+{% else %}
+<span class="text-xs text-gray-500">No encontrado en fuentes públicas. Rellena los campos manualmente.</span>
+{% endif %}
