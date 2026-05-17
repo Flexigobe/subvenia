@@ -12,6 +12,7 @@ from sqlalchemy.orm import Session
 
 from app.config import get_settings
 from app.db.models import Subvencion
+from app.matching.finalidad_classifier import classify
 from app.sync.bdns_mappers import map_detail
 
 logger = logging.getLogger(__name__)
@@ -79,6 +80,11 @@ async def enrich_existing(
                     skipped += 1
                 else:
                     mapped = map_detail(detail)
+                    # Plan 3 Task 2: if keyword heuristic produced ['otros'] or empty, try Gemini classifier
+                    if not mapped["finalidad"] or mapped["finalidad"] == ["otros"]:
+                        long_text = detail.get("descripcionBasesReguladoras") or detail.get("descripcion") or ""
+                        if long_text:
+                            mapped["finalidad"] = await classify(long_text, fallback=mapped["finalidad"] or ["otros"])
                     for k, v in mapped.items():
                         # raw_payload siempre se sobrescribe; los demás solo si traen valor útil
                         if k == "raw_payload" or (v is not None and v != []):
@@ -114,7 +120,13 @@ async def enrich_one(session: Session, external_id: str) -> bool:
     ).scalar_one_or_none()
     if sub is None:
         return False
-    for k, v in map_detail(detail).items():
+    mapped = map_detail(detail)
+    # Plan 3 Task 2: if keyword heuristic produced ['otros'] or empty, try Gemini classifier
+    if not mapped["finalidad"] or mapped["finalidad"] == ["otros"]:
+        long_text = detail.get("descripcionBasesReguladoras") or detail.get("descripcion") or ""
+        if long_text:
+            mapped["finalidad"] = await classify(long_text, fallback=mapped["finalidad"] or ["otros"])
+    for k, v in mapped.items():
         if k == "raw_payload" or (v is not None and v != []):
             setattr(sub, k, v)
     session.commit()
