@@ -1,0 +1,23 @@
+{
+  "page": 1,
+  "totalPages": 2,
+  "items": [
+    {
+      "id": "BDNS-001",
+      "titulo": "Ayudas para digitalización de PYMEs",
+      "organismo": "Ministerio de Industria",
+      "ambito": "estatal",
+      "ccaa": null,
+      "fechaInicio": "2026-01-15",
+      "fechaFin": "2026-12-31",
+      "importeTotal": 1000000.00,
+      "importeMaxBeneficiario": 12000.00,
+      "porcentaje": null,
+      "beneficiarios": {"tamanos": ["micro", "pequena", "mediana"]},
+      "cnaeElegible": ["6201", "6202"],
+      "finalidad": ["digitalizacion"],
+      "descripcion": "Ayudas Kit Digital para PYMEs.",
+      "enlaceOficial": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-1"
+    }
+  ]
+}
