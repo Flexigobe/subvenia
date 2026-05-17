@@ -68,6 +68,10 @@ from app.web.routes_admin import router as admin_router  # noqa: E402
 
 app.include_router(admin_router)
 
+from app.web.rate_limit import RateLimitMiddleware  # noqa: E402
+
+app.add_middleware(RateLimitMiddleware, requests_per_window=settings.rate_limit_per_hour)
+
 
 @app.get("/healthz")
 def healthz() -> dict[str, str]:

@@ -38,6 +38,9 @@ class Settings(BaseSettings):
     admin_user: str = ""
     admin_pass: str = ""
 
+    # Rate limiting (POST /search only, sliding window 1h)
+    rate_limit_per_hour: int = 60
+
 
 @lru_cache
 def get_settings() -> Settings:
