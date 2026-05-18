@@ -70,31 +70,58 @@ def _merge_into_existing(existing: Empresa, parsed: dict[str, Any]) -> None:
 
 
 def _upsert_entry(session: Session, parsed: dict[str, Any]) -> str:
-    """Insert or update an empresa by hoja_rm. Returns 'created', 'updated', or 'skipped'."""
+    """Insert or update an empresa by hoja_rm. Returns 'created', 'updated', or 'skipped'.
+
+    Race-condition-safe: uses Postgres INSERT ... ON CONFLICT DO NOTHING for the create
+    path, then re-selects and merges if the row already existed (either pre-existing or
+    inserted by a concurrent transaction in another parallel date). This eliminates the
+    SELECT-then-INSERT race that fails with UniqueViolation when parallel=N>1.
+    """
     hoja_rm = parsed.get("hoja_rm")
     if not hoja_rm:
         return "skipped"
+
+    # Try the SELECT-then-merge fast path first (most common case in single-threaded use).
     existing = session.execute(
         select(Empresa).where(Empresa.hoja_rm == hoja_rm)
     ).scalar_one_or_none()
-    if existing is None:
-        session.add(Empresa(
-            slug=parsed["slug"],
-            razon_social=parsed["razon_social"],
-            provincia=parsed.get("provincia"),
-            domicilio=parsed.get("domicilio"),
-            objeto_social=parsed.get("objeto_social"),
-            hoja_rm=hoja_rm,
-            capital_social=parsed.get("capital_social"),
-            fecha_constitucion=parsed.get("fecha_constitucion"),
-            fecha_ultima_act=parsed.get("fecha_ultima_act"),
-            actos=parsed.get("actos"),
-            estado=parsed.get("estado") or "activa",
-            raw_text=parsed.get("raw_text"),
-        ))
+    if existing is not None:
+        _merge_into_existing(existing, parsed)
+        return "updated"
+
+    # Attempt atomic insert. If a concurrent transaction inserted the same hoja_rm in
+    # the gap between our SELECT and our INSERT, ON CONFLICT DO NOTHING avoids the
+    # UniqueViolation — we then re-select and merge as if the row pre-existed.
+    from sqlalchemy.dialects.postgresql import insert as pg_insert
+
+    stmt = pg_insert(Empresa).values(
+        slug=parsed["slug"],
+        razon_social=parsed["razon_social"],
+        provincia=parsed.get("provincia"),
+        domicilio=parsed.get("domicilio"),
+        objeto_social=parsed.get("objeto_social"),
+        hoja_rm=hoja_rm,
+        capital_social=parsed.get("capital_social"),
+        fecha_constitucion=parsed.get("fecha_constitucion"),
+        fecha_ultima_act=parsed.get("fecha_ultima_act"),
+        actos=parsed.get("actos"),
+        estado=parsed.get("estado") or "activa",
+        raw_text=parsed.get("raw_text"),
+    ).on_conflict_do_nothing(index_elements=["hoja_rm"]).returning(Empresa.id)
+    inserted_id = session.execute(stmt).scalar_one_or_none()
+
+    if inserted_id is not None:
         return "created"
-    _merge_into_existing(existing, parsed)
-    return "updated"
+
+    # Lost the race — another transaction inserted this hoja_rm. Refetch & merge.
+    existing = session.execute(
+        select(Empresa).where(Empresa.hoja_rm == hoja_rm)
+    ).scalar_one_or_none()
+    if existing is not None:
+        _merge_into_existing(existing, parsed)
+        return "updated"
+    # Edge case: the conflicting row was deleted between INSERT and re-SELECT. Skip.
+    return "skipped"
 
 
 async def _process_pdf(
