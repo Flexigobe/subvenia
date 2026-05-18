@@ -6,7 +6,7 @@ robots.txt is static text disallowing /admin/* and referencing sitemap.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import PlainTextResponse, Response
@@ -47,7 +47,7 @@ def robots(request: Request) -> PlainTextResponse:
 @router.get("/sitemap.xml")
 def sitemap(request: Request, db: Session = Depends(get_db)) -> Response:
     origin = _origin(request)
-    now = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    now = datetime.now(UTC).strftime("%Y-%m-%d")
 
     static_urls = [
         ("/", "1.0", "daily"),
@@ -81,8 +81,8 @@ def sitemap(request: Request, db: Session = Depends(get_db)) -> Response:
         lines.append("<url>")
         lines.append(f"  <loc>{origin}/subsidy/{row.id}</loc>")
         lines.append(f"  <lastmod>{last}</lastmod>")
-        lines.append(f"  <changefreq>monthly</changefreq>")
-        lines.append(f"  <priority>0.6</priority>")
+        lines.append("  <changefreq>monthly</changefreq>")
+        lines.append("  <priority>0.6</priority>")
         lines.append("</url>")
     lines.append("</urlset>")
 

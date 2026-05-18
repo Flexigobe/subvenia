@@ -6,8 +6,8 @@ import hashlib
 import json
 import uuid
 from pathlib import Path
-from uuid import UUID
 from typing import Annotated
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import HTMLResponse

@@ -15,7 +15,6 @@ import re
 import unicodedata
 from datetime import date
 from decimal import Decimal, InvalidOperation
-from typing import Any
 
 logger = logging.getLogger(__name__)
 

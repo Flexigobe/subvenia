@@ -1,5 +1,4 @@
 # tests/unit/test_cnae_catalog.py
-import pytest
 
 from app.lib.cnae_catalog import get_by_code, search
 

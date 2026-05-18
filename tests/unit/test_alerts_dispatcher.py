@@ -1,6 +1,6 @@
 """Tests for outbox flush + alerts dispatcher."""
 
-from datetime import date, datetime, timedelta, timezone
+from datetime import date, timedelta
 
 import pytest
 from sqlalchemy import select

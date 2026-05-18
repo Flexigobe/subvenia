@@ -30,7 +30,6 @@ from pathlib import Path
 from app.db.session import SessionLocal
 from app.sync.borme_ingester import sync_day
 
-
 _DEFAULT_STATE = Path("/tmp/borme_backfill_state.json")
 _BATCH_DELAY_SECONDS = 1.0  # Polite delay between batches
 

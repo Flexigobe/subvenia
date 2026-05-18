@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.db.models import AlertSent, AlertSubscription, EmailOutbox, Subvencion
+from app.db.models import AlertSent, AlertSubscription, EmailOutbox
 from app.lib.email_brevo import send_email
 from app.matching.filter import EmpresaProfile, find_candidates
 
@@ -33,7 +33,7 @@ async def flush_outbox(session: Session, max_per_run: int = 50) -> dict[str, int
             ok = await send_email(msg.to_email, msg.subject, msg.body_html, msg.attachments)
             if ok:
                 msg.status = "sent"
-                msg.sent_at = datetime.now(timezone.utc)
+                msg.sent_at = datetime.now(UTC)
                 sent += 1
             else:
                 msg.attempts += 1
@@ -97,8 +97,9 @@ async def dispatch_alerts(session: Session) -> dict[str, int]:
     `last_sent_at` que matcheen el perfil, encola un digest email, registra
     AlertSent (idempotencia) y actualiza last_sent_at.
     """
-    from app.config import get_settings
     from fastapi.templating import Jinja2Templates
+
+    from app.config import get_settings
 
     settings = get_settings()
     base_url = settings.base_url
@@ -153,7 +154,7 @@ async def dispatch_alerts(session: Session) -> dict[str, int]:
         ))
         for s in new_ones:
             session.add(AlertSent(subscription_id=sub.id, subvencion_id=s.id))
-        sub.last_sent_at = datetime.now(timezone.utc)
+        sub.last_sent_at = datetime.now(UTC)
         subscriptions_alerted += 1
         total_subvenciones_emailed += len(new_ones)
 

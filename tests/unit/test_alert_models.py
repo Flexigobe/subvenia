@@ -1,7 +1,5 @@
 """Tests that the alert models persist and constrain correctly."""
 
-import uuid
-from datetime import date, datetime, timedelta, timezone
 
 import pytest
 from sqlalchemy import select

@@ -1,6 +1,5 @@
 """Tests for the Gemini-based finalidad classifier."""
 
-import json
 import sys
 from unittest.mock import MagicMock
 

@@ -10,12 +10,12 @@ from fastapi import FastAPI
 
 from app.config import get_settings
 from app.sync.runner import build_scheduler
-from app.web.routes_search import router as search_router
-from app.web.routes_browse import router as browse_router  # noqa: E402
-from app.web.routes_news import router as news_router  # noqa: E402
-from app.web.routes_enrich import router as enrich_router  # noqa: E402
 from app.web.routes_alerts import router as alerts_router  # noqa: E402
+from app.web.routes_browse import router as browse_router  # noqa: E402
 from app.web.routes_empresa import router as empresa_router  # noqa: E402
+from app.web.routes_enrich import router as enrich_router  # noqa: E402
+from app.web.routes_news import router as news_router  # noqa: E402
+from app.web.routes_search import router as search_router
 
 settings = get_settings()
 logging.basicConfig(level=settings.log_level)
@@ -88,14 +88,14 @@ app.add_middleware(RateLimitMiddleware, requests_per_window=settings.rate_limit_
 # Each route module imports its own templates instance — we collect them and inject.
 def _register_seo_globals():
     settings = get_settings()
-    from app.web.routes_search import templates as _t1
-    from app.web.routes_browse import templates as _t2
-    from app.web.routes_news import templates as _t3
-    from app.web.routes_enrich import templates as _t4
     from app.web.routes_admin import templates as _t5
     from app.web.routes_alerts import templates as _t6
+    from app.web.routes_browse import templates as _t2
     from app.web.routes_empresa import templates as _t7
+    from app.web.routes_enrich import templates as _t4
     from app.web.routes_legal import templates as _t8
+    from app.web.routes_news import templates as _t3
+    from app.web.routes_search import templates as _t1
     for t in (_t1, _t2, _t3, _t4, _t5, _t6, _t7, _t8):
         t.env.globals["plausible_domain"] = settings.plausible_domain
         t.env.globals["plausible_src"] = settings.plausible_src

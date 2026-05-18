@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import date, timedelta
+from datetime import date
 
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session

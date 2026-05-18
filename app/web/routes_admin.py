@@ -4,13 +4,12 @@ para evitar dejar el panel abierto por accidente."""
 
 from __future__ import annotations
 
-import asyncio
 import csv
 import io
 import logging
 import secrets as _secrets
+from datetime import UTC, datetime, timedelta
 from datetime import date as _date
-from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Annotated
 from uuid import UUID
@@ -22,8 +21,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.alerts.dispatcher import dispatch_alerts, flush_outbox
-from app.config import get_settings
+from app.alerts.dispatcher import dispatch_alerts
 from app.db.models import (
     AlertSubscription,
     EmailOutbox,
@@ -111,7 +109,7 @@ def _top_values(
 
 
 def _compute_dashboard_metrics(session: Session) -> dict:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     last_24h = now - timedelta(hours=24)
     last_7d = now - timedelta(days=7)
     last_30d = now - timedelta(days=30)
@@ -410,6 +408,7 @@ async def _run_alerts() -> None:
 
 async def _run_borme() -> None:
     from datetime import date as _date
+
     from app.sync.borme_ingester import sync_day as _borme_sync_day
     with SessionLocal() as session:
         result = await _borme_sync_day(session, _date.today())

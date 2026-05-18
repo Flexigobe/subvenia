@@ -39,7 +39,7 @@ def test_sitemap_xml_returns_xml_with_static_routes(db_session):
     assert "<urlset" in body
     # All 5 static routes must appear
     for path in ["/", "/subvenciones", "/noticias", "/privacidad", "/terminos"]:
-        assert f"<loc>http" in body  # has some URL
+        assert "<loc>http" in body  # has some URL
     # Each <url> has lastmod + changefreq + priority
     assert "<lastmod>" in body
     assert "<changefreq>" in body
