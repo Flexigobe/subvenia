@@ -72,8 +72,10 @@ app.include_router(alerts_router)
 app.include_router(empresa_router)
 
 from app.web.routes_admin import router as admin_router  # noqa: E402
+from app.web.routes_legal import router as legal_router  # noqa: E402
 
 app.include_router(admin_router)
+app.include_router(legal_router)
 
 from app.web.rate_limit import RateLimitMiddleware  # noqa: E402
 
