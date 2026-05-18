@@ -407,12 +407,21 @@ async def _run_alerts() -> None:
     _log.info("admin force-sync alerts done: %s", result)
 
 
+async def _run_borme() -> None:
+    from datetime import date as _date
+    from app.sync.borme_ingester import sync_day as _borme_sync_day
+    with SessionLocal() as session:
+        result = await _borme_sync_day(session, _date.today())
+    _log.info("admin force-sync borme done: %s", result)
+
+
 _JOB_CALLABLES = {
     "bdns": _run_bdns,
     "eu": _run_eu,
     "enricher": _run_enricher,
     "catalogs": _run_catalogs,
     "alerts": _run_alerts,
+    "borme": _run_borme,
 }
 
 
