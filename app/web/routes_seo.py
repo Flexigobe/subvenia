@@ -53,6 +53,7 @@ def sitemap(request: Request, db: Session = Depends(get_db)) -> Response:
         ("/", "1.0", "daily"),
         ("/subvenciones", "0.9", "daily"),
         ("/noticias", "0.7", "weekly"),
+        ("/como-funciona", "0.6", "monthly"),  # NEW
         ("/privacidad", "0.3", "yearly"),
         ("/terminos", "0.3", "yearly"),
     ]

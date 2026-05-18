@@ -47,3 +47,33 @@ def test_footer_has_legal_links():
     assert 'href="/privacidad"' in response.text
     assert 'href="/terminos"' in response.text
     assert "Política de privacidad" in response.text
+
+
+def test_como_funciona_returns_200_with_content():
+    response = client.get("/como-funciona")
+    assert response.status_code == 200
+    text = response.text
+    # Key sections that must be present
+    assert "Cómo funciona" in text
+    assert "BDNS" in text
+    assert "BORME" in text
+    assert "Gemini" in text or "IA" in text
+    # CTA back to home
+    assert 'href="/"' in text and "Probar el buscador" in text
+    # Mentions privacy link
+    assert 'href="/privacidad"' in text
+
+
+def test_como_funciona_appears_in_nav():
+    response = client.get("/")
+    assert response.status_code == 200
+    assert 'href="/como-funciona"' in response.text
+
+
+def test_home_hero_has_strong_value_proposition():
+    response = client.get("/")
+    text = response.text
+    # Should mention BDNS prominently AND BORME (Plan 7 pivot is hero pulido)
+    assert "BDNS" in text and "BORME" in text
+    # The three trust chips
+    assert "Gratis" in text and "oficiales" in text.lower()

@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Cómo funciona el buscador de subvenciones · Datos oficiales y gratuitos{% endblock %}
+{% block meta_description %}Te explicamos cómo cruzamos tu perfil de empresa con las fuentes oficiales (BDNS, BORME, UE) para encontrar las subvenciones públicas a las que puedes optar. Gratis, sin registro, sin cookies.{% endblock %}
+{% block og_title %}Cómo funciona — Buscador de subvenciones{% endblock %}
+{% block og_description %}Cómo cruzamos tu perfil con BDNS, BORME y UE para encontrar las subvenciones que puede pedir tu empresa.{% endblock %}
+
+{% block content %}
+<article class="max-w-3xl mx-auto bg-white border border-gray-200 rounded-2xl p-8 prose prose-sm">
+  <h1 class="text-3xl font-bold mb-2">Cómo funciona</h1>
+  <p class="text-gray-600 mb-8">El recorrido completo de un click en "Buscar" hasta tu informe personalizado, en 5 pasos.</p>
+
+  <ol class="space-y-8">
+    <li>
+      <h2 class="text-xl font-semibold flex items-baseline gap-2">
+        <span class="bg-green-700 text-white text-sm font-bold rounded-full w-7 h-7 inline-flex items-center justify-center">1</span>
+        Tú rellenas el formulario
+      </h2>
+      <p class="text-gray-700 mt-2">Nos das tu razón social (con autocompletado contra el <strong>BORME oficial</strong> mientras tecleas), tu CNAE, tu tamaño, tu provincia y qué tipo de financiación buscas (digitalización, I+D, contratación, etc.). El NIF es opcional, solo para personalizar el informe.</p>
+    </li>
+
+    <li>
+      <h2 class="text-xl font-semibold flex items-baseline gap-2">
+        <span class="bg-green-700 text-white text-sm font-bold rounded-full w-7 h-7 inline-flex items-center justify-center">2</span>
+        Filtramos en bases oficiales
+      </h2>
+      <p class="text-gray-700 mt-2">Tenemos sincronizadas a diario:</p>
+      <ul class="list-disc pl-6 mt-2 space-y-1 text-gray-700">
+        <li><strong>BDNS</strong> (Base de Datos Nacional de Subvenciones) — todas las convocatorias estatales, autonómicas y locales que se publican en España por ley.</li>
+        <li><strong>EU Funding &amp; Tenders Portal</strong> — programas de financiación europea (Horizon Europe, Digital Europe, EIC...) a los que España puede optar.</li>
+        <li><strong>BORME</strong> (Boletín Oficial del Registro Mercantil) — para el autocompletado de razón social.</li>
+      </ul>
+      <p class="text-gray-700 mt-2">Hacemos un primer filtro SQL (CNAE compatible, ámbito territorial, finalidad solapada) y nos quedamos con las 30 convocatorias más prometedoras.</p>
+    </li>
+
+    <li>
+      <h2 class="text-xl font-semibold flex items-baseline gap-2">
+        <span class="bg-green-700 text-white text-sm font-bold rounded-full w-7 h-7 inline-flex items-center justify-center">3</span>
+        Las puntuamos con IA
+      </h2>
+      <p class="text-gray-700 mt-2">Para cada una de esas 30, Google Gemini lee el texto completo de la convocatoria y la compara con tu perfil concreto. Devuelve un score 0-100 y una frase explicando por qué encaja (o no). Eso es lo que ves como <em>"96% match · Porque tu CNAE 62.01 cumple el requisito de PYME tecnológica"</em>.</p>
+      <p class="text-gray-700 mt-2">Si la IA no está disponible o tarda, caemos a un ranking determinista por reglas — siempre verás resultados.</p>
+    </li>
+
+    <li>
+      <h2 class="text-xl font-semibold flex items-baseline gap-2">
+        <span class="bg-green-700 text-white text-sm font-bold rounded-full w-7 h-7 inline-flex items-center justify-center">4</span>
+        Te enseñamos el informe
+      </h2>
+      <p class="text-gray-700 mt-2">Las 3 mejor puntuadas como tarjetas grandes destacadas. Las otras en una tabla compacta. Cada una tiene un enlace directo a la <strong>convocatoria oficial publicada en el BOE</strong> (o portal correspondiente).</p>
+    </li>
+
+    <li>
+      <h2 class="text-xl font-semibold flex items-baseline gap-2">
+        <span class="bg-green-700 text-white text-sm font-bold rounded-full w-7 h-7 inline-flex items-center justify-center">5</span>
+        Opcional: alertas por email
+      </h2>
+      <p class="text-gray-700 mt-2">Si quieres, dejas tu email al final y te enviamos:</p>
+      <ul class="list-disc pl-6 mt-2 space-y-1 text-gray-700">
+        <li>El informe en PDF inmediatamente.</li>
+        <li>Un aviso cuando salga una nueva convocatoria afín a tu perfil (cron diario a las 9:00).</li>
+      </ul>
+      <p class="text-gray-700 mt-2">Te das de baja con un clic en cualquier email. Cumplimos RGPD; <a href="/privacidad" class="underline">léelo aquí</a>.</p>
+    </li>
+  </ol>
+
+  <hr class="my-8 border-gray-200">
+
+  <h2 class="text-2xl font-bold mb-4">Qué NO hacemos</h2>
+  <p class="text-gray-700 mb-2">Honestidad: hay cosas que el sistema español o europeo no permite, y queremos que las sepas:</p>
+  <ul class="list-disc pl-6 space-y-2 text-gray-700">
+    <li><strong>No tramitamos la subvención por ti.</strong> Te llevamos al BOE oficial y tú (o tu gestor) la solicitas. Somos un buscador, no una asesoría.</li>
+    <li><strong>No autocompletamos la razón social a partir del NIF.</strong> España (AEAT) no expone esa correspondencia en fuentes públicas gratuitas — es decisión política. Por eso te pedimos tu razón social (autocompletada desde BORME) y el NIF es opcional.</li>
+    <li><strong>No garantizamos que recibas la subvención.</strong> Las convocatorias tienen requisitos, plazos y presupuestos limitados. Mostramos las que podrías pedir; aprobarla es decisión del organismo.</li>
+    <li><strong>No vendemos tus datos.</strong> Ni a terceros, ni a la "industria de los leads". Si nos das tu email es para enviarte alertas, punto.</li>
+  </ul>
+
+  <hr class="my-8 border-gray-200">
+
+  <h2 class="text-2xl font-bold mb-4">Stack técnico (para los curiosos)</h2>
+  <p class="text-gray-700">Python 3.12 + FastAPI + PostgreSQL + APScheduler. Frontend con HTMX y Tailwind, sin SPA. Sincronización diaria con BDNS, EU Funding &amp; Tenders y BORME. Hosting en Railway (UE). LLM: Google Gemini 2.0 Flash (free tier). Email: Brevo. Código limpio, 200+ tests automáticos, despliegue continuo.</p>
+
+  <hr class="my-8 border-gray-200">
+
+  <div class="text-center mt-8">
+    <a href="/" class="inline-block bg-green-700 hover:bg-green-800 text-white font-semibold px-8 py-3 rounded-lg">
+      Probar el buscador →
+    </a>
+  </div>
+</article>
+{% endblock %}

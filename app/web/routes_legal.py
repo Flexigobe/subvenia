@@ -25,3 +25,8 @@ def privacidad(request: Request) -> HTMLResponse:
 @router.get("/terminos", response_class=HTMLResponse)
 def terminos(request: Request) -> HTMLResponse:
     return templates.TemplateResponse(request, "legal/terminos.html", {})
+
+
+@router.get("/como-funciona", response_class=HTMLResponse)
+def como_funciona(request: Request) -> HTMLResponse:
+    return templates.TemplateResponse(request, "como_funciona.html", {})

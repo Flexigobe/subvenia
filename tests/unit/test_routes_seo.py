@@ -46,6 +46,11 @@ def test_sitemap_xml_returns_xml_with_static_routes(db_session):
     assert "<priority>" in body
 
 
+def test_sitemap_xml_includes_como_funciona(db_session):
+    response = client.get("/sitemap.xml")
+    assert "/como-funciona" in response.text
+
+
 def test_sitemap_xml_includes_open_subvenciones(db_session):
     from app.db.models import Subvencion
 
