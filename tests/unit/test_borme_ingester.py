@@ -1,7 +1,6 @@
 """Tests for BORME ingester `sync_day`."""
 
 from datetime import date
-from unittest.mock import AsyncMock
 
 import pytest
 from sqlalchemy import select

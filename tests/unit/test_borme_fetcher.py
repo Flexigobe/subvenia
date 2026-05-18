@@ -2,9 +2,7 @@
 
 from datetime import date
 
-import httpx
 import pytest
-
 
 # Use a recent monday-friday date — the test mocks HTTP, so the date doesn't need to be real
 TEST_DATE = date(2025, 5, 16)

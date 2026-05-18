@@ -7,7 +7,7 @@ import json
 import logging
 import re
 import secrets
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Annotated
 
@@ -107,7 +107,7 @@ async def subscribe(
         perfil=perfil,
         top3=top3,
         rest=rest,
-        generated_at=datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
+        generated_at=datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC"),
     )
     pdf_bytes = generate_pdf(pdf_html)
     if pdf_bytes:

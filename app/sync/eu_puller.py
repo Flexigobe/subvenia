@@ -29,8 +29,8 @@ from __future__ import annotations
 
 import logging
 import unicodedata
+from datetime import UTC, datetime
 from datetime import date as date_t
-from datetime import datetime, timezone
 from typing import Any
 
 import httpx
@@ -103,7 +103,7 @@ def _parse_date(value: Any) -> date_t | None:
         return None
     try:
         if isinstance(value, (int, float)):
-            return datetime.fromtimestamp(value / 1000, tz=timezone.utc).date()
+            return datetime.fromtimestamp(value / 1000, tz=UTC).date()
         # Take first 10 chars: "2026-12-31"
         return date_t.fromisoformat(str(value)[:10])
     except (ValueError, TypeError):
@@ -276,7 +276,7 @@ async def sync_all(
         }
     """
     # Build year-targeted search text to bias results toward future deadlines.
-    now = datetime.now(tz=timezone.utc)
+    now = datetime.now(tz=UTC)
     search_text = f"{now.year} {now.year + 1}"
 
     page = 1

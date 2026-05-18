@@ -1,9 +1,9 @@
 # tests/unit/test_bdns_puller.py
 import json
-from datetime import date, date as date_t
+from datetime import date
+from datetime import date as date_t
 from pathlib import Path
 
-import httpx
 import pytest
 
 FIXTURES = Path(__file__).resolve().parents[1] / "fixtures" / "bdns"

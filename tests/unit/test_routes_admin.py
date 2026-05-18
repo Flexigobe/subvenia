@@ -287,8 +287,9 @@ def test_admin_subscriptions_lists(admin_creds, db_session):
 
 
 def test_admin_deactivate_subscription_works(admin_creds, db_session):
-    from app.db.models import AlertSubscription
     from sqlalchemy import select as _select
+
+    from app.db.models import AlertSubscription
 
     sub = AlertSubscription(
         email="bye@example.com",
@@ -379,8 +380,9 @@ def test_admin_outbox_lists_with_filter(admin_creds, db_session):
 
 
 def test_admin_outbox_retry_dead_resets_attempts(admin_creds, db_session):
-    from app.db.models import EmailOutbox
     from sqlalchemy import select as _select
+
+    from app.db.models import EmailOutbox
 
     db_session.add(EmailOutbox(
         to_email="dead@example.com", subject="S", body_html="<p>x</p>",

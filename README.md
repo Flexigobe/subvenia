@@ -1,37 +1,71 @@
 # subvenciones-app
 
-Buscador de subvenciones públicas para empresas españolas (Plan 1: BDNS + matching determinista).
+[![CI](https://github.com/<your-org-or-user>/subvenciones-app/actions/workflows/ci.yml/badge.svg)](https://github.com/<your-org-or-user>/subvenciones-app/actions/workflows/ci.yml)
+
+**Buscador gratuito de subvenciones públicas españolas y europeas para empresas.** Cruza el perfil de la empresa con la BDNS oficial, el portal EU Funding & Tenders y los datos del BORME para encontrar las convocatorias que mejor encajan.
+
+- **Datos oficiales**: BDNS (Ministerio de Hacienda), BORME (Registro Mercantil), EU Funding & Tenders Portal.
+- **Gratis y sin registro** para el usuario final.
+- **Scoring inteligente** con Google Gemini + razón en lenguaje natural.
+- **Alertas opcionales** por email vía Brevo cuando salen nuevas convocatorias afines.
+- **RGPD-compliant**.
+
+> Owner: [Flexigobe](mailto:comercial@flexigobe.com). Última versión: `v0.6.0-plan6`. 200+ tests automatizados.
+
+## Pantallazos
+
+> _Pendiente — añadir captures de la home, /subvenciones, /admin._
+
+## Stack
+
+- Python 3.12 + FastAPI + APScheduler (cron in-process)
+- PostgreSQL 14+ (managed en Railway)
+- SQLAlchemy 2 + Alembic
+- Jinja2 + HTMX + Tailwind (sin SPA)
+- WeasyPrint para PDF
+- Google Gemini 2.0 Flash (free tier) para scoring LLM
+- Brevo para email transaccional
+- BORME XML + PDF (BOE Datos Abiertos, CC-BY-NC-ND 4.0)
 
 ## Pre-requisitos
 
 - Python 3.12
-- Postgres 14+
+- PostgreSQL 14+
+- (Producción) cuenta Railway con Postgres managed
 
 ## Setup local
 
 ```bash
+# 1. Clonar e instalar deps
+git clone https://github.com/<your-org-or-user>/subvenciones-app.git
+cd subvenciones-app
 python3.12 -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"
 
-# Postgres local — crear usuario y DBs
+# 2. Crear DBs locales
 psql postgres -c "CREATE USER subvenciones WITH PASSWORD 'subvenciones';" || true
 psql postgres -c "CREATE DATABASE subvenciones OWNER subvenciones;" || true
 psql postgres -c "CREATE DATABASE subvenciones_test OWNER subvenciones;" || true
 
-# Variables de entorno
+# 3. Variables de entorno
 cp .env.example .env
+# Editar .env con GEMINI_API_KEY, etc.
 
-# Migraciones
+# 4. Migraciones
 alembic upgrade head
 
-# Arrancar el servidor
+# 5. Arrancar el servidor
 uvicorn app.main:app --reload --port 8000
 ```
 
-Abrir http://localhost:8000.
+Abre [http://localhost:8000](http://localhost:8000).
 
-## Sincronizar BDNS manualmente
+Si no estableces `ADMIN_PASS`, la app genera credenciales aleatorias al arrancar y las loguea en stdout. Búscalas en los logs si quieres acceder a `/admin`.
+
+## Cargar datos oficiales
+
+### Sincronizar BDNS (Estado español)
 
 ```bash
 source .venv/bin/activate
@@ -45,75 +79,105 @@ with SessionLocal() as s:
 "
 ```
 
-El scheduler in-process lo ejecuta automáticamente cada día a las 03:00 (Europe/Madrid) mientras la app está corriendo.
+### Backfill BORME (empresas)
 
-**Nota:** la URL y los parámetros del endpoint BDNS en `app/sync/bdns_puller.py:fetch_page` están basados en una asunción del plan; en la primera ejecución contra BDNS real puede ser necesario ajustar el endpoint y los nombres de campos. Si la llamada falla, abrir https://www.infosubvenciones.es/bdnstrans/ y verificar el endpoint correcto.
+```bash
+# 3 años en paralelo, resumible con state file
+PYTHONPATH=. python scripts/backfill_borme.py --days 1095 --parallel 4
+```
+
+Para extender: `--days 3650` (10 años) reusa el state file y solo procesa los días nuevos.
+
+### Crons automáticos
+
+Mientras la app esté corriendo (`uvicorn`), APScheduler ejecuta:
+
+- 03:00 — sync BDNS
+- 03:30 — enricher detalle BDNS
+- 03:45 — sync UE Funding & Tenders
+- 04:00 (día 1 de mes) — sync catálogos BDNS
+- 09:00 — alerts dispatcher (envía digests email)
+- 10:30 — sync BORME del día
+- cada 5 min — outbox flush
+
+Todos en zona Europe/Madrid.
 
 ## Tests
 
 ```bash
-source .venv/bin/activate
 pytest -v
 ```
 
-## Estructura
-
-```
-app/
-├── main.py              # FastAPI entrypoint + scheduler lifespan
-├── config.py            # Pydantic Settings
-├── db/                  # ORM models + sesión
-├── lib/                 # NIF validator + CNAE catalog
-├── sync/                # BDNS puller + APScheduler runner
-├── matching/            # SQL filter + pre-rank determinista
-└── web/                 # Rutas + templates Jinja2 + HTMX
-```
+> 200+ tests · cobertura unit + integración + smoke con httpx_mock.
 
 ## Deploy en Railway
 
-La app está lista para Railway sin tocar código. El flujo:
+Mira la guía paso a paso completa en [`docs/LAUNCH_CHECKLIST.md`](docs/LAUNCH_CHECKLIST.md).
 
-1. **Crear proyecto en Railway** (https://railway.com → "New Project").
-2. **Añadir Postgres**: "+ New" → "Database" → "Add PostgreSQL". Railway inyecta automáticamente `DATABASE_URL` como variable.
-3. **Conectar este repo**: "+ New" → "GitHub Repo" → seleccionar `subvenciones-app`.
-4. **Variables de entorno** (en Settings → Variables del servicio web):
+Resumen rápido:
 
-   | Variable | Valor | Notas |
-   |----------|-------|-------|
-   | `DATABASE_URL` | auto | Inyectado por el plugin Postgres |
-   | `BASE_URL` | `https://<servicio>.up.railway.app` | URL pública; ajustar tras 1er deploy |
-   | `GEMINI_API_KEY` | tu key | https://aistudio.google.com/app/apikey |
-   | `BREVO_API_KEY` | (opcional) | Si vacío, emails se loguean — no se envían |
-   | `ALERT_FROM_EMAIL` | `alertas@flexigobe.com` | Verificado en Brevo |
-   | `ADMIN_USER` | `admin` | Cambia si quieres |
-   | `ADMIN_PASS` | `<cadena segura>` | Genérala con `openssl rand -base64 24` |
-   | `RATE_LIMIT_PER_HOUR` | `60` | Default; sube si quieres más permisivo |
+1. New Project en Railway → añadir Postgres + conectar el repo.
+2. Establecer las variables de entorno (lista en `docs/LAUNCH_CHECKLIST.md`).
+3. Railway detecta `railway.toml` + `nixpacks.toml` y construye automáticamente.
+4. Healthcheck en `/healthz`, deploy automático en cada push a `main`.
 
-5. **Deploy automático**: cada push a `main` despliega. Health-check en `/healthz`.
-6. **Logs**: Settings → Deploys → View Logs (incluye logs estructurados de los syncs).
-7. **(Opcional) Dominio personalizado**: Settings → Domains → Custom Domain → seguir instrucciones DNS.
+### Limitaciones conocidas del deploy
 
-### Limitaciones del deploy actual
+- **Single worker**: APScheduler in-process + rate limiter en memoria. Si escalas a `RAILWAY_REPLICA_COUNT > 1` los crons se duplicarían. Solución futura: separar scheduler en servicio aparte + Redis para rate limit.
+- **WeasyPrint** depende de pango/cairo (instalados via `nixpacks.toml`). Si los logs muestran `ImportError: cannot load library libpango`, revisa que el build use Nixpacks (no Dockerfile custom).
 
-- **Single worker**: APScheduler corre in-process y el rate limiter es per-worker. Si escalas a `RAILWAY_REPLICA_COUNT > 1` los crons se duplicarían y el rate limiter sería por instancia. Para escalar horizontalmente se necesita extraer el scheduler a un servicio aparte y mover el rate limiter a Redis.
-- **WeasyPrint** depende de pango/cairo, instalados via `nixpacks.toml`. Si los logs muestran `ImportError: cannot load library libpango`, revisa que el build use Nixpacks (no Dockerfile custom).
-
-### Despliegue local de prueba (sin Railway)
+## Deploy con Docker (alternativa)
 
 ```bash
-docker run -d --name pg -p 5432:5432 -e POSTGRES_USER=subvenciones -e POSTGRES_PASSWORD=subvenciones postgres:15
-source .venv/bin/activate
-alembic upgrade head
-uvicorn app.main:app --host 0.0.0.0 --port 8000
+docker build -t subvenciones-app .
+docker run -p 8000:8000 \
+  -e DATABASE_URL="postgresql+psycopg://USER:PASS@host.docker.internal:5432/subvenciones" \
+  -e GEMINI_API_KEY="..." \
+  -e ADMIN_PASS="..." \
+  -e BASE_URL="http://localhost:8000" \
+  subvenciones-app
+```
+
+Imagen multi-stage (~250 MB final), usuario no-root, incluye libs pango/cairo para WeasyPrint.
+
+## Estructura del proyecto
+
+```
+app/
+├── main.py                    # FastAPI entrypoint + lifespan + scheduler
+├── config.py                  # Pydantic Settings
+├── db/                        # ORM models + sessión + migraciones (Alembic)
+├── lib/                       # NIF validator, CNAE catalog, PDF generator, email Brevo
+├── enrich/                    # VIES (NIF enrichment)
+├── matching/                  # Filtro SQL determinista + Gemini scorer + classifier finalidad
+├── sync/                      # Pullers (BDNS, EU, BORME) + ingesters + scheduler runner
+├── alerts/                    # Dispatcher email + outbox flusher
+└── web/
+    ├── routes_*.py            # Search, browse, admin, alerts, empresa, legal, seo, news, enrich
+    └── templates/             # Jinja2 + HTMX + Tailwind
+data/
+└── cnae_2009.json             # Catálogo CNAE-2009
+docs/
+├── superpowers/specs/         # Diseño funcional
+├── superpowers/plans/         # Planes 1-7
+├── LAUNCH_CHECKLIST.md        # Guía paso a paso para producción
+└── audits/                    # Auditorías técnicas
+migrations/versions/           # Alembic migrations 0001-0004
+scripts/                       # Backfill BORME, reclassify finalidad
+tests/                         # Unit + integration (200+ tests)
 ```
 
 ## Documentación
 
-- Diseño: [docs/superpowers/specs/2026-05-17-subvenciones-app-design.md](docs/superpowers/specs/2026-05-17-subvenciones-app-design.md)
-- Plan 1 (este plan): [docs/superpowers/plans/2026-05-17-subvenciones-app-plan-1-cimientos.md](docs/superpowers/plans/2026-05-17-subvenciones-app-plan-1-cimientos.md)
+- Diseño funcional: [`docs/superpowers/specs/2026-05-17-subvenciones-app-design.md`](docs/superpowers/specs/2026-05-17-subvenciones-app-design.md)
+- Planes de desarrollo: [`docs/superpowers/plans/`](docs/superpowers/plans/)
+- Launch checklist: [`docs/LAUNCH_CHECKLIST.md`](docs/LAUNCH_CHECKLIST.md)
 
-## Próximos planes (post-Plan 1)
+## Licencia
 
-- Plan 2: enriquecimiento NIF (libreborme/OpenCorporates) + scoring Gemini + UE Funding & Tenders.
-- Plan 3: captura email + PDF + alertas diarias por email vía Brevo.
-- Plan 4: panel admin + rate limiting + deploy Railway + dominio.
+Código propietario de Flexigobe. Los datos públicos consumidos (BDNS, BORME, EU Funding & Tenders) se utilizan bajo las condiciones de reutilización de cada organismo.
+
+## Contacto
+
+- Email: [comercial@flexigobe.com](mailto:comercial@flexigobe.com)
+- Issues: [GitHub Issues](https://github.com/<your-org-or-user>/subvenciones-app/issues)

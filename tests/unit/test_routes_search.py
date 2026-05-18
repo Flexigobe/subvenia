@@ -1,9 +1,8 @@
 # tests/unit/test_routes_search.py
 from fastapi.testclient import TestClient
 
-from app.main import app
-
 from app.db.session import get_db
+from app.main import app
 from tests.conftest import TestSessionLocal
 
 

@@ -37,6 +37,18 @@ addopts = "-v --tb=short"
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+extend-exclude = ["migrations/versions/"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP"]
+ignore = [
+    "E501",   # line too long — many long URLs/comments; enforced by formatter not linter
+    "B008",   # Depends() in default args — idiomatic FastAPI pattern
+    "B905",   # zip() strict= — not needed for paired lists we control
+    "B007",   # unused loop variable — sometimes intentional
+    "UP042",  # str+Enum — intentional for JSON serialisation
+    "E402",   # module-level import not at top — needed after conditional guards
+    "B904",   # raise from err — minor; tracked separately
+    "B017",   # assert Exception — test helper
+    "F841",   # local var assigned but unused — minor
+]

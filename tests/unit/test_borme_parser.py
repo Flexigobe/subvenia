@@ -4,7 +4,6 @@ is tested separately via small synthetic PDF bytes if needed."""
 from datetime import date
 from decimal import Decimal
 
-
 # ─── slugify ─────────────────────────────────────────────────────────────────
 
 

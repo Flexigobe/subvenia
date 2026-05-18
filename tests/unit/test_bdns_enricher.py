@@ -127,6 +127,7 @@ async def test_fetch_detail_returns_none_on_204(httpx_mock):
 @pytest.mark.asyncio
 async def test_enrich_existing_only_processes_empty_records(db_session, httpx_mock):
     from datetime import date
+
     from app.db.models import Subvencion
     from app.sync.bdns_enricher import enrich_existing
 

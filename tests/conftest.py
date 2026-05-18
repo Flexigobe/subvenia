@@ -9,8 +9,8 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
-from app.db.base import Base
 from app.db import models  # noqa: F401
+from app.db.base import Base
 
 TEST_DB_URL = os.environ["DATABASE_URL"]
 test_engine = create_engine(TEST_DB_URL, future=True)

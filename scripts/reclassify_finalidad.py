@@ -9,11 +9,11 @@ Run manually after Plan 3 Task 2 is deployed:
 
 import asyncio
 import logging as _logging
-import sys
+
 from sqlalchemy import select
 
-from app.db.session import SessionLocal
 from app.db.models import Subvencion
+from app.db.session import SessionLocal
 from app.matching.finalidad_classifier import classify
 from app.sync.bdns_mappers import infer_finalidad
 

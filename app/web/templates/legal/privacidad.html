@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Política de privacidad · Buscador de subvenciones{% endblock %}
+{% block content %}
+<article class="max-w-3xl mx-auto bg-white border border-gray-200 rounded-2xl p-8 prose prose-sm">
+<h1 class="text-3xl font-bold mb-6">Política de privacidad</h1>
+<p class="text-xs text-gray-500 mb-6">Última actualización: 17 de mayo de 2026.</p>
+
+<h2 class="text-lg font-semibold mt-6 mb-2">1. Responsable del tratamiento</h2>
+<p>El responsable del tratamiento de los datos personales recogidos en este sitio web es <strong>Flexigobe</strong>, con domicilio en España y correo de contacto <a class="underline" href="mailto:comercial@flexigobe.com">comercial@flexigobe.com</a>.</p>
+
+<h2 class="text-lg font-semibold mt-6 mb-2">2. Datos que recogemos</h2>
+<p>Cuando usas este buscador podemos tratar los siguientes datos:</p>
+<ul class="list-disc pl-6 space-y-1">
+  <li><strong>Datos de búsqueda</strong>: razón social, NIF (opcional), CNAE, tamaño de empresa, provincia y finalidades seleccionadas. Estos datos se almacenan vinculados a tu búsqueda para poder generarte el informe.</li>
+  <li><strong>Email</strong> (opcional): si nos lo proporcionas para recibir el informe en PDF y/o alertas de nuevas convocatorias.</li>
+  <li><strong>Datos técnicos</strong>: hash SHA-256 de tu dirección IP (no la IP en claro) y tu user-agent, usados exclusivamente para evitar abuso del servicio mediante limitación de búsquedas por hora.</li>
+</ul>
+
+<h2 class="text-lg font-semibold mt-6 mb-2">3. Finalidad y base jurídica</h2>
+<ul class="list-disc pl-6 space-y-1">
+  <li><strong>Prestación del servicio</strong>: ejecutar la búsqueda y mostrarte resultados. Base: ejecución del servicio solicitado (art. 6.1.b RGPD).</li>
+  <li><strong>Envío de alertas por email</strong>: si te suscribes, te enviamos notificaciones cuando aparecen convocatorias afines a tu perfil. Base: consentimiento (art. 6.1.a RGPD), retirable en cualquier momento.</li>
+  <li><strong>Mejora del servicio</strong>: análisis agregado y anónimo del uso (búsquedas más frecuentes, sectores demandados). No usamos cookies de seguimiento de terceros.</li>
+</ul>
+
+<h2 class="text-lg font-semibold mt-6 mb-2">4. Conservación</h2>
+<p>Los datos de búsqueda se conservan mientras el servicio esté activo, con un máximo de 3 años desde la última interacción. Si te das de baja de las alertas, tu email queda marcado como inactivo pero se conserva durante 1 año adicional por razones de auditoría. Pasado ese plazo se borra.</p>
+
+<h2 class="text-lg font-semibold mt-6 mb-2">5. Destinatarios</h2>
+<p>No vendemos ni compartimos tus datos con terceros para fines comerciales. Los datos están alojados en servidores de <strong>Railway</strong> (ubicados en la UE/EEE). Para el envío de emails utilizamos <strong>Brevo</strong> (Francia, UE). Para el scoring inteligente de subvenciones utilizamos la API de <strong>Google Gemini</strong> (datos anonimizados, no se envía tu email ni NIF al modelo).</p>
+
+<h2 class="text-lg font-semibold mt-6 mb-2">6. Derechos</h2>
+<p>Puedes ejercer los siguientes derechos enviando un email a <a class="underline" href="mailto:comercial@flexigobe.com">comercial@flexigobe.com</a>:</p>
+<ul class="list-disc pl-6 space-y-1">
+  <li>Acceso, rectificación y supresión.</li>
+  <li>Limitación y oposición al tratamiento.</li>
+  <li>Portabilidad de los datos.</li>
+  <li>Retirar el consentimiento en cualquier momento (las alertas además se pueden cancelar con un solo clic desde cualquier email recibido).</li>
+  <li>Reclamación ante la <a class="underline" href="https://www.aepd.es" target="_blank" rel="noopener">Agencia Española de Protección de Datos</a>.</li>
+</ul>
+
+<h2 class="text-lg font-semibold mt-6 mb-2">7. Datos públicos consultados</h2>
+<p>Este sitio consulta y muestra datos públicos oficiales de:</p>
+<ul class="list-disc pl-6 space-y-1">
+  <li><strong>BDNS</strong> (Base de Datos Nacional de Subvenciones) — Ministerio de Hacienda.</li>
+  <li><strong>BORME</strong> (Boletín Oficial del Registro Mercantil) vía BOE Datos Abiertos, licencia CC-BY-NC-ND 4.0.</li>
+  <li><strong>EU Funding &amp; Tenders Portal</strong> — Comisión Europea.</li>
+</ul>
+<p>Estos datos son públicos por mandato legal. Si una empresa aparece en nuestro buscador por estar en BORME y desea no aparecer, debe dirigirse al Registro Mercantil correspondiente; nosotros reflejamos lo que la fuente oficial publica.</p>
+
+<h2 class="text-lg font-semibold mt-6 mb-2">8. Cambios</h2>
+<p>Esta política puede actualizarse. La versión vigente es la publicada en esta página con la fecha de última actualización indicada arriba.</p>
+
+</article>
+{% endblock %}
