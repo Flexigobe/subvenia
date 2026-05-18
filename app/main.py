@@ -73,13 +73,35 @@ app.include_router(empresa_router)
 
 from app.web.routes_admin import router as admin_router  # noqa: E402
 from app.web.routes_legal import router as legal_router  # noqa: E402
+from app.web.routes_seo import router as seo_router  # noqa: E402
 
 app.include_router(admin_router)
 app.include_router(legal_router)
+app.include_router(seo_router)
 
 from app.web.rate_limit import RateLimitMiddleware  # noqa: E402
 
 app.add_middleware(RateLimitMiddleware, requests_per_window=settings.rate_limit_per_hour)
+
+
+# Register SEO/analytics globals on all Jinja2Templates instances used by the app.
+# Each route module imports its own templates instance — we collect them and inject.
+def _register_seo_globals():
+    settings = get_settings()
+    from app.web.routes_search import templates as _t1
+    from app.web.routes_browse import templates as _t2
+    from app.web.routes_news import templates as _t3
+    from app.web.routes_enrich import templates as _t4
+    from app.web.routes_admin import templates as _t5
+    from app.web.routes_alerts import templates as _t6
+    from app.web.routes_empresa import templates as _t7
+    from app.web.routes_legal import templates as _t8
+    for t in (_t1, _t2, _t3, _t4, _t5, _t6, _t7, _t8):
+        t.env.globals["plausible_domain"] = settings.plausible_domain
+        t.env.globals["plausible_src"] = settings.plausible_src
+
+
+_register_seo_globals()
 
 
 @app.get("/healthz")

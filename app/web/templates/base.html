@@ -3,12 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Buscador de subvenciones{% endblock %}</title>
+  <title>{% block title %}Buscador de subvenciones para empresas españolas · Gratis y oficial{% endblock %}</title>
+
+  <meta name="description" content="{% block meta_description %}Buscador gratuito de subvenciones públicas españolas y europeas con datos oficiales de BDNS, BORME y la Comisión Europea. Encuentra ayudas para tu empresa en segundos.{% endblock %}">
+  <meta name="robots" content="{% block meta_robots %}index, follow{% endblock %}">
+  <link rel="canonical" href="{% block canonical %}{{ request.url }}{% endblock %}">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{% block og_title %}Buscador de subvenciones para empresas españolas{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}Gratis · datos oficiales · BDNS + UE + BORME. Encuentra ayudas para tu empresa en segundos.{% endblock %}">
+  <meta property="og:url" content="{% block og_url %}{{ request.url }}{% endblock %}">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:site_name" content="Buscador de subvenciones">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{% block twitter_title %}Buscador de subvenciones para empresas españolas{% endblock %}">
+  <meta name="twitter:description" content="{% block twitter_description %}Gratis · datos oficiales · BDNS + UE + BORME{% endblock %}">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/htmx.org@2.0.3"></script>
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
   </style>
+
+  {% if plausible_domain %}
+  <!-- Plausible Analytics — privacy-friendly, no cookies -->
+  <script defer data-domain="{{ plausible_domain }}" src="{{ plausible_src }}"></script>
+  {% endif %}
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen">
   <header class="bg-white border-b border-gray-200">

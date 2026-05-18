@@ -41,6 +41,11 @@ class Settings(BaseSettings):
     # Rate limiting (POST /search only, sliding window 1h)
     rate_limit_per_hour: int = 60
 
+    # SEO / analytics (all optional, all without cookies)
+    plausible_domain: str = ""  # e.g. "subvenciones.flexigobe.com" — if set, Plausible script is included
+    plausible_src: str = "https://plausible.io/js/script.js"  # change if self-hosted
+    seo_canonical_origin: str = ""  # e.g. "https://subvenciones.flexigobe.com" — used for absolute URLs in sitemap + canonical
+
 
 @lru_cache
 def get_settings() -> Settings:
