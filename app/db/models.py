@@ -176,3 +176,46 @@ class EmailOutbox(Base):
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
     sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class Empresa(Base):
+    """Empresa española extraída de BORME oficial.
+
+    Plan 5 reemplaza el bloqueado NIF→razón social pivotando a razón social
+    como input primario, con autocomplete desde esta tabla.
+    """
+
+    __tablename__ = "empresa"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    # Slug normalizado (lowercase, sin acentos, sin sufijos S.L./S.A.) — buscable rápido
+    slug: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
+    razon_social: Mapped[str] = mapped_column(Text, nullable=False)
+    # Provincia INE de 2 dígitos (08 = Barcelona, 28 = Madrid, etc.). Nullable porque
+    # algunos PDFs BORME no exponen la provincia explícitamente — usamos la del archivo.
+    provincia: Mapped[str | None] = mapped_column(String(2), index=True)
+    domicilio: Mapped[str | None] = mapped_column(Text)
+    objeto_social: Mapped[str | None] = mapped_column(Text)
+    # Registro Mercantil hoja — único por empresa. Formato típico: "S 8, H A 197635, I/A 1"
+    # Lo almacenamos crudo, pero la clave única es la parte H X NNNNN. Nullable durante
+    # backfill (algunas entradas no la exponen aún).
+    hoja_rm: Mapped[str | None] = mapped_column(String(64), unique=True, index=True)
+    capital_social: Mapped[Decimal | None] = mapped_column(Numeric(16, 2))
+    fecha_constitucion: Mapped[date | None] = mapped_column(Date)
+    fecha_ultima_act: Mapped[date | None] = mapped_column(Date)
+    # Lista de actos JSONB: [{"fecha": "2025-05-08", "tipo": "Constitución", "detalle": "..."}]
+    actos: Mapped[list | None] = mapped_column(JSONB)
+    estado: Mapped[str] = mapped_column(
+        Enum("activa", "disuelta", "concursal", name="empresa_estado_enum"),
+        default="activa",
+        nullable=False,
+    )
+    # Texto BORME crudo de la entrada — útil para debug y futuro re-parse
+    raw_text: Mapped[str | None] = mapped_column(Text)
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+    )
