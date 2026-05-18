@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+.venv-*/
+
+# Local dev
+.env
+.env.local
+.env.bak
+
+# Git / docs
+.git/
+.gitignore
+.gitattributes
+docs/
+*.md
+!README.md
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Tests in production image (the test DB is local anyway)
+tests/
+
+# CI/local-only
+.github/
+.superpowers/
+
+# Build artifacts
+dist/
+build/
+htmlcov/
+.coverage
+
+# Large binaries that should never be in image
+*.sqlite

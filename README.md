@@ -2,6 +2,8 @@
 
 Buscador de subvenciones públicas para empresas españolas (Plan 1: BDNS + matching determinista).
 
+[![CI](https://github.com/<your-org-or-user>/subvenciones-app/actions/workflows/ci.yml/badge.svg)](https://github.com/<your-org-or-user>/subvenciones-app/actions/workflows/ci.yml)
+
 ## Pre-requisitos
 
 - Python 3.12
@@ -106,6 +108,22 @@ source .venv/bin/activate
 alembic upgrade head
 uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
+
+## Deploy con Docker (alternativa a Railway/Nixpacks)
+
+Si prefieres Docker (Fly.io, Render, AWS, K8s...):
+
+```bash
+docker build -t subvenciones-app .
+docker run -p 8000:8000 \
+  -e DATABASE_URL="postgresql+psycopg://USER:PASS@host.docker.internal:5432/subvenciones" \
+  -e GEMINI_API_KEY="..." \
+  -e ADMIN_PASS="..." \
+  -e BASE_URL="http://localhost:8000" \
+  subvenciones-app
+```
+
+El Dockerfile es multi-stage (~250MB final). Incluye las libs de pango/cairo para WeasyPrint. Corre como usuario no-root.
 
 ## Documentación
 
