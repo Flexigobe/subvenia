@@ -1,0 +1,19 @@
+{% if empresas %}
+<ul class="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg max-h-64 overflow-y-auto z-10 shadow-md">
+  {% for e in empresas %}
+  <li>
+    <button type="button"
+            class="w-full text-left px-3 py-2 hover:bg-green-50 text-sm border-b border-gray-100 last:border-b-0"
+            onclick="selectEmpresa({{ e.razon_social|tojson }}, {{ (e.provincia or '')|tojson }})">
+      <div class="font-medium">{{ e.razon_social }}</div>
+      <div class="text-xs text-gray-500">
+        {% if e.provincia %}Provincia {{ e.provincia }}{% else %}Provincia desconocida{% endif %}
+        {% if e.domicilio %} · {{ e.domicilio[:60] }}{% if e.domicilio|length > 60 %}…{% endif %}{% endif %}
+      </div>
+    </button>
+  </li>
+  {% endfor %}
+</ul>
+{% elif q %}
+<p class="text-xs text-gray-500 px-2 mt-1">Sin coincidencias para "{{ q }}". Continúa tecleando o rellena los campos a mano.</p>
+{% endif %}

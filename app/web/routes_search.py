@@ -67,18 +67,24 @@ def home(request: Request) -> HTMLResponse:
 @router.post("/search", response_class=HTMLResponse)
 async def search(
     request: Request,
-    nif: Annotated[str, Form()],
+    razon_social: Annotated[str, Form()],
     cnae: Annotated[str, Form()],
     tamano: Annotated[str, Form()],
     provincia: Annotated[str, Form()],
     finalidad: Annotated[list[str], Form()],
-    razon_social: Annotated[str | None, Form()] = None,
+    nif: Annotated[str, Form()] = "",
     db: Session = Depends(get_db),
 ) -> HTMLResponse:
-    # Validar NIF
-    nif_result = validate_nif(nif)
-    if not nif_result.valid:
-        raise HTTPException(status_code=400, detail=f"El NIF {nif} no es válido")
+    # razón social is now required (was optional)
+    # nif is now optional (was required)
+
+    # Validate NIF only if provided
+    nif_normalized = ""
+    if nif.strip():
+        nif_result = validate_nif(nif)
+        if not nif_result.valid:
+            raise HTTPException(status_code=400, detail=f"El NIF {nif} no es válido")
+        nif_normalized = nif_result.normalized
 
     # Validar al menos una finalidad
     if not finalidad:
@@ -90,7 +96,7 @@ async def search(
 
     search_row = Search(
         id=uuid.uuid4(),
-        nif=nif_result.normalized,
+        nif=nif_normalized,
         razon_social=razon_social,
         cnae=cnae,
         tamano=tamano,
@@ -131,7 +137,7 @@ async def search(
         request,
         "results.html",
         {
-            "nif": nif_result.normalized,
+            "nif": nif_normalized,
             "razon_social": razon_social,
             "top3": top3,
             "rest": rest,
