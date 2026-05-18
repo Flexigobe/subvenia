@@ -409,3 +409,79 @@ def test_admin_outbox_retry_dead_resets_attempts(admin_creds, db_session):
     # 'sent' row not touched
     assert by_email["sent@example.com"].status == "sent"
     assert by_email["sent@example.com"].attempts == 1
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Plan 5 — admin empresas viewer
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def test_admin_empresas_lists_paginated(admin_creds, db_session):
+    """30 empresas → page 1 of 2."""
+    from app.db.models import Empresa
+
+    for i in range(30):
+        db_session.add(Empresa(
+            slug=f"acme{i:02d}",
+            razon_social=f"ACME{i:02d} SL",
+            provincia="08",
+            hoja_rm=f"H X PAG{i:03d}",
+        ))
+    db_session.commit()
+
+    response = client.get(
+        "/admin/empresas",
+        headers=_basic_header(admin_creds["user"], admin_creds["password"]),
+    )
+    assert response.status_code == 200
+    assert "Empresas" in response.text
+    assert "ACME00 SL" in response.text  # page 1 should include first
+    assert "Página 1 de 2" in response.text
+
+
+def test_admin_empresas_filters_by_slug_prefix(admin_creds, db_session):
+    from app.db.models import Empresa
+
+    db_session.add(Empresa(slug="flexigobe", razon_social="FLEXIGOBE SL", provincia="08", hoja_rm="H X F1"))
+    db_session.add(Empresa(slug="acme", razon_social="ACME SL", provincia="08", hoja_rm="H X A1"))
+    db_session.commit()
+
+    response = client.get(
+        "/admin/empresas?q=flex",
+        headers=_basic_header(admin_creds["user"], admin_creds["password"]),
+    )
+    assert response.status_code == 200
+    assert "FLEXIGOBE SL" in response.text
+    assert "ACME SL" not in response.text
+
+
+def test_admin_empresas_filters_by_provincia(admin_creds, db_session):
+    from app.db.models import Empresa
+
+    db_session.add(Empresa(slug="madrid co", razon_social="MADRID CO SL", provincia="28", hoja_rm="H X M1"))
+    db_session.add(Empresa(slug="bcn co", razon_social="BCN CO SL", provincia="08", hoja_rm="H X B1"))
+    db_session.commit()
+
+    response = client.get(
+        "/admin/empresas?provincia=28",
+        headers=_basic_header(admin_creds["user"], admin_creds["password"]),
+    )
+    assert response.status_code == 200
+    assert "MADRID CO SL" in response.text
+    assert "BCN CO SL" not in response.text
+
+
+def test_admin_empresas_filters_by_estado(admin_creds, db_session):
+    from app.db.models import Empresa
+
+    db_session.add(Empresa(slug="activa co", razon_social="ACTIVA CO SL", estado="activa", hoja_rm="H X AC"))
+    db_session.add(Empresa(slug="disuelta co", razon_social="DISUELTA CO SL", estado="disuelta", hoja_rm="H X DS"))
+    db_session.commit()
+
+    response = client.get(
+        "/admin/empresas?estado=disuelta",
+        headers=_basic_header(admin_creds["user"], admin_creds["password"]),
+    )
+    assert response.status_code == 200
+    assert "DISUELTA CO SL" in response.text
+    assert "ACTIVA CO SL" not in response.text

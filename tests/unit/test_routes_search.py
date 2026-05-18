@@ -73,10 +73,12 @@ def test_search_returns_results_html(db_session):
 
 
 def test_search_invalid_nif_returns_error():
+    """Plan 5: NIF is optional but validated when provided."""
     response = client.post(
         "/search",
         data={
             "nif": "INVALIDO",
+            "razon_social": "TEST SL",
             "cnae": "6201",
             "tamano": "pequena",
             "provincia": "08",
@@ -91,7 +93,7 @@ def test_search_requires_at_least_one_finalidad():
     response = client.post(
         "/search",
         data={
-            "nif": "B12345674",
+            "razon_social": "TEST SL",
             "cnae": "6201",
             "tamano": "pequena",
             "provincia": "08",
@@ -129,3 +131,65 @@ def test_subsidy_detail_renders(db_session):
 def test_subsidy_detail_404_when_not_found():
     response = client.get("/subsidy/00000000-0000-0000-0000-000000000000")
     assert response.status_code == 404
+
+
+# ── Plan 5 tests ──────────────────────────────────────────────────────────────
+
+def test_search_works_without_nif(db_session):
+    """Plan 5: NIF is optional. The form must be submittable without it."""
+    db_session.add(
+        Subvencion(
+            source="bdns",
+            external_id="NO-NIF-1",
+            titulo="Match sin NIF",
+            ambito="estatal",
+            cnae_elegible=["6201"],
+            finalidad=["digitalizacion"],
+            estado="abierta",
+            fecha_fin=date.today() + timedelta(days=30),
+            beneficiarios={"tamanos": ["pequena"]},
+        )
+    )
+    db_session.commit()
+
+    response = client.post(
+        "/search",
+        data={
+            # No NIF
+            "razon_social": "FLEXIGOBE SL",
+            "cnae": "6201",
+            "tamano": "pequena",
+            "provincia": "08",
+            "finalidad": ["digitalizacion"],
+        },
+    )
+    assert response.status_code == 200
+    assert "Match sin NIF" in response.text
+
+
+def test_search_still_validates_nif_when_provided():
+    """Plan 5: when NIF is provided it must be validated."""
+    response = client.post(
+        "/search",
+        data={
+            "nif": "INVALIDO",
+            "razon_social": "TEST SL",
+            "cnae": "6201",
+            "tamano": "pequena",
+            "provincia": "08",
+            "finalidad": ["digitalizacion"],
+        },
+    )
+    assert response.status_code == 400
+
+
+def test_home_form_has_empresa_autocomplete():
+    """Plan 5: home page must expose razón social autocomplete + optional NIF."""
+    response = client.get("/")
+    assert response.status_code == 200
+    html = response.text
+    assert 'name="razon_social"' in html
+    assert 'hx-get="/api/empresa/search"' in html
+    assert "empresa-suggestions" in html
+    # NIF is now optional (no `required` attribute on the nif input)
+    assert "opcional" in html.lower()

@@ -14,6 +14,7 @@ from app.config import get_settings
 from app.db.session import SessionLocal
 from app.sync.bdns_enricher import enrich_existing
 from app.sync.bdns_puller import sync_all
+from app.sync.borme_ingester import sync_day as borme_sync_day
 from app.sync.catalogs import sync_catalogs
 from app.sync.eu_puller import sync_all as eu_sync_all
 
@@ -61,6 +62,16 @@ async def run_eu_sync() -> None:
         stats = await eu_sync_all(session, max_pages=10)
     logger.info("EU sync done: %s", stats)
     logger.info("sync_complete", extra={"sync_name": "eu", "stats": stats})
+
+
+async def run_borme_sync() -> None:
+    """Daily BORME ingest at 10:30 Europe/Madrid (BORME publishes ~8-9 AM)."""
+    from datetime import date as _date
+    target = _date.today()
+    logger.info("Starting BORME sync for %s", target)
+    with SessionLocal() as session:
+        stats = await borme_sync_day(session, target)
+    logger.info("sync_complete", extra={"sync_name": "borme", "stats": stats})
 
 
 async def run_flush_outbox() -> None:
@@ -118,6 +129,12 @@ def build_scheduler() -> AsyncIOScheduler:
         run_dispatch_alerts,
         CronTrigger(hour=9, minute=0),
         id="dispatch_alerts",
+        replace_existing=True,
+    )
+    scheduler.add_job(
+        run_borme_sync,
+        CronTrigger(hour=10, minute=30),
+        id="borme_sync",
         replace_existing=True,
     )
     return scheduler

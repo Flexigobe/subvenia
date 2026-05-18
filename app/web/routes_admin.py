@@ -27,6 +27,7 @@ from app.config import get_settings
 from app.db.models import (
     AlertSubscription,
     EmailOutbox,
+    Empresa,
     Search,
     Subvencion,
 )
@@ -407,12 +408,21 @@ async def _run_alerts() -> None:
     _log.info("admin force-sync alerts done: %s", result)
 
 
+async def _run_borme() -> None:
+    from datetime import date as _date
+    from app.sync.borme_ingester import sync_day as _borme_sync_day
+    with SessionLocal() as session:
+        result = await _borme_sync_day(session, _date.today())
+    _log.info("admin force-sync borme done: %s", result)
+
+
 _JOB_CALLABLES = {
     "bdns": _run_bdns,
     "eu": _run_eu,
     "enricher": _run_enricher,
     "catalogs": _run_catalogs,
     "alerts": _run_alerts,
+    "borme": _run_borme,
 }
 
 
@@ -529,4 +539,60 @@ def admin_outbox_retry_dead(
     return RedirectResponse(
         url=f"/admin/outbox?status=pending&msg=Reactivados+{n}+emails+dead",
         status_code=303,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Empresas viewer
+# ---------------------------------------------------------------------------
+
+@router.get("/empresas", response_class=HTMLResponse)
+def admin_empresas(
+    request: Request,
+    _user: Annotated[str, Depends(require_admin)],
+    q: str = "",
+    provincia: str = "",
+    estado: str = "",
+    page: int = 1,
+    db: Session = Depends(get_db),
+) -> HTMLResponse:
+    page = max(1, page)
+    page_size = 25
+
+    stmt = select(Empresa).order_by(Empresa.razon_social.asc())
+    if q.strip():
+        from app.sync.borme_parser import slugify as _slugify
+        slug_q = _slugify(q)
+        if slug_q:
+            stmt = stmt.where(Empresa.slug.like(f"{slug_q}%"))
+    if provincia.strip():
+        stmt = stmt.where(Empresa.provincia == provincia.strip())
+    if estado in ("activa", "disuelta", "concursal"):
+        stmt = stmt.where(Empresa.estado == estado)
+
+    total = db.execute(
+        select(func.count()).select_from(stmt.order_by(None).subquery())
+    ).scalar_one()
+    rows = db.execute(stmt.offset((page - 1) * page_size).limit(page_size)).scalars().all()
+    total_pages = max(1, (total + page_size - 1) // page_size)
+
+    # Aggregate counts per estado (for filter chips)
+    estado_counts_rows = db.execute(
+        select(Empresa.estado, func.count()).group_by(Empresa.estado)
+    ).all()
+    estado_counts = {r[0]: r[1] for r in estado_counts_rows}
+
+    return templates.TemplateResponse(
+        request,
+        "admin/empresas.html",
+        {
+            "rows": rows,
+            "page": page,
+            "total_pages": total_pages,
+            "total": total,
+            "q": q,
+            "provincia": provincia,
+            "estado": estado,
+            "estado_counts": estado_counts,
+        },
     )

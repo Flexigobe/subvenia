@@ -1,0 +1,87 @@
+{% extends "admin/_base.html" %}
+{% block admin_content %}
+<div class="space-y-4">
+  <header class="flex items-baseline justify-between flex-wrap gap-2">
+    <h1 class="text-2xl font-bold">Empresas</h1>
+    <div class="text-xs text-gray-500">{{ "{:,}".format(total) }} resultados con filtro actual</div>
+  </header>
+
+  <!-- Estado chips -->
+  <div class="flex gap-2 flex-wrap text-sm">
+    {% for s in ["", "activa", "disuelta", "concursal"] %}
+    {% set s_label = s if s else "todas" %}
+    <a href="/admin/empresas?estado={{ s }}{% if q %}&q={{ q }}{% endif %}{% if provincia %}&provincia={{ provincia }}{% endif %}"
+       class="px-3 py-1 rounded-full border {% if estado == s %}bg-gray-900 text-white border-gray-900{% else %}border-gray-300 text-gray-700 hover:bg-gray-100{% endif %}">
+      {{ s_label }}{% if s %} ({{ estado_counts.get(s, 0) }}){% endif %}
+    </a>
+    {% endfor %}
+  </div>
+
+  <!-- Filtros -->
+  <form method="get" action="/admin/empresas" class="bg-white border border-gray-200 rounded-2xl p-4 flex flex-wrap gap-3 items-end">
+    <div class="flex-1 min-w-[200px]">
+      <label class="block text-xs text-gray-500 mb-1">Buscar por razón social</label>
+      <input type="text" name="q" value="{{ q }}" placeholder="empieza por…"
+             class="w-full border border-gray-300 rounded px-2 py-1 text-sm">
+    </div>
+    <div>
+      <label class="block text-xs text-gray-500 mb-1">Provincia INE</label>
+      <input type="text" name="provincia" value="{{ provincia }}" placeholder="08" maxlength="2"
+             class="w-24 border border-gray-300 rounded px-2 py-1 text-sm">
+    </div>
+    {% if estado %}<input type="hidden" name="estado" value="{{ estado }}">{% endif %}
+    <button type="submit" class="bg-green-700 hover:bg-green-800 text-white px-4 py-1.5 rounded text-sm">Filtrar</button>
+    {% if q or provincia or estado %}
+    <a href="/admin/empresas" class="text-xs text-gray-500 hover:underline">Limpiar</a>
+    {% endif %}
+  </form>
+
+  <!-- Tabla -->
+  <div class="bg-white border border-gray-200 rounded-2xl overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
+        <tr>
+          <th class="px-3 py-2 text-left">Razón social</th>
+          <th class="px-3 py-2 text-left">Provincia</th>
+          <th class="px-3 py-2 text-left">Estado</th>
+          <th class="px-3 py-2 text-left">Constitución</th>
+          <th class="px-3 py-2 text-left">Último acto</th>
+          <th class="px-3 py-2 text-left">Hoja RM</th>
+          <th class="px-3 py-2 text-left">Domicilio</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in rows %}
+        <tr class="border-t border-gray-100">
+          <td class="px-3 py-1.5"><strong>{{ e.razon_social }}</strong></td>
+          <td class="px-3 py-1.5">{{ e.provincia or "—" }}</td>
+          <td class="px-3 py-1.5">
+            {% if e.estado == "activa" %}<span class="text-green-700">activa</span>
+            {% elif e.estado == "disuelta" %}<span class="text-red-700">disuelta</span>
+            {% else %}<span class="text-yellow-700">concursal</span>{% endif %}
+          </td>
+          <td class="px-3 py-1.5 text-gray-600">{{ e.fecha_constitucion.strftime("%d/%m/%Y") if e.fecha_constitucion else "—" }}</td>
+          <td class="px-3 py-1.5 text-gray-600">{{ e.fecha_ultima_act.strftime("%d/%m/%Y") if e.fecha_ultima_act else "—" }}</td>
+          <td class="px-3 py-1.5 text-xs text-gray-600">{{ e.hoja_rm or "—" }}</td>
+          <td class="px-3 py-1.5 text-xs text-gray-600 max-w-xs truncate" title="{{ e.domicilio or '' }}">{{ (e.domicilio or '')[:80] }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="px-3 py-6 text-center text-gray-400">Sin resultados</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if total_pages > 1 %}
+  <nav class="flex items-center justify-between text-sm">
+    {% set qs = "" %}
+    {% if q %}{% set qs = qs + "&q=" + q %}{% endif %}
+    {% if provincia %}{% set qs = qs + "&provincia=" + provincia %}{% endif %}
+    {% if estado %}{% set qs = qs + "&estado=" + estado %}{% endif %}
+    {% if page > 1 %}<a href="/admin/empresas?page={{ page-1 }}{{ qs }}" class="text-gray-700 hover:underline">← Anterior</a>{% else %}<span></span>{% endif %}
+    <span class="text-gray-500">Página {{ page }} de {{ total_pages }}</span>
+    {% if page < total_pages %}<a href="/admin/empresas?page={{ page+1 }}{{ qs }}" class="text-gray-700 hover:underline">Siguiente →</a>{% else %}<span></span>{% endif %}
+  </nav>
+  {% endif %}
+</div>
+{% endblock %}

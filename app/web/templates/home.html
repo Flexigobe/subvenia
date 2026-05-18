@@ -9,20 +9,28 @@
   <section>
     <h2 class="text-xs font-semibold text-gray-500 uppercase mb-3">① Tu empresa</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div>
-        <label class="block text-sm mb-1">NIF / CIF</label>
-        <input type="text" name="nif" required pattern=".{8,10}" placeholder="B12345678"
+      <div class="md:col-span-2 relative">
+        <label class="block text-sm mb-1">Razón social de tu empresa</label>
+        <input type="text"
+               name="razon_social"
+               id="razon_social"
+               required
+               minlength="2"
+               placeholder="Empieza a teclear el nombre…"
+               autocomplete="off"
                class="w-full border border-gray-300 rounded px-3 py-2"
-               hx-get="/api/enrich"
-               hx-trigger="change, keyup changed delay:500ms"
-               hx-target="#enrich-status"
+               hx-get="/api/empresa/search"
+               hx-trigger="keyup changed delay:300ms"
+               hx-target="#empresa-suggestions"
                hx-swap="innerHTML"
                hx-include="this">
-        <div id="enrich-status" class="mt-1"></div>
+        <div id="empresa-suggestions" class="relative"></div>
+        <p class="text-xs text-gray-500 mt-1">Te sugerimos empresas registradas oficialmente en BORME conforme tecleas. Si la tuya no aparece, sigue rellenando los demás campos a mano.</p>
       </div>
       <div>
-        <label class="block text-sm mb-1">Razón social <span class="text-gray-400 text-xs">(opcional)</span></label>
-        <input type="text" name="razon_social" id="razon_social" class="w-full border border-gray-300 rounded px-3 py-2">
+        <label class="block text-sm mb-1">NIF / CIF <span class="text-gray-400 text-xs">(opcional)</span></label>
+        <input type="text" name="nif" pattern=".{0,10}" placeholder="(opcional, para personalizar el informe)"
+               class="w-full border border-gray-300 rounded px-3 py-2">
       </div>
       <div>
         <label class="block text-sm mb-1">CNAE (código de actividad)</label>
@@ -41,7 +49,7 @@
       </div>
       <div class="md:col-span-2">
         <label class="block text-sm mb-1">Provincia</label>
-        <select name="provincia" required class="w-full border border-gray-300 rounded px-3 py-2">
+        <select name="provincia" id="provincia" required class="w-full border border-gray-300 rounded px-3 py-2">
           {% for code, name in provincias %}
             <option value="{{ code }}">{{ code }} — {{ name }}</option>
           {% endfor %}
@@ -70,6 +78,7 @@
 </form>
 
 <script>
+  // Existing: finalidad validation
   (function () {
     var form = document.getElementById('search-form');
     if (!form) return;
@@ -84,7 +93,6 @@
         errorMsg.classList.add('hidden');
       }
     });
-    // Hide error as soon as the user ticks any chip
     form.querySelectorAll('input[name="finalidad"]').forEach(function (cb) {
       cb.addEventListener('change', function () {
         if (form.querySelectorAll('input[name="finalidad"]:checked').length > 0) {
@@ -93,5 +101,28 @@
       });
     });
   })();
+
+  // Plan 5: empresa autocomplete selector
+  function selectEmpresa(razon, provincia) {
+    var input = document.getElementById('razon_social');
+    var suggestions = document.getElementById('empresa-suggestions');
+    var provinciaSelect = document.getElementById('provincia');
+    if (input) input.value = razon;
+    if (suggestions) suggestions.innerHTML = '';
+    if (provincia && provinciaSelect) {
+      var opt = Array.from(provinciaSelect.options).find(function (o) { return o.value === provincia; });
+      if (opt) provinciaSelect.value = provincia;
+    }
+  }
+
+  // Hide suggestions when clicking outside
+  document.addEventListener('click', function (e) {
+    var input = document.getElementById('razon_social');
+    var suggestions = document.getElementById('empresa-suggestions');
+    if (!input || !suggestions) return;
+    if (e.target !== input && !suggestions.contains(e.target)) {
+      suggestions.innerHTML = '';
+    }
+  });
 </script>
 {% endblock %}
