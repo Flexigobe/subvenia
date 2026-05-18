@@ -24,6 +24,11 @@
         {{ r.subvencion.organismo or "Organismo no especificado" }}
         {% if r.subvencion.importe_max_beneficiario %} · Hasta {{ "{:,.0f}".format(r.subvencion.importe_max_beneficiario) }}€{% endif %}
       </p>
+      {% if r.subvencion.finalidad %}
+      <div class="flex flex-wrap gap-1 mt-2">
+        {% for f in r.subvencion.finalidad %}<span class="text-[10px] uppercase tracking-wide bg-blue-50 text-blue-800 px-2 py-0.5 rounded-full border border-blue-100">{{ f }}</span>{% endfor %}
+      </div>
+      {% endif %}
     </a>
     {% endfor %}
   </div>
@@ -39,6 +44,7 @@
         <tr>
           <th class="px-4 py-2 text-left">Score</th>
           <th class="px-4 py-2 text-left">Convocatoria</th>
+          <th class="px-4 py-2 text-left">Tipo</th>
           <th class="px-4 py-2 text-left">Organismo</th>
           <th class="px-4 py-2 text-left">Importe</th>
           <th class="px-4 py-2 text-left">Cierra</th>
@@ -49,6 +55,13 @@
         <tr class="border-t border-gray-100 hover:bg-gray-50">
           <td class="px-4 py-2 font-semibold {% if r.score >= 60 %}text-green-700{% elif r.score >= 40 %}text-yellow-700{% else %}text-gray-500{% endif %}">{{ r.score }}</td>
           <td class="px-4 py-2"><a class="hover:underline" href="/subsidy/{{ r.subvencion.id }}">{{ r.subvencion.titulo }}</a></td>
+          <td class="px-4 py-2">
+            {% if r.subvencion.finalidad %}
+              <div class="flex flex-wrap gap-0.5">
+                {% for f in r.subvencion.finalidad %}<span class="text-[10px] uppercase bg-blue-50 text-blue-800 px-1.5 py-0.5 rounded">{{ f }}</span>{% endfor %}
+              </div>
+            {% else %}<span class="text-gray-400 text-xs">—</span>{% endif %}
+          </td>
           <td class="px-4 py-2 text-gray-600">{{ r.subvencion.organismo or "—" }}</td>
           <td class="px-4 py-2 text-gray-600">{% if r.subvencion.importe_max_beneficiario %}{{ "{:,.0f}".format(r.subvencion.importe_max_beneficiario) }}€{% else %}—{% endif %}</td>
           <td class="px-4 py-2 text-gray-600">{% if r.subvencion.fecha_fin %}{{ r.subvencion.fecha_fin.strftime("%d/%m/%Y") }}{% else %}—{% endif %}</td>
@@ -63,7 +76,7 @@
 {% if total == 0 %}
 <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-center">
   <p class="font-semibold mb-1">No hemos encontrado subvenciones abiertas para tu perfil.</p>
-  <p class="text-sm text-gray-700">Prueba con otra finalidad o vuelve a buscar más adelante — la BDNS se actualiza a diario.</p>
+  <p class="text-sm text-gray-700">Las bases oficiales se actualizan a diario — vuelve más adelante o ajusta tu CNAE / provincia.</p>
 </div>
 {% endif %}
 

@@ -71,12 +71,14 @@ async def search(
     cnae: Annotated[str, Form()],
     tamano: Annotated[str, Form()],
     provincia: Annotated[str, Form()],
-    finalidad: Annotated[list[str], Form()],
     nif: Annotated[str, Form()] = "",
+    finalidad: Annotated[list[str], Form()] = [],
     db: Session = Depends(get_db),
 ) -> HTMLResponse:
-    # razón social is now required (was optional)
-    # nif is now optional (was required)
+    # razón social is required; nif and finalidad are optional.
+    # When finalidad is empty, the filter shows ALL applicable subvenciones (no topic filter).
+    # The result page labels each subvencion with its inferred finalidad so the user can
+    # narrow down visually.
 
     # Validate NIF only if provided
     nif_normalized = ""
@@ -85,10 +87,6 @@ async def search(
         if not nif_result.valid:
             raise HTTPException(status_code=400, detail=f"El NIF {nif} no es válido")
         nif_normalized = nif_result.normalized
-
-    # Validar al menos una finalidad
-    if not finalidad:
-        raise HTTPException(status_code=422, detail="Selecciona al menos una finalidad")
 
     # Persistir la búsqueda como lead
     ip = request.client.host if request.client else ""

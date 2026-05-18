@@ -79,50 +79,13 @@
     </div>
   </section>
 
-  <section>
-    <h2 class="text-xs font-semibold text-gray-500 uppercase mb-3">② ¿Para qué necesitas financiación?</h2>
-    <div class="flex flex-wrap gap-2">
-      {% for f in finalidades %}
-        <label class="cursor-pointer">
-          <input type="checkbox" name="finalidad" value="{{ f.value }}" class="peer hidden">
-          <span class="inline-block px-3 py-1.5 rounded-full border border-gray-300 text-sm peer-checked:bg-green-700 peer-checked:text-white peer-checked:border-green-700">{{ f.label }}</span>
-        </label>
-      {% endfor %}
-    </div>
-    <p class="text-xs text-gray-500 mt-2">Marca al menos una.</p>
-    <p id="finalidad-error" class="hidden text-sm text-red-600 mt-2 font-semibold">⚠ Marca al menos una finalidad antes de buscar.</p>
-  </section>
-
   <button type="submit" class="w-full bg-green-700 hover:bg-green-800 text-white font-semibold py-3 rounded-lg">
     Buscar subvenciones →
   </button>
+  <p class="text-xs text-gray-500 text-center mt-2">Verás todas las subvenciones aplicables a tu empresa con su tipo etiquetado.</p>
 </form>
 
 <script>
-  // Existing: finalidad validation
-  (function () {
-    var form = document.getElementById('search-form');
-    if (!form) return;
-    var errorMsg = document.getElementById('finalidad-error');
-    form.addEventListener('submit', function (e) {
-      var checked = form.querySelectorAll('input[name="finalidad"]:checked');
-      if (checked.length === 0) {
-        e.preventDefault();
-        errorMsg.classList.remove('hidden');
-        errorMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      } else {
-        errorMsg.classList.add('hidden');
-      }
-    });
-    form.querySelectorAll('input[name="finalidad"]').forEach(function (cb) {
-      cb.addEventListener('change', function () {
-        if (form.querySelectorAll('input[name="finalidad"]:checked').length > 0) {
-          errorMsg.classList.add('hidden');
-        }
-      });
-    });
-  })();
-
   // Plan 5: empresa autocomplete selector
   function selectEmpresa(razon, provincia) {
     var input = document.getElementById('razon_social');

@@ -25,7 +25,8 @@ def test_home_returns_form():
     html = response.text
     assert "NIF" in html or "nif" in html
     assert "tamaño" in html.lower() or "tamano" in html.lower()
-    assert 'name="finalidad"' in html or "finalidad" in html.lower()
+    # Finalidad no longer required in the form (Plan 7+: shown as label on results instead)
+    assert "razon_social" in html
 
 
 from datetime import date, timedelta
@@ -88,7 +89,25 @@ def test_search_invalid_nif_returns_error():
     assert "NIF" in response.text or "no válido" in response.text.lower()
 
 
-def test_search_requires_at_least_one_finalidad():
+def test_search_works_without_finalidad(db_session):
+    """Plan 7: finalidad is now optional. Without it, the matcher returns all
+    applicable subvenciones across all topics; the result page labels each one
+    with its finalidad so the user can read what type they are."""
+    db_session.add(
+        Subvencion(
+            source="bdns",
+            external_id="ALL-TOPICS-1",
+            titulo="Match sin finalidad filter",
+            ambito="estatal",
+            cnae_elegible=["6201"],
+            finalidad=["digitalizacion"],
+            estado="abierta",
+            fecha_fin=date.today() + timedelta(days=30),
+            beneficiarios={"tamanos": ["pequena"]},
+            organismo="Min test",
+        )
+    )
+    db_session.commit()
     response = client.post(
         "/search",
         data={
@@ -96,9 +115,11 @@ def test_search_requires_at_least_one_finalidad():
             "cnae": "6201",
             "tamano": "pequena",
             "provincia": "08",
+            # No finalidad submitted — should still work and return matches
         },
     )
-    assert response.status_code == 422
+    assert response.status_code == 200
+    assert "Match sin finalidad filter" in response.text
 
 
 def test_subsidy_detail_renders(db_session):
