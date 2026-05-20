@@ -40,4 +40,4 @@ COPY . /app
 ENV PORT=8000
 EXPOSE 8000
 
-CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port ${PORT} --proxy-headers"]
+CMD ["sh", "-c", "set -e; echo '[start] running alembic'; alembic upgrade head 2>&1; echo '[start] alembic done, starting uvicorn on port '${PORT}; exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT} --proxy-headers --log-level info 2>&1"]
