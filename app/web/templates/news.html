@@ -1,37 +1,287 @@
 {% extends "base.html" %}
-{% block title %}Fuentes y novedades de subvenciones{% endblock %}
+{% block title %}Novedades · Subvenia{% endblock %}
 {% block content %}
 
-<!-- Intro -->
-<div class="mb-8">
-  <h1 class="text-2xl font-bold mb-2">Fuentes y novedades</h1>
-  <p class="text-gray-700 max-w-2xl">
-    Esta página recoge las fuentes oficiales donde se publican las convocatorias de subvenciones en España y la Unión Europea.
-    Para una búsqueda personalizada según tu empresa, usa el <a href="/" class="text-green-700 hover:underline font-medium">buscador a medida</a>.
-    Para explorar todas las convocatorias ya indexadas en nuestra base de datos, visita el
-    <a href="/subvenciones" class="text-green-700 hover:underline font-medium">directorio de subvenciones</a>.
-  </p>
-</div>
+<div class="max-w-7xl mx-auto px-5 md:px-8 py-10 md:py-14">
 
-<!-- Groups -->
-{% for group in groups %}
-<section class="mb-10">
-  <h2 class="text-lg font-bold text-gray-900 mb-1">{{ group.title }}</h2>
-  <p class="text-sm text-gray-600 mb-4">{{ group.description }}</p>
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    {% for item in group.sources %}
-    <div class="bg-white border border-gray-200 rounded-2xl p-5 hover:shadow-md transition">
-      <a
-        href="{{ item.url }}"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="font-semibold text-green-700 hover:underline block mb-1"
-      >{{ item.name }}</a>
-      <p class="text-sm text-gray-600">{{ item.desc }}</p>
+  {# ───── Cabecera ───── #}
+  <header class="grid grid-cols-12 gap-6 mb-12">
+    <div class="col-span-12 md:col-span-3">
+      <div class="press text-oxblood">№ Última hora</div>
+      <div class="rule mt-1 mb-3"></div>
+      <div class="press-sm text-ink2">Actualizado a diario · sincronización a las 3:00</div>
     </div>
-    {% endfor %}
-  </div>
-</section>
-{% endfor %}
+    <div class="col-span-12 md:col-span-9">
+      <h1 class="ff-display text-ink leading-[0.95] tracking-tight text-[44px] md:text-[68px] lg:text-[84px]"
+          style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 700'>
+        Lo que <span class="ff-display-light text-oxblood">se acaba de publicar</span>.
+      </h1>
+      <div class="rule mt-6 mb-3"></div>
+      <p class="text-base md:text-lg text-ink2 leading-relaxed max-w-3xl">
+        Convocatorias añadidas a la base de datos en las últimas horas, las que cierran esta semana y las próximas a abrir. Los datos vienen de BDNS (España) y F&amp;T Portal (UE) — actualizado a las 3:00 cada día.
+      </p>
+    </div>
+  </header>
 
+  {# ───── BOE — Lo más fresco (publicado hoy/ayer) ───── #}
+  {% if boe_items %}
+  <section class="mb-16">
+    <div class="flex items-baseline gap-3 mb-3">
+      <span class="num-bloomberg text-3xl text-ink">📰</span>
+      <h2 class="ff-display text-2xl md:text-3xl text-ink" style='font-variation-settings:"opsz" 144,"wght" 700'>
+        Boletín Oficial del Estado
+      </h2>
+      <span class="press-sm text-ink3">{{ boe_items|length }} publicaciones · últimos 7 días</span>
+    </div>
+    <div class="rule mb-5"></div>
+    <p class="text-sm text-ink2 mb-4 max-w-3xl">
+      Convocatorias recién publicadas en el BOE — algunas todavía no aparecen indexadas en BDNS.
+      Fuente directa: <a href="https://www.boe.es" target="_blank" rel="noopener" class="ed-link">Agencia Estatal Boletín Oficial del Estado</a>.
+    </p>
+    <div class="border border-ink overflow-hidden bg-paperdk/30">
+      <table class="w-full text-sm">
+        <thead class="bg-ink text-paper">
+          <tr>
+            <th class="px-4 py-3 text-left press-sm">Fecha</th>
+            <th class="px-4 py-3 text-left press-sm">Convocatoria oficial</th>
+            <th class="px-4 py-3 text-left press-sm hidden md:table-cell">Departamento</th>
+            <th class="px-4 py-3 text-left press-sm">Texto</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for it in boe_items %}
+          <tr class="border-t border-ink/15 hover:bg-paper transition">
+            <td class="px-4 py-3 align-top whitespace-nowrap">
+              <span class="ff-mono text-xs text-ink2">{{ it.fecha_publicacion.strftime("%d.%m.%Y") }}</span>
+            </td>
+            <td class="px-4 py-3 align-top">
+              <a href="{{ it.url_html }}" target="_blank" rel="noopener" class="ff-display text-base text-ink hover:text-oxblood transition line-clamp-2" style='font-variation-settings:"opsz" 144,"wght" 600'>{{ it.titulo }}</a>
+              <div class="press-sm text-ink3 mt-1">{{ it.epigrafe }}</div>
+            </td>
+            <td class="px-4 py-3 text-ink2 align-top text-xs hidden md:table-cell">{{ it.departamento[:50] }}</td>
+            <td class="px-4 py-3 align-top whitespace-nowrap">
+              <a href="{{ it.url_pdf }}" target="_blank" rel="noopener" class="press-sm text-oxblood inline-flex items-center gap-1 ed-link">
+                PDF
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+  {% endif %}
+
+  {# ───── ALERTA: Cierra esta semana (urgentes) ───── #}
+  {% if closing_week %}
+  <section class="mb-16">
+    <div class="flex items-baseline gap-3 mb-3">
+      <span class="num-bloomberg text-3xl text-oxblood">⏰</span>
+      <h2 class="ff-display text-2xl md:text-3xl text-ink" style='font-variation-settings:"opsz" 144,"wght" 700'>
+        Cierra esta semana
+      </h2>
+      <span class="press-sm text-oxblood">{{ closing_week|length }} urgentes</span>
+    </div>
+    <div class="rule mb-5"></div>
+    <div class="border border-oxblood overflow-hidden bg-oxblood/5">
+      <table class="w-full text-sm">
+        <thead class="bg-oxblood text-paper">
+          <tr>
+            <th class="px-4 py-3 text-left press-sm">Cierre</th>
+            <th class="px-4 py-3 text-left press-sm">Convocatoria</th>
+            <th class="px-4 py-3 text-left press-sm hidden md:table-cell">Organismo</th>
+            <th class="px-4 py-3 text-left press-sm hidden lg:table-cell">Importe</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in closing_week %}
+          {% set days_left = (s.fecha_fin - today).days %}
+          <tr class="border-t border-oxblood/30 hover:bg-paperdk/40 transition">
+            <td class="px-4 py-3 align-top whitespace-nowrap">
+              <div class="ff-mono text-sm font-bold text-oxblood">{{ s.fecha_fin.strftime("%d.%m") }}</div>
+              <div class="press-sm text-oxblood">{{ days_left }} día{{ '' if days_left == 1 else 's' }}</div>
+            </td>
+            <td class="px-4 py-3 align-top">
+              <a href="/subsidy/{{ s.id }}" class="ff-display text-base text-ink hover:text-oxblood transition line-clamp-2" style='font-variation-settings:"opsz" 144,"wght" 600'>{{ s.titulo }}</a>
+              {% if s.finalidad %}
+              <div class="flex flex-wrap gap-1 mt-1">
+                {% for f in s.finalidad[:3] %}<span class="press-sm border border-ink/30 text-ink2 px-1.5 py-0.5">{{ f }}</span>{% endfor %}
+              </div>
+              {% endif %}
+            </td>
+            <td class="px-4 py-3 text-ink2 align-top text-xs hidden md:table-cell">{{ (s.organismo or "—")|truncate(40, true, "…") }}</td>
+            <td class="px-4 py-3 align-top hidden lg:table-cell">
+              <span class="ff-mono text-sm">{% if s.importe_total %}{{ "{:,.0f}".format(s.importe_total) }}€{% else %}—{% endif %}</span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+  {% endif %}
+
+  {# ───── Últimas añadidas (más recientes en BD) ───── #}
+  {% if latest %}
+  <section class="mb-16">
+    <div class="flex items-baseline gap-3 mb-3">
+      <span class="num-bloomberg text-3xl text-oxblood">●</span>
+      <h2 class="ff-display text-2xl md:text-3xl text-ink" style='font-variation-settings:"opsz" 144,"wght" 700'>
+        Últimas publicadas
+      </h2>
+      <span class="press-sm text-ink3">{{ latest|length }} novedades · ordenadas por fecha de publicación</span>
+    </div>
+    <div class="rule mb-5"></div>
+    <div class="border border-ink overflow-hidden">
+      <table class="w-full text-sm">
+        <thead class="bg-ink text-paper">
+          <tr>
+            <th class="px-4 py-3 text-left press-sm">Publicada</th>
+            <th class="px-4 py-3 text-left press-sm">Convocatoria</th>
+            <th class="px-4 py-3 text-left press-sm hidden md:table-cell">Ámbito</th>
+            <th class="px-4 py-3 text-left press-sm hidden lg:table-cell">Organismo</th>
+            <th class="px-4 py-3 text-left press-sm">Cierra</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in latest %}
+          <tr class="border-t border-ink/15 hover:bg-paperdk/40 transition">
+            <td class="px-4 py-3 align-top whitespace-nowrap">
+              <span class="ff-mono text-xs text-ink2">{{ s.fecha_inicio.strftime("%d.%m.%Y") if s.fecha_inicio else "—" }}</span>
+            </td>
+            <td class="px-4 py-3 align-top">
+              <a href="/subsidy/{{ s.id }}" class="ff-display text-base text-ink hover:text-oxblood transition line-clamp-2" style='font-variation-settings:"opsz" 144,"wght" 600'>{{ s.titulo }}</a>
+            </td>
+            <td class="px-4 py-3 align-top hidden md:table-cell">
+              <span class="press-sm border border-ink/30 text-ink2 px-2 py-0.5">{{ s.ambito|capitalize }}</span>
+            </td>
+            <td class="px-4 py-3 text-ink2 align-top text-xs hidden lg:table-cell">{{ (s.organismo or "—")|truncate(40, true, "…") }}</td>
+            <td class="px-4 py-3 align-top whitespace-nowrap">
+              <span class="ff-mono text-xs text-ink">{% if s.fecha_fin %}{{ s.fecha_fin.strftime("%d.%m.%Y") }}{% else %}—{% endif %}</span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+  {% endif %}
+
+  {# ───── Cerrando este mes ───── #}
+  {% if closing_month %}
+  <section class="mb-16">
+    <div class="flex items-baseline gap-3 mb-3">
+      <span class="ff-mono text-2xl text-ochre">○</span>
+      <h2 class="ff-display text-2xl md:text-3xl text-ink" style='font-variation-settings:"opsz" 144,"wght" 600'>
+        Cierra este mes
+      </h2>
+      <span class="press-sm text-ink3">{{ closing_month|length }} convocatorias · 8-30 días</span>
+    </div>
+    <div class="rule mb-5"></div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-ink border border-ink">
+      {% for s in closing_month[:10] %}
+      {% set days_left = (s.fecha_fin - today).days %}
+      <a href="/subsidy/{{ s.id }}" class="bg-paper p-4 hover:bg-paperdk/60 transition group">
+        <div class="flex items-baseline justify-between mb-2">
+          <span class="ff-mono text-sm text-ochre">Cierra {{ s.fecha_fin.strftime("%d.%m") }}</span>
+          <span class="press-sm text-ink3">{{ days_left }} días</span>
+        </div>
+        <h3 class="ff-display text-base text-ink line-clamp-2 group-hover:text-oxblood transition" style='font-variation-settings:"opsz" 144,"wght" 600'>{{ s.titulo }}</h3>
+        <div class="press-sm text-ink2 mt-1 line-clamp-1">{{ s.organismo or "—" }}</div>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  {# ───── Próximas a abrir ───── #}
+  {% if next_open %}
+  <section class="mb-16">
+    <div class="flex items-baseline gap-3 mb-3">
+      <span class="ff-mono text-2xl text-moss">▷</span>
+      <h2 class="ff-display text-2xl md:text-3xl text-ink" style='font-variation-settings:"opsz" 144,"wght" 600'>
+        Abrirán pronto
+      </h2>
+      <span class="press-sm text-ink3">{{ next_open|length }} convocatorias futuras</span>
+    </div>
+    <div class="rule mb-5"></div>
+    <div class="border border-ink overflow-hidden">
+      <table class="w-full text-sm">
+        <thead class="bg-ink text-paper">
+          <tr>
+            <th class="px-4 py-3 text-left press-sm">Abre</th>
+            <th class="px-4 py-3 text-left press-sm">Convocatoria</th>
+            <th class="px-4 py-3 text-left press-sm hidden md:table-cell">Organismo</th>
+            <th class="px-4 py-3 text-left press-sm">Cierra</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in next_open %}
+          <tr class="border-t border-ink/15 hover:bg-moss/5 transition">
+            <td class="px-4 py-3 align-top whitespace-nowrap">
+              <span class="ff-mono text-sm text-moss font-bold">{{ s.fecha_inicio.strftime("%d.%m.%Y") }}</span>
+            </td>
+            <td class="px-4 py-3 align-top">
+              <a href="/subsidy/{{ s.id }}" class="ff-display text-base text-ink hover:text-oxblood transition line-clamp-2" style='font-variation-settings:"opsz" 144,"wght" 600'>{{ s.titulo }}</a>
+            </td>
+            <td class="px-4 py-3 text-ink2 align-top text-xs hidden md:table-cell">{{ (s.organismo or "—")|truncate(40, true, "…") }}</td>
+            <td class="px-4 py-3 align-top whitespace-nowrap">
+              <span class="ff-mono text-xs text-ink2">{% if s.fecha_fin %}{{ s.fecha_fin.strftime("%d.%m.%Y") }}{% else %}—{% endif %}</span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+  {% endif %}
+
+  {# ───── Fuentes oficiales (al final, como referencia) ───── #}
+  <section class="mt-20 pt-12 border-t border-ink">
+    <div class="grid grid-cols-12 gap-6 mb-8">
+      <div class="col-span-12 md:col-span-3">
+        <div class="press text-oxblood">№ Fuentes</div>
+        <div class="rule mt-1 mb-3"></div>
+        <div class="press-sm text-ink2">De dónde sacamos los datos.</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <h2 class="ff-display text-2xl md:text-3xl text-ink leading-tight" style='font-variation-settings:"opsz" 144,"wght" 600'>
+          Boletines y portales oficiales
+        </h2>
+        <p class="text-sm text-ink2 mt-2 max-w-3xl">
+          Estos son los registros públicos donde se publican las convocatorias originales. Cuando una nueva sale aquí, aparece en Subvenia en la próxima sincronización diaria.
+        </p>
+      </div>
+    </div>
+
+    {% for group in groups %}
+    <section class="mb-10">
+      <div class="grid grid-cols-12 gap-6 mb-4">
+        <div class="col-span-12 md:col-span-3">
+          <div class="num-bloomberg text-3xl text-oxblood leading-none">{{ "%02d"|format(loop.index) }}</div>
+        </div>
+        <div class="col-span-12 md:col-span-9">
+          <h3 class="ff-display text-xl text-ink leading-tight" style='font-variation-settings:"opsz" 144,"wght" 600'>{{ group.title }}</h3>
+          <div class="rule mt-2 mb-2"></div>
+          <p class="text-sm text-ink2">{{ group.description }}</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-ink border border-ink">
+        {% for item in group.sources %}
+        <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer"
+           class="bg-paper p-5 hover:bg-paperdk/60 transition group flex flex-col">
+          <div class="flex items-start justify-between gap-2 mb-2">
+            <span class="ff-display text-sm text-oxblood group-hover:text-oxblood2 transition" style='font-variation-settings:"opsz" 144,"wght" 600'>{{ item.name }}</span>
+            <svg class="w-3.5 h-3.5 text-ink3 group-hover:text-oxblood transition flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+          </div>
+          <p class="text-xs text-ink2 leading-relaxed">{{ item.desc }}</p>
+        </a>
+        {% endfor %}
+      </div>
+    </section>
+    {% endfor %}
+  </section>
+
+</div>
 {% endblock %}

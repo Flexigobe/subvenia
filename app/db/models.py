@@ -12,6 +12,7 @@ from sqlalchemy import (
     DateTime,
     Enum,
     ForeignKey,
+    Index,
     Integer,
     Numeric,
     String,
@@ -185,6 +186,11 @@ class Empresa(Base):
     """
 
     __tablename__ = "empresa"
+    # Índice especializado para `LIKE 'X%'` sobre slug — sin esto el btree default
+    # cae a Seq Scan sobre 7M filas. Ver migration 0005_slug_pattern.
+    __table_args__ = (
+        Index("ix_empresa_slug_pattern", "slug", postgresql_ops={"slug": "text_pattern_ops"}),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     # Slug normalizado (lowercase, sin acentos, sin sufijos S.L./S.A.) — buscable rápido
@@ -211,7 +217,55 @@ class Empresa(Base):
     )
     # Texto BORME crudo de la entrada — útil para debug y futuro re-parse
     raw_text: Mapped[str | None] = mapped_column(Text)
+    # CNAE inferido y cacheado: pre-computado para todas las empresas para evitar
+    # latencia en autocomplete. El campo se rellena con bulk script + on-demand
+    # via cnae_inferer.infer_cnae(objeto_social) o infer_cnae(razon_social).
+    cnae_inferido: Mapped[str | None] = mapped_column(String(4), index=True)
+    cnae_inferido_label: Mapped[str | None] = mapped_column(String(255))
 
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+    )
+
+
+class Licitacion(Base):
+    """Licitación pública (contrato sector público) — origen TED EU.
+
+    NO son subvenciones: son oportunidades de venderle servicios/obras/suministros
+    al sector público. TED expone ~180k licitaciones de España desde 2016.
+    """
+
+    __tablename__ = "licitacion"
+    __table_args__ = (
+        UniqueConstraint("source", "external_id", name="uq_licitacion_source_extid"),
+        Index("ix_licitacion_fecha_limite", "fecha_limite"),
+        Index("ix_licitacion_provincia", "provincia"),
+        Index("ix_licitacion_ccaa", "ccaa"),
+        Index("ix_licitacion_cpv", "cpv_codes", postgresql_using="gin"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    source: Mapped[str] = mapped_column(String(16), nullable=False)
+    external_id: Mapped[str] = mapped_column(String(64), nullable=False)
+    titulo: Mapped[str] = mapped_column(Text, nullable=False)
+    descripcion: Mapped[str | None] = mapped_column(Text)
+    organismo: Mapped[str | None] = mapped_column(Text)
+    ccaa: Mapped[str | None] = mapped_column(String(8))
+    provincia: Mapped[str | None] = mapped_column(String(8))
+    nuts_code: Mapped[str | None] = mapped_column(String(8))
+    ciudad: Mapped[str | None] = mapped_column(Text)
+    fecha_publicacion: Mapped[date | None] = mapped_column(Date)
+    fecha_limite: Mapped[date | None] = mapped_column(Date)
+    importe_total: Mapped[Decimal | None] = mapped_column(Numeric(18, 2))
+    moneda: Mapped[str | None] = mapped_column(String(8), default="EUR")
+    tipo_procedimiento: Mapped[str | None] = mapped_column(String(64))
+    tipo_contrato: Mapped[str | None] = mapped_column(String(64))
+    cpv_codes: Mapped[list[str] | None] = mapped_column(ARRAY(String(16)))
+    enlace_oficial: Mapped[str | None] = mapped_column(Text)
+    raw_payload: Mapped[dict | None] = mapped_column(JSONB)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )

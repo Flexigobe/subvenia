@@ -1,10 +1,14 @@
 {% if success %}
-<div class="bg-green-50 border border-green-200 rounded-xl p-4 text-sm">
-  ✓ Listo. Te enviaremos el informe a <strong>{{ email }}</strong> y nuevas convocatorias afines cuando salgan.
-  Comprueba también la bandeja de spam los primeros días.
+<div class="border-l-4 border-moss bg-moss/10 px-4 py-3 text-sm flex items-start gap-3">
+  <span class="ff-mono text-moss text-xs pt-0.5">VERIFICADO —</span>
+  <div class="text-ink">
+    Te enviaremos el informe a <strong class="ff-display" style='font-variation-settings:"opsz" 144,"wght" 600'>{{ email }}</strong> y avisos de nuevas convocatorias afines.
+    <span class="press-sm text-ink2 block mt-1">Revisa la bandeja de spam los primeros días.</span>
+  </div>
 </div>
 {% elif error %}
-<div class="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-800">
-  {{ error }}
+<div class="border-l-4 border-oxblood bg-oxblood/8 px-4 py-3 text-sm flex items-start gap-3">
+  <span class="ff-mono text-oxblood text-xs pt-0.5">ERROR —</span>
+  <span class="text-oxblood">{{ error }}</span>
 </div>
 {% endif %}

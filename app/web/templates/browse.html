@@ -1,113 +1,163 @@
 {% extends "base.html" %}
-{% block title %}Todas las subvenciones{% endblock %}
+{% block title %}Catálogo · Subvenia{% endblock %}
 {% block content %}
 
-<!-- Header -->
-<div class="mb-6">
-  <h1 class="text-2xl font-bold">Todas las subvenciones</h1>
-  <p class="text-gray-600 text-sm mt-1">{{ total_count }} convocatorias en base de datos</p>
-</div>
+<div class="max-w-7xl mx-auto px-5 md:px-8 py-10 md:py-14">
 
-<!-- Filter form -->
-<form method="get" action="/subvenciones" class="bg-white border border-gray-200 rounded-2xl p-4 mb-6">
-  <div class="flex flex-wrap gap-3 items-end">
-    <div class="flex-1 min-w-[180px]">
-      <label for="q" class="block text-xs font-medium text-gray-600 mb-1">Texto</label>
-      <input
-        id="q"
-        type="text"
-        name="q"
-        value="{{ q }}"
-        placeholder="Buscar por título o descripción…"
-        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-      >
+  {# ───── Portadilla ───── #}
+  <header class="grid grid-cols-12 gap-6 mb-10">
+    <div class="col-span-12 md:col-span-3">
+      <div class="press text-oxblood">№ Catálogo</div>
+      <div class="rule mt-1 mb-3"></div>
+      <div class="press-sm text-ink2">Todo lo que hay en base de datos</div>
     </div>
-    <div class="min-w-[160px]">
-      <label for="ambito" class="block text-xs font-medium text-gray-600 mb-1">Ámbito</label>
-      <select id="ambito" name="ambito" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+    <div class="col-span-12 md:col-span-9">
+      <h1 class="ff-display text-ink leading-[0.95] tracking-tight text-[44px] md:text-[68px] lg:text-[84px]"
+          style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 700'>
+        Catálogo<br><span class="ff-display-light text-oxblood">completo</span>
+      </h1>
+      <div class="rule mt-6 mb-3"></div>
+      <div class="flex items-baseline gap-4">
+        <span class="num-bloomberg text-4xl text-ink">{{ "{:,}".format(total_count) }}</span>
+        <span class="press-sm text-ink2">convocatorias indexadas · BDNS + Comisión Europea</span>
+      </div>
+    </div>
+  </header>
+
+  {# ───── Filtros ───── #}
+  <form method="get" action="/subvenciones" class="border border-ink p-5 md:p-6 mb-8 bg-paperdk/40 grid grid-cols-12 gap-4 items-end">
+    <div class="col-span-12 md:col-span-12">
+      <label for="q" class="press text-ink mb-2 block">Búsqueda libre</label>
+      <input id="q" type="text" name="q" value="{{ q }}" placeholder="Título, organismo, descripción… ej: 'digitalización pymes', 'investigación cáncer', 'subvención empleo joven'"
+             class="ed-input-box w-full text-base">
+    </div>
+    <div class="col-span-6 md:col-span-3">
+      <label for="ambito" class="press text-ink mb-2 block">Ámbito</label>
+      <select id="ambito" name="ambito" class="ed-input-box w-full">
         {% for value, label in ambito_choices %}
         <option value="{{ value }}" {% if ambito == value %}selected{% endif %}>{{ label }}</option>
         {% endfor %}
       </select>
     </div>
-    <div class="min-w-[140px]">
-      <label for="estado" class="block text-xs font-medium text-gray-600 mb-1">Estado</label>
-      <select id="estado" name="estado" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+    <div class="col-span-6 md:col-span-3">
+      <label for="estado" class="press text-ink mb-2 block">Estado</label>
+      <select id="estado" name="estado" class="ed-input-box w-full">
         {% for value, label in estado_choices %}
         <option value="{{ value }}" {% if estado == value %}selected{% endif %}>{{ label }}</option>
         {% endfor %}
       </select>
     </div>
+    <div class="col-span-6 md:col-span-3">
+      <label for="finalidad" class="press text-ink mb-2 block">Finalidad</label>
+      <select id="finalidad" name="finalidad" class="ed-input-box w-full">
+        {% for value, label in finalidad_choices %}
+        <option value="{{ value }}" {% if finalidad == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-span-6 md:col-span-3">
+      <label for="orden" class="press text-ink mb-2 block">Ordenar por</label>
+      <select id="orden" name="orden" class="ed-input-box w-full">
+        {% for value, label in orden_choices %}
+        <option value="{{ value }}" {% if orden == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-span-12 md:col-span-9">
+      <label for="importe_min" class="press text-ink mb-2 block">Importe mínimo (€)</label>
+      <input id="importe_min" type="number" name="importe_min" min="0" step="1000" value="{{ importe_min or '' }}"
+             placeholder="0 (cualquier importe)"
+             class="ed-input-box w-full">
+    </div>
+    <div class="col-span-12 md:col-span-3">
+      <button type="submit" class="btn-sello w-full px-4 py-3 ff-display" style='font-variation-settings:"opsz" 144,"wght" 600'>Aplicar filtros</button>
+    </div>
+  </form>
+
+  {# ───── Tabla ───── #}
+  {% if items %}
+  <div class="border border-ink overflow-hidden mb-6">
+    <table class="w-full text-sm">
+      <thead class="bg-ink text-paper">
+        <tr>
+          <th class="px-4 py-3 text-left press-sm">Convocatoria</th>
+          <th class="px-4 py-3 text-left press-sm hidden md:table-cell">Organismo</th>
+          <th class="px-4 py-3 text-left press-sm hidden lg:table-cell">Ámbito</th>
+          <th class="px-4 py-3 text-left press-sm hidden lg:table-cell">Recibida</th>
+          <th class="px-4 py-3 text-left press-sm">Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for sub in items %}
+        <tr class="border-t border-ink/15 hover:bg-paperdk/50 transition">
+          <td class="px-4 py-3">
+            <a href="/subsidy/{{ sub.id }}" class="ff-display text-base text-ink hover:text-oxblood transition line-clamp-2" style='font-variation-settings:"opsz" 144,"wght" 600'>
+              {{ sub.titulo or "—" }}
+            </a>
+          </td>
+          <td class="px-4 py-3 text-ink2 hidden md:table-cell text-xs">{{ (sub.organismo or "—")|truncate(55, true, "…") }}</td>
+          <td class="px-4 py-3 hidden lg:table-cell">
+            <span class="press-sm border border-ink/40 text-ink2 px-2 py-0.5">{{ sub.ambito|capitalize }}</span>
+          </td>
+          <td class="px-4 py-3 hidden lg:table-cell">
+            <span class="ff-mono text-xs text-ink2">{% if sub.fecha_inicio %}{{ sub.fecha_inicio.strftime("%d.%m.%Y") }}{% else %}—{% endif %}</span>
+          </td>
+          <td class="px-4 py-3">
+            {% if sub.estado == "abierta" %}
+            <span class="inline-flex items-center gap-1.5 press-sm border border-moss text-moss px-2 py-0.5">
+              <span class="w-1.5 h-1.5 bg-moss"></span>Abierta
+            </span>
+            {% elif sub.estado == "cerrada" %}
+            <span class="inline-flex items-center gap-1.5 press-sm border border-ink/30 text-ink3 px-2 py-0.5">
+              <span class="w-1.5 h-1.5 bg-ink3"></span>Cerrada
+            </span>
+            {% else %}
+            <span class="inline-flex items-center gap-1.5 press-sm border border-ochre text-ochre px-2 py-0.5">
+              <span class="w-1.5 h-1.5 bg-ochre"></span>Próximamente
+            </span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="border border-ink p-10 text-center bg-paperdk/40 mb-6">
+    <div class="press text-oxblood mb-3">Sin coincidencias</div>
+    <p class="ff-display text-2xl md:text-3xl text-ink mb-2" style='font-variation-settings:"opsz" 144,"wght" 600'>
+      No hay subvenciones que coincidan con esos filtros.
+    </p>
+    <p class="text-sm text-ink2">Prueba a cambiar el texto, el ámbito o el estado.</p>
+  </div>
+  {% endif %}
+
+  {# ───── Paginación ───── #}
+  {% if total_pages > 1 %}
+  <div class="flex items-center justify-between text-sm border-t border-b border-ink py-4">
     <div>
-      <button type="submit" class="bg-green-700 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-green-800 transition">Filtrar</button>
+      {% if page > 1 %}
+      <a href="/subvenciones?q={{ q }}&ambito={{ ambito }}&estado={{ estado }}&finalidad={{ finalidad }}&importe_min={{ importe_min }}&orden={{ orden }}&page={{ page - 1 }}"
+         class="press text-ink ed-link inline-flex items-center gap-2">
+        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+        Anterior
+      </a>
+      {% endif %}
+    </div>
+    <span class="press text-ink2">
+      Página <span class="num-bloomberg text-xl text-ink mx-1">{{ page }}</span> de <span class="num-bloomberg text-xl text-ink mx-1">{{ total_pages }}</span>
+    </span>
+    <div>
+      {% if page < total_pages %}
+      <a href="/subvenciones?q={{ q }}&ambito={{ ambito }}&estado={{ estado }}&finalidad={{ finalidad }}&importe_min={{ importe_min }}&orden={{ orden }}&page={{ page + 1 }}"
+         class="press text-ink ed-link inline-flex items-center gap-2">
+        Siguiente
+        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+      </a>
+      {% endif %}
     </div>
   </div>
-</form>
+  {% endif %}
 
-<!-- Table or empty state -->
-{% if items %}
-<div class="bg-white border border-gray-200 rounded-2xl overflow-hidden mb-6">
-  <table class="w-full text-sm">
-    <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
-      <tr>
-        <th class="px-4 py-3 text-left">Convocatoria</th>
-        <th class="px-4 py-3 text-left hidden md:table-cell">Organismo</th>
-        <th class="px-4 py-3 text-left hidden md:table-cell">Ámbito</th>
-        <th class="px-4 py-3 text-left hidden md:table-cell">Recibida</th>
-        <th class="px-4 py-3 text-left">Estado</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for sub in items %}
-      <tr class="border-t border-gray-100 hover:bg-gray-50">
-        <td class="px-4 py-3">
-          <a href="/subsidy/{{ sub.id }}" class="font-medium hover:underline hover:text-green-700">
-            {{ (sub.titulo or "")[:80] }}{% if (sub.titulo or "")|length > 80 %}…{% endif %}
-          </a>
-        </td>
-        <td class="px-4 py-3 text-gray-600 hidden md:table-cell">{{ sub.organismo or "—" }}</td>
-        <td class="px-4 py-3 text-gray-600 hidden md:table-cell">{{ sub.ambito|capitalize }}</td>
-        <td class="px-4 py-3 text-gray-500 hidden md:table-cell">
-          {% if sub.fecha_inicio %}{{ sub.fecha_inicio.strftime("%d/%m/%Y") }}{% else %}—{% endif %}
-        </td>
-        <td class="px-4 py-3">
-          {% if sub.estado == "abierta" %}
-          <span class="inline-block bg-green-100 text-green-800 text-xs font-semibold px-2 py-0.5 rounded">Abierta</span>
-          {% elif sub.estado == "cerrada" %}
-          <span class="inline-block bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded">Cerrada</span>
-          {% else %}
-          <span class="inline-block bg-yellow-100 text-yellow-800 text-xs font-semibold px-2 py-0.5 rounded">Próximamente</span>
-          {% endif %}
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
 </div>
-{% else %}
-<div class="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-center mb-6">
-  <p class="font-semibold mb-1">No hay subvenciones que coincidan con esos filtros.</p>
-  <p class="text-sm text-gray-700">Prueba a cambiar el texto de búsqueda, el ámbito o el estado.</p>
-</div>
-{% endif %}
-
-<!-- Pagination footer -->
-{% if total_pages > 1 %}
-<div class="flex items-center justify-between text-sm">
-  <div>
-    {% if page > 1 %}
-    <a href="/subvenciones?q={{ q }}&ambito={{ ambito }}&estado={{ estado }}&page={{ page - 1 }}"
-       class="inline-block border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-100 transition">← Anterior</a>
-    {% endif %}
-  </div>
-  <span class="text-gray-600 font-medium">Página {{ page }} de {{ total_pages }}</span>
-  <div>
-    {% if page < total_pages %}
-    <a href="/subvenciones?q={{ q }}&ambito={{ ambito }}&estado={{ estado }}&page={{ page + 1 }}"
-       class="inline-block border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-100 transition">Siguiente →</a>
-    {% endif %}
-  </div>
-</div>
-{% endif %}
-
 {% endblock %}

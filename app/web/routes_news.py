@@ -2,14 +2,21 @@
 
 from __future__ import annotations
 
+from datetime import date, timedelta
 from pathlib import Path
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from sqlalchemy.orm import Session
+
+from app.db.models import Subvencion
+from app.db.session import get_db
 
 TEMPLATES_DIR = Path(__file__).resolve().parent / "templates"
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
+from app.web._template_globals import inject_globals
+inject_globals(templates)
 
 router = APIRouter()
 
@@ -56,6 +63,106 @@ _GROUPS: list[dict] = [
 ]
 
 
+# Cache en memoria del BOE — TTL 30 minutos
+import time as _time
+_boe_cache: dict = {"items": [], "ts": 0.0}
+_BOE_TTL = 30 * 60  # 30 min
+
+
+async def _get_boe_items(limit: int = 10) -> list:
+    """Fetch últimos items del BOE con cache 30 min.
+
+    El BOE solo publica 1 vez al día (~8h), así que 30 min de cache es seguro.
+    La primera visita después del TTL paga la latencia (~3s), las siguientes
+    sirven desde memoria (<1ms). Si BOE falla devolvemos cache aunque expirado.
+    """
+    now = _time.time()
+    if _boe_cache["items"] and (now - _boe_cache["ts"]) < _BOE_TTL:
+        return _boe_cache["items"][:limit]
+
+    try:
+        from app.sync.boe_puller import fetch_last_n_days
+        items = await fetch_last_n_days(days=7)
+        _boe_cache["items"] = items
+        _boe_cache["ts"] = now
+        return items[:limit]
+    except Exception as exc:
+        import logging
+        logging.getLogger(__name__).warning("BOE fetch failed: %s", exc)
+        # Si tenemos algo en cache aunque sea viejo, mejor eso que nada
+        return _boe_cache["items"][:limit] if _boe_cache["items"] else []
+
+
 @router.get("/noticias", response_class=HTMLResponse)
-def news(request: Request) -> HTMLResponse:
-    return templates.TemplateResponse(request, "news.html", {"groups": _GROUPS})
+async def news(request: Request, db: Session = Depends(get_db)) -> HTMLResponse:
+    """Feed real de novedades: últimas subvenciones publicadas, próximas a cerrar
+    y fuentes oficiales. La página se refresca automáticamente con cada sync diaria.
+    """
+    today = date.today()
+    one_week = today + timedelta(days=7)
+    one_month = today + timedelta(days=30)
+    boe_items = await _get_boe_items(limit=15)
+
+    # 1) Últimas 30 añadidas: ordenadas por created_at DESC, filtradas a las que
+    #    aún están abiertas (fecha_fin >= hoy o null) Y publicadas en últimos 90 días
+    # El filtro de created_at es CRÍTICO — sin él escanea toda la tabla (163k).
+    cutoff_90 = today - timedelta(days=90)
+    latest = (
+        db.query(Subvencion)
+        .filter(
+            Subvencion.created_at >= cutoff_90,
+            (Subvencion.fecha_fin.is_(None)) | (Subvencion.fecha_fin >= today),
+        )
+        .order_by(Subvencion.created_at.desc())
+        .limit(30)
+        .all()
+    )
+
+    # 2) Cerrando esta semana (próximos 7 días, urgentes)
+    closing_week = (
+        db.query(Subvencion)
+        .filter(
+            Subvencion.fecha_fin.between(today, one_week)
+        )
+        .order_by(Subvencion.fecha_fin.asc())
+        .limit(20)
+        .all()
+    )
+
+    # 3) Cerrando este mes (8-30 días)
+    closing_month = (
+        db.query(Subvencion)
+        .filter(
+            Subvencion.fecha_fin > one_week,
+            Subvencion.fecha_fin <= one_month,
+        )
+        .order_by(Subvencion.fecha_fin.asc())
+        .limit(20)
+        .all()
+    )
+
+    # 4) Próximas a abrir (fecha_inicio futura, próximos 30 días)
+    next_open = (
+        db.query(Subvencion)
+        .filter(
+            Subvencion.fecha_inicio > today,
+            Subvencion.fecha_inicio <= one_month,
+        )
+        .order_by(Subvencion.fecha_inicio.asc())
+        .limit(15)
+        .all()
+    )
+
+    return templates.TemplateResponse(
+        request,
+        "news.html",
+        {
+            "groups": _GROUPS,
+            "latest": latest,
+            "closing_week": closing_week,
+            "closing_month": closing_month,
+            "next_open": next_open,
+            "boe_items": boe_items,
+            "today": today,
+        },
+    )

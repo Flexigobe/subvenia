@@ -3,75 +3,508 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Buscador de subvenciones para empresas españolas · Gratis y oficial{% endblock %}</title>
+  <title>{% block title %}Subvenia — Boletín inteligente de subvenciones públicas para empresas españolas{% endblock %}</title>
 
-  <meta name="description" content="{% block meta_description %}Buscador gratuito de subvenciones públicas españolas y europeas con datos oficiales de BDNS, BORME y la Comisión Europea. Encuentra ayudas para tu empresa en segundos.{% endblock %}">
+  <meta name="description" content="{% block meta_description %}Subvenia. El boletín inteligente que cruza tu empresa con BDNS, BORME y la Comisión Europea para decirte qué subvenciones puedes pedir. Gratis. Sin registro. Sin spam.{% endblock %}">
   <meta name="robots" content="{% block meta_robots %}index, follow{% endblock %}">
   <link rel="canonical" href="{% block canonical %}{{ request.url }}{% endblock %}">
 
-  <!-- Open Graph -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="{% block og_title %}Buscador de subvenciones para empresas españolas{% endblock %}">
-  <meta property="og:description" content="{% block og_description %}Gratis · datos oficiales · BDNS + UE + BORME. Encuentra ayudas para tu empresa en segundos.{% endblock %}">
+  <meta property="og:title" content="{% block og_title %}Subvenia — Subvenciones que tu empresa puede pedir{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}Boletín inteligente. Datos oficiales BDNS + UE + BORME. Análisis automático. Gratis.{% endblock %}">
   <meta property="og:url" content="{% block og_url %}{{ request.url }}{% endblock %}">
   <meta property="og:locale" content="es_ES">
-  <meta property="og:site_name" content="Buscador de subvenciones">
+  <meta property="og:site_name" content="Subvenia">
 
-  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="{% block twitter_title %}Buscador de subvenciones para empresas españolas{% endblock %}">
-  <meta name="twitter:description" content="{% block twitter_description %}Gratis · datos oficiales · BDNS + UE + BORME{% endblock %}">
+  <meta name="twitter:title" content="{% block twitter_title %}Subvenia{% endblock %}">
+  <meta name="twitter:description" content="{% block twitter_description %}Subvenciones públicas, cruzadas con tu empresa, en segundos.{% endblock %}">
+
+  {# ─── JSON-LD Schema.org: Organization + WebSite con SearchAction ─── #}
+  <script type="application/ld+json">
+  {% raw %}{{% endraw %}
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "{{ request.url.scheme }}://{{ request.url.netloc }}/#organization",
+        "name": "Subvenia",
+        "url": "{{ request.url.scheme }}://{{ request.url.netloc }}/",
+        "description": "Buscador público de subvenciones España + UE. Cruza tu empresa con BDNS, BORME, Funding & Tenders Portal y TED.",
+        "areaServed": [
+          {"@type": "Country", "name": "España"},
+          {"@type": "Place", "name": "Unión Europea"}
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "{{ request.url.scheme }}://{{ request.url.netloc }}/#website",
+        "url": "{{ request.url.scheme }}://{{ request.url.netloc }}/",
+        "name": "Subvenia",
+        "inLanguage": "es-ES",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "{{ request.url.scheme }}://{{ request.url.netloc }}/subvenciones?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }{% block extra_schema %}{% endblock %}
+    ]
+  {% raw %}}{% endraw %}
+  </script>
+
+  {# ─── Favicon: monograma S serif sobre ivory ─── #}
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23F4EFE3'/%3E%3Ctext x='16' y='23' font-family='Georgia,serif' font-size='22' font-weight='700' text-anchor='middle' fill='%237B2D1A' font-style='italic'%3ES%3C/text%3E%3C/svg%3E">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  {# Fraunces: display variable serif con opsz + soft + wonk. Geist: body sans Vercel. Geist Mono: cifras. #}
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/htmx.org@2.0.3"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans:    ['"Geist"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            display: ['"Fraunces"', '"GT Sectra"', 'Georgia', 'serif'],
+            mono:    ['"Geist Mono"', 'ui-monospace', 'monospace'],
+          },
+          colors: {
+            // Paleta editorial-treasury
+            paper:    '#F4EFE3',  // parchment / ivory
+            paperdk:  '#EAE3D2',  // ivory oscuro para layered
+            ink:      '#13110D',  // casi-negro cálido
+            ink2:     '#3A3530',  // ink medio
+            ink3:     '#6E6759',  // ink suave
+            rule:     '#1F1B14',  // líneas
+            // Acentos
+            oxblood:  '#7B2D1A',  // rojo profundo Banco de España
+            oxblood2: '#5E2010',  // hover
+            ochre:    '#C4892C',  // oro/ochre treasury
+            ochrelt:  '#E3B65C',  // highlight suave
+            moss:     '#5B6F4A',  // status verde apagado (no SaaS)
+            moss2:    '#3F4F33',
+          },
+          letterSpacing: {
+            'press':  '0.18em',   // small caps
+            'press2': '0.08em',
+          },
+          keyframes: {
+            'editorial-up': {
+              '0%':   { opacity: '0', transform: 'translateY(14px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            'rule-grow': {
+              '0%':   { transform: 'scaleX(0)' },
+              '100%': { transform: 'scaleX(1)' },
+            },
+            'ticker': {
+              '0%':   { transform: 'translateX(0)' },
+              '100%': { transform: 'translateX(-50%)' },
+            },
+            'ticker-slow': {
+              '0%':   { transform: 'translateX(0)' },
+              '100%': { transform: 'translateX(-50%)' },
+            },
+            'softblink': {
+              '0%, 100%': { opacity: '1' },
+              '50%':       { opacity: '0.35' },
+            },
+          },
+          animation: {
+            'editorial-up': 'editorial-up 0.75s cubic-bezier(.2,.7,.2,1) both',
+            'rule-grow':    'rule-grow 0.9s cubic-bezier(.2,.7,.2,1) both',
+            'ticker':       'ticker 50s linear infinite',
+            'softblink':    'softblink 2.6s ease-in-out infinite',
+          },
+        },
+      },
+    };
+  </script>
+
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Geist', ui-sans-serif, system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      background:
+        radial-gradient(at 80% -10%, rgba(196,137,44,0.10) 0px, transparent 50%),
+        radial-gradient(at 0% 110%, rgba(123,45,26,0.06) 0px, transparent 50%),
+        #F4EFE3;
+      color: #13110D;
+    }
+
+    /* Display Fraunces con opsz + wonk para carácter editorial */
+    .ff-display {
+      font-family: 'Fraunces', 'GT Sectra', Georgia, serif;
+      font-optical-sizing: auto;
+      font-variation-settings: "opsz" 144, "SOFT" 30, "WONK" 1;
+      letter-spacing: -0.025em;
+      font-feature-settings: "ss01" on, "liga" on, "dlig" on;
+    }
+    .ff-display-light {
+      font-family: 'Fraunces', Georgia, serif;
+      font-variation-settings: "opsz" 144, "SOFT" 60, "WONK" 0;
+      font-style: italic;
+    }
+    .ff-mono { font-family: 'Geist Mono', ui-monospace, monospace; font-feature-settings: "ss01" on; }
+
+    /* Sello / press: typography institucional pequeña */
+    .press {
+      font-size: 10.5px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .press-sm {
+      font-size: 9.5px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    /* Rule: línea horizontal con grano editorial */
+    .rule         { height: 1px; background: #13110D; }
+    .rule-thin    { height: 1px; background: rgba(19,17,13,0.18); }
+    .rule-double  { border-top: 1px solid #13110D; border-bottom: 1px solid #13110D; height: 5px; }
+
+    /* Drop cap para hero */
+    .dropcap::first-letter {
+      font-family: 'Fraunces', Georgia, serif;
+      font-variation-settings: "opsz" 144, "SOFT" 30, "WONK" 1;
+      font-weight: 700;
+      font-size: 5.2em;
+      line-height: 0.82;
+      float: left;
+      margin: 0.06em 0.08em 0 -0.04em;
+      color: #7B2D1A;
+    }
+
+    /* Texturas: grano suave */
+    .grain::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.07  0 0 0 0 0.06  0 0 0 0 0.05  0 0 0 .12 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: 0.5;
+      pointer-events: none;
+      mix-blend-mode: multiply;
+    }
+
+    /* Link editorial subrayado */
+    .ed-link {
+      color: #7B2D1A;
+      background-image: linear-gradient(currentColor, currentColor);
+      background-size: 100% 1px;
+      background-position: 0 100%;
+      background-repeat: no-repeat;
+      transition: background-size 0.3s;
+    }
+    .ed-link:hover { color: #5E2010; }
+
+    /* Botón primario "sello" */
+    .btn-sello {
+      background: #13110D;
+      color: #F4EFE3;
+      border: 1px solid #13110D;
+      transition: all 0.18s ease;
+      position: relative;
+    }
+    .btn-sello:hover {
+      background: #7B2D1A;
+      border-color: #7B2D1A;
+      transform: translate(-2px, -2px);
+      box-shadow: 4px 4px 0 0 #13110D;
+    }
+    .btn-sello:active { transform: translate(0, 0); box-shadow: none; }
+
+    .btn-ghost {
+      background: transparent;
+      color: #13110D;
+      border: 1px solid #13110D;
+      transition: all 0.18s ease;
+    }
+    .btn-ghost:hover {
+      background: #13110D;
+      color: #F4EFE3;
+    }
+
+    /* Card editorial: bordes finos, sin sombras de SaaS */
+    .ed-card {
+      background: #F8F4E9;
+      border: 1px solid rgba(19,17,13,0.15);
+      transition: all 0.2s ease;
+    }
+    .ed-card:hover {
+      border-color: #13110D;
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0 0 rgba(19,17,13,0.85);
+    }
+
+    /* Input editorial: underline en vez de box */
+    .ed-input {
+      background: transparent;
+      border: none;
+      border-bottom: 1.5px solid #13110D;
+      border-radius: 0;
+      padding: 0.5rem 0;
+      font-family: 'Geist', sans-serif;
+      transition: border-color 0.15s;
+    }
+    .ed-input:focus {
+      outline: none;
+      border-bottom-color: #7B2D1A;
+      border-bottom-width: 2px;
+    }
+    .ed-input::placeholder { color: #6E6759; }
+
+    /* Box-bordered (alternative form fields que sí necesitan caja) */
+    .ed-input-box {
+      background: #F8F4E9;
+      border: 1px solid #13110D;
+      border-radius: 0;
+      padding: 0.65rem 0.85rem;
+      font-family: 'Geist', sans-serif;
+      transition: all 0.15s;
+    }
+    .ed-input-box:focus {
+      outline: none;
+      background: #FFFCF5;
+      box-shadow: 3px 3px 0 0 rgba(19,17,13,0.85);
+      transform: translate(-1px, -1px);
+    }
+
+    /* Numeric display Bloomberg-style */
+    .num-bloomberg {
+      font-family: 'Fraunces', Georgia, serif;
+      font-variation-settings: "opsz" 144, "wght" 700;
+      font-feature-settings: "tnum" on, "lnum" on;
+      letter-spacing: -0.04em;
+    }
+
+    /* Stagger helpers */
+    .stagger > * { opacity: 0; animation: editorial-up 0.7s cubic-bezier(.2,.7,.2,1) both; }
+    .stagger > *:nth-child(1) { animation-delay: 0.05s; }
+    .stagger > *:nth-child(2) { animation-delay: 0.14s; }
+    .stagger > *:nth-child(3) { animation-delay: 0.22s; }
+    .stagger > *:nth-child(4) { animation-delay: 0.30s; }
+    .stagger > *:nth-child(5) { animation-delay: 0.38s; }
+    .stagger > *:nth-child(6) { animation-delay: 0.46s; }
+    .stagger > *:nth-child(7) { animation-delay: 0.54s; }
+    .stagger > *:nth-child(8) { animation-delay: 0.62s; }
+
+    /* Animated rule */
+    .rule-anim { transform-origin: left; animation: rule-grow 0.85s cubic-bezier(.2,.7,.2,1) 0.2s both; }
+
+    /* HTMX indicator */
+    .htmx-indicator { opacity: 0; transition: opacity 200ms; }
+    .htmx-request .htmx-indicator,
+    .htmx-request.htmx-indicator { opacity: 1; }
+
+    /* Focus visible */
+    *:focus-visible { outline: none; }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(123,45,26,0.32);
+    }
+
+    /* Line-clamp utilities (Tailwind no incluye por defecto) */
+    .line-clamp-1, .line-clamp-2, .line-clamp-3 {
+      display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .line-clamp-1 { -webkit-line-clamp: 1; }
+    .line-clamp-2 { -webkit-line-clamp: 2; }
+    .line-clamp-3 { -webkit-line-clamp: 3; }
+
+    /* Prose ajustes editorial */
+    .prose-ed h2 { font-family: 'Fraunces', Georgia, serif; font-variation-settings: "opsz" 144, "wght" 700; letter-spacing: -0.02em; }
+    .prose-ed h3 { font-family: 'Fraunces', Georgia, serif; }
+    .prose-ed a  { color: #7B2D1A; text-decoration: underline; text-underline-offset: 3px; }
+    .prose-ed strong { color: #13110D; }
+
+    /* Print-only / Print-hide utility classes */
+    .print-only { display: none; }
+    @media print { .print-only { display: block !important; } }
+
+    /* ───── Print stylesheet — PDF/papel A4 ─────
+       Quitar el "letter-spacing" enorme del .press (que en pantalla queda institucional
+       pero en papel se ve roto: "N U E VA  C O N S U LTA"). Reducir font-sizes,
+       cortar paddings, esconder elementos no imprimibles (filtros, ticker, form
+       suscripción, cita motivacional, CTAs decorativas). */
+    @media print {
+      @page { size: A4; margin: 1.2cm 1.4cm; }
+      html, body {
+        background: #ffffff !important;
+        color: #000 !important;
+        font-size: 10pt;
+        line-height: 1.35;
+      }
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      /* Quitar texturas/animaciones que no aportan en papel */
+      .grain::before, .grain { background-image: none !important; }
+      .grain::before { display: none !important; }
+      .stagger > * { opacity: 1 !important; animation: none !important; }
+      .animate-ticker, .animate-softblink, .animate-pulse-soft { animation: none !important; }
+      /* Tipografía — quitar letter-spacing exagerado y reducir tamaños */
+      .press, .press-sm {
+        letter-spacing: 0.05em !important;
+        font-size: 8pt !important;
+      }
+      .ff-display, h1, h2, h3 { letter-spacing: -0.01em !important; }
+      h1.ff-display { font-size: 22pt !important; line-height: 1.1 !important; }
+      h2.ff-display { font-size: 16pt !important; line-height: 1.15 !important; }
+      h3.ff-display { font-size: 12pt !important; line-height: 1.2 !important; }
+      .num-bloomberg { letter-spacing: -0.03em !important; }
+      /* Reducir num-bloomberg sizes en print */
+      .num-bloomberg.text-5xl { font-size: 22pt !important; }
+      .num-bloomberg.text-4xl { font-size: 18pt !important; }
+      .num-bloomberg.text-3xl { font-size: 14pt !important; }
+      .num-bloomberg.text-2xl { font-size: 12pt !important; }
+      /* Reducir padding/margin general */
+      .py-10, .py-12, .py-14, .py-16, .py-20, .py-24 { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
+      .px-5, .px-8 { padding-left: 0 !important; padding-right: 0 !important; }
+      .mb-8, .mb-10, .mb-12, .mb-14, .mb-16 { margin-bottom: 0.6rem !important; }
+      .mt-8, .mt-10, .mt-12 { margin-top: 0.6rem !important; }
+      .p-7, .p-8, .p-9, .p-10 { padding: 0.4rem !important; }
+      /* Esconder elementos no útiles en papel */
+      header, footer,
+      .print-hide,
+      .filter-btn, #filters,
+      .animate-ticker, [class*="overflow-hidden"]:has(.animate-ticker),
+      form#search-form,
+      [hx-post], button[type="submit"],
+      a[href^="javascript:"],
+      a[href="#search-form"], a[href="#form-section"],
+      details summary svg,
+      .htmx-indicator
+      { display: none !important; }
+      /* Cita pull-quote (manifiesto): demasiado dramática en papel */
+      blockquote, blockquote + footer { display: none !important; }
+      section.bg-ink { display: none !important; }
+      /* Tablas: bordes finos y compactos */
+      table { border-collapse: collapse !important; font-size: 9pt !important; }
+      table th, table td { padding: 4pt 6pt !important; border: 0.4pt solid #999 !important; }
+      thead { background: #f0f0f0 !important; color: #000 !important; }
+      thead th { color: #000 !important; }
+      /* Cards: borde fino sin sombras hard */
+      .ed-card, .border, .border-ink, [class*="border-"] { box-shadow: none !important; transform: none !important; }
+      .bg-ink, .bg-paperdk\/40, .bg-paperdk\/30 { background: #fafafa !important; }
+      .bg-paper { background: #fff !important; }
+      /* Color overrides */
+      .text-paper, .text-paper\/80, .text-ink3, .text-ink2 { color: #000 !important; }
+      .text-oxblood, .text-ochre, .text-ochrelt, .text-moss { color: #444 !important; }
+      .gradient-text { background: none !important; -webkit-text-fill-color: #000 !important; color: #000 !important; }
+      .ff-display-light { font-style: italic; }
+      /* Hipervínculos: añadir URL después */
+      a[href^="http"]::after { content: " — " attr(href); font-size: 7pt; color: #555; }
+      /* Pero NO para los links internos al subsidy */
+      a[href^="/subsidy/"]::after { content: ""; }
+      a[href^="/"]::after { content: ""; }
+      /* Esconder rules decorativas */
+      .rule, .rule-thin, .rule-double, hr { border: none !important; height: 0.6pt !important; background: #ccc !important; margin: 6pt 0 !important; }
+      /* Page break inside avoid */
+      tr, .ed-card, section, article { page-break-inside: avoid; }
+      /* Esconder Filtros section completa */
+      .border-t.border-b.border-ink.py-3.mb-8 { display: none !important; }
+      /* Suscripción al boletín al final */
+      section.mt-16 { display: none !important; }
+      /* Leyenda explicativa: simpler */
+      .grid.md\\:grid-cols-3.gap-3.text-xs { font-size: 8pt !important; }
+    }
   </style>
 
   {% if plausible_domain %}
-  <!-- Plausible Analytics — privacy-friendly, no cookies -->
   <script defer data-domain="{{ plausible_domain }}" src="{{ plausible_src }}"></script>
   {% endif %}
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen">
-  <header class="bg-white border-b border-gray-200">
-    <div class="max-w-5xl mx-auto px-6 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-      <a href="/" class="font-bold text-lg">Buscador de subvenciones</a>
-      <nav class="flex flex-wrap items-center gap-4 text-sm">
-        <a href="/" class="text-gray-700 hover:text-green-700 hover:underline">Buscar a medida</a>
-        <a href="/subvenciones" class="text-gray-700 hover:text-green-700 hover:underline">Todas las subvenciones</a>
-        <a href="/noticias" class="text-gray-700 hover:text-green-700 hover:underline">Fuentes y novedades</a>
-        <a href="/como-funciona" class="text-gray-700 hover:text-green-700 hover:underline">Cómo funciona</a>
-      </nav>
+<body class="min-h-screen flex flex-col">
+
+  {# ───── HEADER editorial — masthead estilo periódico ───── #}
+  <header class="border-b border-ink relative grain">
+    {# Top strip: fecha / edición / ticker breve #}
+    <div class="border-b border-ink/30 bg-paper/60 backdrop-blur-sm">
+      <div class="max-w-7xl mx-auto px-5 md:px-8 py-1.5 flex items-center justify-between text-ink2">
+        <div class="press-sm">Edición {{ today_iso or now_iso }} · España + UE</div>
+        <div class="hidden sm:flex items-center gap-3 press-sm">
+          <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-moss animate-softblink"></span>Datos en directo</span>
+          <span class="text-ink/40">·</span>
+          <span>Gratuito · Sin registro</span>
+        </div>
+      </div>
     </div>
+
+    {# Masthead principal #}
+    <div class="max-w-7xl mx-auto px-5 md:px-8 py-4 md:py-5 flex items-end justify-between gap-6">
+      <a href="/" class="flex items-end gap-3 group">
+        <span class="ff-display text-5xl md:text-6xl font-bold leading-none text-ink select-none" style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 800'>Subvenia</span>
+        <span class="hidden sm:block text-ink3 press-sm pb-1.5 border-l border-ink/30 pl-3 leading-tight">
+          Boletín inteligente<br>de subvenciones
+        </span>
+      </a>
+      <nav class="hidden md:flex items-end gap-5 text-sm pb-1.5">
+        <a href="/" class="ed-link">Buscar</a>
+        <a href="/subvenciones" class="ed-link">Catálogo</a>
+        <a href="/licitaciones" class="ed-link">Licitaciones</a>
+        <a href="/noticias" class="ed-link">Novedades</a>
+        <a href="/como-funciona" class="ed-link">Método</a>
+      </nav>
+      <a href="/" class="md:hidden btn-sello px-3 py-2 text-xs press-sm">Buscar</a>
+    </div>
+
+    {# Rule editorial doble #}
+    <div class="border-t border-b border-ink/80 h-[3px] bg-paper"></div>
   </header>
-  <main class="max-w-5xl mx-auto px-6 py-8">
+
+  <main class="flex-1 w-full">
     {% block content %}{% endblock %}
   </main>
-  <footer class="border-t border-gray-200 mt-12">
-    <div class="max-w-5xl mx-auto px-6 py-8 grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-gray-600">
-      <div>
-        <div class="font-semibold text-gray-800 mb-2">Buscador de subvenciones</div>
-        <p class="text-xs">Información orientativa generada a partir de fuentes oficiales públicas. Consulta siempre la convocatoria oficial antes de solicitar.</p>
+
+  {# ───── FOOTER editorial — colofón ───── #}
+  <footer class="mt-24 border-t border-ink relative grain">
+    <div class="max-w-7xl mx-auto px-5 md:px-8 py-12 grid grid-cols-1 md:grid-cols-12 gap-8">
+      <div class="md:col-span-5">
+        <div class="ff-display text-3xl font-bold text-ink leading-none mb-3" style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1'>Subvenia</div>
+        <p class="text-sm text-ink2 leading-relaxed max-w-md">
+          Boletín inteligente que cruza tu empresa con
+          <span class="ed-link">BDNS</span>,
+          <span class="ed-link">BORME</span>,
+          <span class="ed-link">Wikidata</span>,
+          <span class="ed-link">eInforma</span> y la
+          <span class="ed-link">Comisión Europea</span>
+          para mostrarte qué subvenciones públicas puedes pedir hoy.
+        </p>
+        <div class="mt-5 press-sm text-ink3">Sin cookies · Sin tracking · Sin registro</div>
       </div>
-      <div>
-        <div class="font-semibold text-gray-800 mb-2">Secciones</div>
-        <ul class="space-y-1 text-xs">
-          <li><a href="/" class="hover:text-green-700 hover:underline">Buscar a medida</a></li>
-          <li><a href="/subvenciones" class="hover:text-green-700 hover:underline">Todas las subvenciones</a></li>
-          <li><a href="/noticias" class="hover:text-green-700 hover:underline">Fuentes y novedades</a></li>
-          <li><a href="/como-funciona" class="hover:text-green-700 hover:underline">Cómo funciona</a></li>
+      <div class="md:col-span-3">
+        <div class="press text-ink mb-3">Secciones</div>
+        <ul class="space-y-1.5 text-sm">
+          <li><a href="/" class="ed-link">Buscar a medida</a></li>
+          <li><a href="/subvenciones" class="ed-link">Catálogo completo</a></li>
+          <li><a href="/noticias" class="ed-link">Fuentes y novedades</a></li>
+          <li><a href="/como-funciona" class="ed-link">Método</a></li>
         </ul>
       </div>
-      <div>
-        <div class="font-semibold text-gray-800 mb-2">Legal</div>
-        <ul class="space-y-1 text-xs">
-          <li><a href="/privacidad" class="hover:text-green-700 hover:underline">Política de privacidad</a></li>
-          <li><a href="/terminos" class="hover:text-green-700 hover:underline">Términos de uso</a></li>
-          <li class="text-gray-500">© Flexigobe — Servicio gratuito</li>
+      <div class="md:col-span-4">
+        <div class="press text-ink mb-3">Colofón</div>
+        <p class="text-xs text-ink3 leading-relaxed mb-4">
+          Información orientativa elaborada a partir de fuentes oficiales abiertas.
+          Consulta siempre la convocatoria oficial publicada antes de solicitar.
+        </p>
+        <ul class="space-y-1.5 text-sm">
+          <li><a href="/privacidad" class="ed-link">Política de privacidad</a></li>
+          <li><a href="/terminos" class="ed-link">Términos de uso</a></li>
         </ul>
+      </div>
+    </div>
+    <div class="border-t border-ink/30">
+      <div class="max-w-7xl mx-auto px-5 md:px-8 py-3 flex flex-wrap justify-between text-ink3 press-sm gap-2">
+        <span>© <span class="ff-display italic">Subvenia</span> — Madrid · Barcelona · UE</span>
+        <span>Hecho con cuidado, sin grandilocuencia</span>
       </div>
     </div>
   </footer>
+
 </body>
 </html>

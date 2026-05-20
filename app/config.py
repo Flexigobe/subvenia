@@ -3,6 +3,7 @@
 from functools import lru_cache
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import field_validator
 
 
 class Settings(BaseSettings):
@@ -10,6 +11,18 @@ class Settings(BaseSettings):
 
     # Database
     database_url: str = "postgresql+psycopg://subvenciones:subvenciones@localhost:5432/subvenciones"
+
+    @field_validator("database_url", mode="before")
+    @classmethod
+    def _ensure_psycopg_driver(cls, v: str) -> str:
+        # Railway / Heroku-style URLs come as "postgresql://..." or "postgres://...".
+        # SQLAlchemy with psycopg3 needs "postgresql+psycopg://".
+        if isinstance(v, str):
+            if v.startswith("postgres://"):
+                v = "postgresql://" + v[len("postgres://") :]
+            if v.startswith("postgresql://"):
+                v = "postgresql+psycopg://" + v[len("postgresql://") :]
+        return v
 
     # App
     base_url: str = "http://localhost:8000"

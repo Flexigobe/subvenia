@@ -1,17 +1,23 @@
 {% extends "base.html" %}
+{% block title %}Baja confirmada · Subvenia{% endblock %}
 {% block content %}
-<div class="max-w-2xl mx-auto bg-white border border-gray-200 rounded-2xl p-8 text-center">
-  <div class="text-4xl mb-3">✓</div>
-  <h1 class="text-2xl font-bold mb-2">Baja confirmada</h1>
-  <p class="text-gray-700 mb-1">
-    Hemos desactivado las alertas para <strong>{{ email }}</strong>.
+<div class="max-w-2xl mx-auto px-5 md:px-8 py-20 md:py-28 text-center">
+  <div class="press text-oxblood mb-3">Confirmado</div>
+  <div class="rule mb-6 max-w-[100px] mx-auto"></div>
+  <h1 class="ff-display text-ink text-5xl md:text-7xl leading-[0.95] tracking-tight mb-6"
+      style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 700'>
+    Baja confirmada.
+  </h1>
+  <p class="text-base md:text-lg text-ink2 leading-relaxed mb-1">
+    Hemos desactivado las alertas para
   </p>
-  <p class="text-sm text-gray-500 mb-6">
-    No recibirás más emails con nuevas convocatorias. Si fue un error, vuelve a
-    suscribirte desde la página principal.
+  <p class="ff-mono text-base text-ink mb-7">{{ email }}</p>
+  <p class="text-sm text-ink3 mb-9 max-w-md mx-auto leading-relaxed">
+    No recibirás más emails con nuevas convocatorias. Si fue un error, vuelve a suscribirte desde el inicio.
   </p>
-  <a href="/" class="inline-block bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-2 rounded">
-    Volver al inicio →
+  <a href="/" class="btn-sello inline-flex items-center gap-3 px-7 py-3.5">
+    <span class="ff-display text-base" style='font-variation-settings:"opsz" 144,"wght" 600'>Volver al inicio</span>
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m0 0l-6-6m6 6l-6 6"/></svg>
   </a>
 </div>
 {% endblock %}

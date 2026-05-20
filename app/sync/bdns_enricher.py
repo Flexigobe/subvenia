@@ -53,20 +53,32 @@ async def enrich_existing(
     session: Session,
     batch_commit: int = 200,
     max_records: int | None = None,
+    *,
+    include_short_descriptions: bool = True,
 ) -> dict[str, int]:
-    """Backfill: encuentra Subvenciones BDNS con campos clave vacíos y las enriquece.
+    """Backfill: encuentra Subvenciones BDNS con campos clave o descripción vacíos y las enriquece.
 
-    Criterio "vacío": importe_total IS NULL AND fecha_fin IS NULL.
+    Criterios:
+      - importe_total IS NULL AND fecha_fin IS NULL  (caso original: vacío total)
+      - O bien len(descripcion) < 200  (Plan 2: BDNS publica el detalle largo en el endpoint
+        detail mientras que el listing solo tiene un título truncado)
+
     Hace commit cada batch_commit registros enriquecidos.
 
     Returns:
         {"enriched": N, "skipped": M (204 del API), "errors": E, "total": N+M+E}
     """
-    stmt = select(Subvencion).where(
-        Subvencion.source == "bdns",
-        Subvencion.importe_total.is_(None),
-        Subvencion.fecha_fin.is_(None),
-    )
+    from sqlalchemy import func, or_
+
+    base_filter = [Subvencion.source == "bdns"]
+    if include_short_descriptions:
+        condition = or_(
+            (Subvencion.importe_total.is_(None) & Subvencion.fecha_fin.is_(None)),
+            func.length(func.coalesce(Subvencion.descripcion, "")) < 200,
+        )
+    else:
+        condition = (Subvencion.importe_total.is_(None) & Subvencion.fecha_fin.is_(None))
+    stmt = select(Subvencion).where(*base_filter, condition)
     if max_records:
         stmt = stmt.limit(max_records)
     rows = session.execute(stmt).scalars().all()

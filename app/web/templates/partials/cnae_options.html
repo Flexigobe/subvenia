@@ -1,0 +1,24 @@
+{% if results %}
+<ul class="absolute left-0 right-0 top-full mt-1 bg-paper border-2 border-ink max-h-80 overflow-y-auto z-50 shadow-[5px_5px_0_0_rgba(19,17,13,0.85)]">
+  {% for r in results %}
+  <li>
+    <button type="button"
+            class="cnae-option block w-full text-left px-4 py-2.5 hover:bg-paperdk focus:bg-paperdk focus:outline-none text-sm border-b border-ink/15 last:border-b-0 transition"
+            data-code="{{ r.code }}"
+            data-description="{{ r.description }}">
+      <div class="flex items-baseline gap-3">
+        <span class="ff-mono text-xs font-bold text-oxblood border border-oxblood px-1.5 py-0.5 shrink-0">{{ r.code }}</span>
+        <span class="text-ink">{{ r.description }}</span>
+      </div>
+    </button>
+  </li>
+  {% endfor %}
+</ul>
+{% elif q %}
+<div class="absolute left-0 right-0 top-full mt-1 bg-paper border-2 border-ink p-3.5 z-50 shadow-[5px_5px_0_0_rgba(19,17,13,0.85)]">
+  <p class="text-xs text-ink2 leading-relaxed">
+    <span class="press-sm text-oxblood block mb-1">Sin coincidencias</span>
+    Ningún CNAE coincide con <strong class="text-ink">«{{ q }}»</strong>. Prueba otra palabra (<em>hostelería</em>, <em>consultoría</em>, <em>taller</em>) o el código de 4 dígitos.
+  </p>
+</div>
+{% endif %}

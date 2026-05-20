@@ -1,9 +1,20 @@
 {% extends "base.html" %}
-{% block title %}Términos de uso · Buscador de subvenciones{% endblock %}
+{% block title %}Términos de uso · Subvenia{% endblock %}
 {% block content %}
-<article class="max-w-3xl mx-auto bg-white border border-gray-200 rounded-2xl p-8 prose prose-sm">
-<h1 class="text-3xl font-bold mb-6">Términos de uso</h1>
-<p class="text-xs text-gray-500 mb-6">Última actualización: 17 de mayo de 2026.</p>
+<div class="max-w-3xl mx-auto px-5 md:px-8 py-10 md:py-14">
+<div class="press text-oxblood mb-3">Legal · Términos</div>
+<div class="rule mb-5"></div>
+<h1 class="ff-display text-ink text-[44px] md:text-[60px] leading-[0.95] tracking-tight mb-3" style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 700'>Términos de uso</h1>
+<p class="press-sm text-ink3 mb-8">Última actualización · 17 de mayo de 2026</p>
+
+<article class="prose-ed text-ink2 leading-relaxed space-y-5
+                [&_h2]:font-display [&_h2]:text-2xl [&_h2]:text-ink [&_h2]:mt-8 [&_h2]:mb-2
+                [&_h2]:tracking-tight [&_h2]:leading-tight
+                [&_a]:text-oxblood [&_a]:underline [&_a]:underline-offset-2
+                [&_strong]:text-ink [&_strong]:font-semibold
+                [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-1
+                [&_p]:max-w-[68ch]
+                [&_code]:font-mono [&_code]:bg-paperdk [&_code]:px-1.5 [&_code]:py-0.5">
 
 <h2 class="text-lg font-semibold mt-6 mb-2">1. Objeto</h2>
 <p>Este sitio web ofrece un buscador gratuito de subvenciones públicas españolas y europeas a partir del perfil de una empresa. Es un servicio de información, no de tramitación.</p>
@@ -38,4 +49,5 @@
 <p class="mt-6"><a href="/privacidad" class="underline">Ver política de privacidad</a></p>
 
 </article>
+</div>
 {% endblock %}

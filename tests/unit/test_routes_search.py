@@ -24,9 +24,10 @@ def test_home_returns_form():
     assert response.status_code == 200
     html = response.text
     assert "NIF" in html or "nif" in html
-    assert "tamaño" in html.lower() or "tamano" in html.lower()
-    # Finalidad no longer required in the form (Plan 7+: shown as label on results instead)
+    # Plan 7+: tamaño no se pide; el form solo requiere razón social, CNAE y provincia.
     assert "razon_social" in html
+    assert 'name="cnae"' in html
+    assert 'name="provincia"' in html
 
 
 from datetime import date, timedelta

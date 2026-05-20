@@ -1,19 +1,33 @@
 {% if empresas %}
-<ul class="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg max-h-64 overflow-y-auto z-10 shadow-md">
+<ul class="absolute left-0 right-0 top-full mt-1 bg-paper border-2 border-ink max-h-[28rem] overflow-y-auto z-50 shadow-[5px_5px_0_0_rgba(19,17,13,0.85)]">
   {% for e in empresas %}
   <li>
     <button type="button"
-            class="w-full text-left px-3 py-2 hover:bg-green-50 text-sm border-b border-gray-100 last:border-b-0"
-            onclick="selectEmpresa({{ e.razon_social|tojson }}, {{ (e.provincia or '')|tojson }})">
-      <div class="font-medium">{{ e.razon_social }}</div>
-      <div class="text-xs text-gray-500">
-        {% if e.provincia %}Provincia {{ e.provincia }}{% else %}Provincia desconocida{% endif %}
-        {% if e.domicilio %} · {{ e.domicilio[:60] }}{% if e.domicilio|length > 60 %}…{% endif %}{% endif %}
+            class="empresa-option block w-full text-left px-4 py-3 hover:bg-paperdk focus:bg-paperdk focus:outline-none text-sm border-b border-ink/15 last:border-b-0 transition"
+            data-razon="{{ e.razon_social }}"
+            data-provincia="{{ e.provincia or '' }}"
+            data-cnae="{{ e.cnae_sugerido or '' }}"
+            data-cnae-label="{{ e.cnae_label or '' }}">
+      <div class="flex items-start justify-between gap-3">
+        <div class="flex-1 min-w-0">
+          <div class="ff-display text-ink text-base leading-tight line-clamp-1" style='font-variation-settings:"opsz" 144,"wght" 600'>{{ e.razon_social }}</div>
+          <div class="press-sm text-ink3 mt-1 truncate">
+            {% if e.domicilio %}{{ e.domicilio }}{% elif e.provincia %}Provincia {{ e.provincia }}{% else %}Sin domicilio{% endif %}
+          </div>
+          {% if e.objeto_social %}
+          <div class="text-xs text-ink2 mt-1 line-clamp-1 italic" style="font-family:'Fraunces',serif">
+            «{{ e.objeto_social[:90] }}{% if e.objeto_social|length > 90 %}…{% endif %}»
+          </div>
+          {% endif %}
+        </div>
+        {% if e.cnae_sugerido %}
+        <div class="shrink-0">
+          <span class="ff-mono text-[10px] font-bold border border-oxblood text-oxblood px-1.5 py-0.5">CNAE {{ e.cnae_sugerido }}</span>
+        </div>
+        {% endif %}
       </div>
     </button>
   </li>
   {% endfor %}
 </ul>
-{% elif q %}
-<p class="text-xs text-gray-500 px-2 mt-1">Sin coincidencias para "{{ q }}". Continúa tecleando o rellena los campos a mano.</p>
 {% endif %}

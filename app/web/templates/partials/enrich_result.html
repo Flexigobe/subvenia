@@ -4,10 +4,16 @@
   name="razon_social"
   id="razon_social"
   value="{{ data.razon_social }}"
-  class="w-full border border-gray-300 rounded px-3 py-2 bg-green-50"
+  class="ed-input-box w-full text-lg font-medium border-moss"
   hx-swap-oob="true"
 />
-<span class="text-xs text-green-700">✓ Encontrado: {{ data.razon_social }}{% if data.provincia_text %} · {{ data.provincia_text }}{% endif %}</span>
+<span class="press-sm text-moss inline-flex items-center gap-2 mt-1">
+  <span class="ff-mono">VERIFICADO</span>
+  <span>{{ data.razon_social }}{% if data.provincia_text %} · {{ data.provincia_text }}{% endif %}</span>
+</span>
 {% else %}
-<span class="text-xs text-gray-500">No encontrado en fuentes públicas. Rellena los campos manualmente.</span>
+<span class="press-sm text-ink3 inline-flex items-center gap-2 mt-1">
+  <span class="ff-mono">NO ENCONTRADO</span>
+  <span>Rellena los campos manualmente.</span>
+</span>
 {% endif %}

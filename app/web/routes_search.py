@@ -14,7 +14,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
-from app.db.models import Search, SearchResult
+from app.db.models import Search, SearchResult, Subvencion
 from app.db.session import get_db
 from app.lib.nif_validator import validate_nif
 from app.matching.filter import EmpresaProfile
@@ -22,6 +22,8 @@ from app.matching.service import rank_for
 
 TEMPLATES_DIR = Path(__file__).resolve().parent / "templates"
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
+from app.web._template_globals import inject_globals
+inject_globals(templates)
 
 router = APIRouter()
 
@@ -56,12 +58,56 @@ _FINALIDADES: list[dict[str, str]] = [
 
 
 @router.get("/", response_class=HTMLResponse)
-def home(request: Request) -> HTMLResponse:
+def home(request: Request, db: Session = Depends(get_db)) -> HTMLResponse:
+    """Home con stats live + últimas convocatorias publicadas (BDNS+EU)."""
+    from datetime import date as _date
+
+    from sqlalchemy import func as _func, text as _text
+
+    bdns_count = db.query(_func.count(Subvencion.id)).filter(
+        Subvencion.source == "bdns",
+        Subvencion.estado.in_(("abierta", "proximamente")),
+    ).scalar() or 0
+    eu_count = db.query(_func.count(Subvencion.id)).filter(
+        Subvencion.source == "eu",
+        Subvencion.estado.in_(("abierta", "proximamente")),
+    ).scalar() or 0
+    empresas_count = int(db.execute(
+        _text("SELECT reltuples::bigint FROM pg_class WHERE relname = 'empresa'")
+    ).scalar() or 0)
+    total_count = bdns_count + eu_count
+
+    # Últimas 8 subvenciones publicadas (mezcla BDNS+EU) — para banner home
+    today = _date.today()
+    latest_news = (
+        db.query(Subvencion)
+        .filter((Subvencion.fecha_fin.is_(None)) | (Subvencion.fecha_fin >= today))
+        .order_by(Subvencion.created_at.desc())
+        .limit(8)
+        .all()
+    )
+
     return templates.TemplateResponse(
         request,
         "home.html",
-        {"provincias": _PROVINCIAS, "finalidades": _FINALIDADES},
+        {
+            "provincias": _PROVINCIAS,
+            "finalidades": _FINALIDADES,
+            "stats": {
+                "bdns": bdns_count,
+                "eu": eu_count,
+                "total": total_count,
+                "empresas": empresas_count,
+                "cnaes": 236,
+            },
+            "latest_news": latest_news,
+            "today": today,
+            "today_iso": today.strftime("%Y.%m.%d"),
+        },
     )
+
+
+_TIPOS_SOLICITANTE_VALIDOS = {"empresa", "ong", "particular", "ayuntamiento", "investigacion"}
 
 
 @router.post("/search", response_class=HTMLResponse)
@@ -69,10 +115,11 @@ async def search(
     request: Request,
     razon_social: Annotated[str, Form()],
     cnae: Annotated[str, Form()],
-    tamano: Annotated[str, Form()],
     provincia: Annotated[str, Form()],
+    tamano: Annotated[str, Form()] = "",
     nif: Annotated[str, Form()] = "",
     finalidad: Annotated[list[str], Form()] = [],
+    tipo_solicitante: Annotated[str, Form()] = "empresa",
     db: Session = Depends(get_db),
 ) -> HTMLResponse:
     # razón social is required; nif and finalidad are optional.
@@ -92,12 +139,16 @@ async def search(
     ip = request.client.host if request.client else ""
     ip_hash = hashlib.sha256(ip.encode()).hexdigest() if ip else None
 
+    # Default tamaño = "pequena" (PYME) cuando el form no lo envía: el formulario
+    # editorial sólo pide razón social + CNAE + provincia, y el column tiene NOT NULL.
+    tamano_normalized = tamano or "pequena"
+
     search_row = Search(
         id=uuid.uuid4(),
         nif=nif_normalized,
         razon_social=razon_social,
         cnae=cnae,
-        tamano=tamano,
+        tamano=tamano_normalized,
         provincia=provincia,
         finalidad=finalidad,
         ip_hash=ip_hash,
@@ -106,8 +157,17 @@ async def search(
     db.add(search_row)
     db.flush()
 
-    # Matching
-    perfil = EmpresaProfile(cnae=cnae, tamano=tamano, provincia=provincia, finalidad=finalidad)
+    # Sanitizar tipo_solicitante
+    tipo_solic = tipo_solicitante if tipo_solicitante in _TIPOS_SOLICITANTE_VALIDOS else "empresa"
+
+    # Matching — el perfil incluye tipo_solicitante para filtrar tiposBeneficiarios
+    perfil = EmpresaProfile(
+        cnae=cnae,
+        tamano=tamano_normalized,
+        provincia=provincia,
+        finalidad=finalidad,
+        tipo_solicitante=tipo_solic,
+    )
     ranked = await rank_for(db, perfil, limit=30)
 
     # Persistir search_results
@@ -121,8 +181,11 @@ async def search(
         ))
     db.commit()
 
-    top3 = ranked[:3]
-    rest = ranked[3:]
+    # Separa: aplicables vs no aplicables (transparencia: el usuario ve POR QUÉ no le tocan)
+    applicables = [r for r in ranked if r.applicable]
+    no_aplicables = [r for r in ranked if not r.applicable]
+    top3 = applicables[:3]
+    rest = applicables[3:]
 
     perfil_json = json.dumps({
         "cnae": cnae,
@@ -139,7 +202,9 @@ async def search(
             "razon_social": razon_social,
             "top3": top3,
             "rest": rest,
+            "no_aplicables": no_aplicables,
             "total": len(ranked),
+            "total_aplicables": len(applicables),
             "perfil_json": perfil_json,
         },
     )

@@ -34,14 +34,41 @@ def _make_subvencion(**kwargs):
     return Subvencion(**defaults)
 
 
-def test_filter_excludes_cerradas(db_session, perfil_pyme_digital):
+def test_filter_excludes_expired_fecha_fin(db_session, perfil_pyme_digital):
+    """El flag BDNS `estado` no es fiable (muchos records marcados 'cerrada' siguen
+    aceptando solicitudes), así que el filtro se basa en `fecha_fin` como fuente de
+    verdad. Un record con fecha_fin pasada se excluye independientemente del estado."""
     from app.matching.filter import find_candidates
 
-    db_session.add(_make_subvencion(external_id="A", estado="cerrada", finalidad=["digitalizacion"], cnae_elegible=["6201"]))
+    db_session.add(_make_subvencion(
+        external_id="A",
+        estado="abierta",
+        fecha_fin=date.today() - timedelta(days=1),
+        finalidad=["digitalizacion"],
+        cnae_elegible=["6201"],
+    ))
     db_session.commit()
 
     results = find_candidates(db_session, perfil_pyme_digital, limit=30)
     assert len(results) == 0
+
+
+def test_filter_includes_cerrada_flag_if_fecha_fin_future(db_session, perfil_pyme_digital):
+    """BDNS marca muchos records como 'cerrada' aunque sigan abiertos; el filtro debe
+    confiar en fecha_fin y mostrarlos cuando aún hay plazo."""
+    from app.matching.filter import find_candidates
+
+    db_session.add(_make_subvencion(
+        external_id="A",
+        estado="cerrada",  # BDNS dice cerrada
+        fecha_fin=date.today() + timedelta(days=30),  # ...pero hay plazo abierto
+        finalidad=["digitalizacion"],
+        cnae_elegible=["6201"],
+    ))
+    db_session.commit()
+
+    results = find_candidates(db_session, perfil_pyme_digital, limit=30)
+    assert len(results) == 1
 
 
 def test_filter_excludes_cnae_no_compatible(db_session, perfil_pyme_digital):

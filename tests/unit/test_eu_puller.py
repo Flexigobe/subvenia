@@ -163,10 +163,12 @@ async def test_eu_sync_all_upserts_records(db_session, httpx_mock):
     """
     payload = json.loads((FIXTURES / "page_sample.json").read_text())
 
-    # sync_all now uses text="<year> <year+1>", so don't match on URL
+    # Primera query devuelve el fixture; resto de queries sectoriales vacío
+    httpx_mock.add_response(method="POST", json=payload)
     httpx_mock.add_response(
         method="POST",
-        json=payload,
+        json={"results": [], "totalPages": 0, "totalResults": 0},
+        is_reusable=True,
     )
 
     from app.sync.eu_puller import sync_all
@@ -243,9 +245,16 @@ async def test_eu_sync_all_skips_closed_records(db_session, httpx_mock):
             "deadlineDate": ["2026-12-31T00:00:00.000+0000"],
         }
     }
+    # Primera query devuelve ambos records
     httpx_mock.add_response(
         method="POST",
         json={"results": [closed_record, open_record], "totalPages": 1, "totalResults": 2},
+    )
+    # Resto de queries (sectoriales) devuelven vacío
+    httpx_mock.add_response(
+        method="POST",
+        json={"results": [], "totalPages": 0, "totalResults": 0},
+        is_reusable=True,
     )
 
     from app.sync.eu_puller import sync_all
@@ -263,8 +272,10 @@ async def test_eu_sync_all_skips_closed_records(db_session, httpx_mock):
 
 
 @pytest.mark.asyncio
-async def test_eu_sync_all_stops_when_min_useful_reached(db_session, httpx_mock):
-    """Iteration stops as soon as min_useful records have been persisted."""
+async def test_eu_sync_all_stops_when_min_useful_reached_per_query(db_session, httpx_mock):
+    """Cada query sectorial itera hasta min_useful, luego pasa a la siguiente keyword.
+    Para el test mockeamos una respuesta vacía para que todas las queries terminen
+    rápido y verificamos que la primera keyword sí trajo records."""
 
     def make_record(rid):
         return {
@@ -276,20 +287,21 @@ async def test_eu_sync_all_stops_when_min_useful_reached(db_session, httpx_mock)
             }
         }
 
-    # Mock 2 pages, each with 3 open records
+    # Primera query trae 4 records (≥ min_useful=4), pasa a siguiente keyword.
     httpx_mock.add_response(
         method="POST",
-        json={"results": [make_record(f"M-{i}") for i in range(3)], "totalPages": 10, "totalResults": 30},
+        json={"results": [make_record(f"M-{i}") for i in range(4)], "totalPages": 1, "totalResults": 4},
     )
+    # Resto de queries devuelven vacío (sin más records)
     httpx_mock.add_response(
         method="POST",
-        json={"results": [make_record(f"M-{i + 3}") for i in range(3)], "totalPages": 10, "totalResults": 30},
+        json={"results": [], "totalPages": 0, "totalResults": 0},
+        is_reusable=True,
     )
 
     from app.sync.eu_puller import sync_all
 
-    # min_useful=4: page 1 gives 3 (<4), fetches page 2 → 6 ≥ 4, stops
     stats = await sync_all(db_session, max_pages=10, page_size=50, min_useful=4)
 
-    assert stats["created"] == 6
-    assert stats["pages"] == 2
+    assert stats["created"] == 4
+    assert stats["queries_run"] >= 1

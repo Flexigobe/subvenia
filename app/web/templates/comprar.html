@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% block title %}Planes y precios · Subvenia{% endblock %}
+{% block content %}
+
+<div class="max-w-7xl mx-auto px-5 md:px-8 py-10 md:py-14">
+
+  {# ───── Cabecera ───── #}
+  <header class="grid grid-cols-12 gap-6 mb-12">
+    <div class="col-span-12 md:col-span-3">
+      <div class="press text-oxblood">№ Precios</div>
+      <div class="rule mt-1 mb-3"></div>
+      <div class="press-sm text-ink2">Elige el plan que encaje con tu uso.</div>
+    </div>
+    <div class="col-span-12 md:col-span-9">
+      <h1 class="ff-display text-ink leading-[0.95] tracking-tight text-[44px] md:text-[68px] lg:text-[84px]"
+          style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 700'>
+        Análisis IA <span class="ff-display-light text-oxblood">a tu medida</span>.
+      </h1>
+      <div class="rule mt-6 mb-3"></div>
+      <p class="text-base md:text-lg text-ink2 leading-relaxed max-w-3xl">
+        El plan gratis cubre la mayoría de empresas. Los planes de pago activan análisis exhaustivo de 300 candidatos por búsqueda con lectura íntegra de bases reguladoras del BOE.
+      </p>
+    </div>
+  </header>
+
+  {# ───── Planes (4 cards) ───── #}
+  <section class="mb-16">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-ink border border-ink">
+      {% for plan in planes %}
+      <article class="bg-paper p-7 md:p-8 flex flex-col {% if plan.highlight %}relative{% endif %}">
+        {% if plan.highlight %}
+        <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-oxblood text-paper press-sm px-3 py-1">
+          MÁS POPULAR
+        </div>
+        {% endif %}
+
+        <div class="press text-oxblood mb-2">{{ plan.id|upper }}</div>
+        <h2 class="ff-display text-3xl text-ink leading-none mb-1" style='font-variation-settings:"opsz" 144,"wght" 700'>{{ plan.nombre }}</h2>
+        <div class="flex items-baseline gap-2 mb-2">
+          <span class="num-bloomberg text-4xl text-ink">{{ plan.precio }}</span>
+          <span class="press-sm text-ink3">{{ plan.subtitulo }}</span>
+        </div>
+        <div class="rule-thin mb-4"></div>
+
+        <ul class="space-y-2 text-sm text-ink2 mb-6 flex-1">
+          {% for f in plan.features %}
+          <li class="flex items-start gap-2">
+            <span class="ff-mono text-moss text-xs mt-0.5">✓</span>
+            <span>{{ f }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+
+        {% if plan.id == "free" %}
+        <a href="/" class="btn-ghost text-center py-3 press-sm">{{ plan.cta }}</a>
+        {% elif plan.id == "enterprise" %}
+        <a href="mailto:comercial@flexigobe.com?subject=Subvenia Enterprise" class="btn-sello text-center py-3 press-sm">{{ plan.cta }}</a>
+        {% else %}
+        <a href="/comprar/checkout?plan={{ plan.id }}" class="btn-sello text-center py-3 press-sm">{{ plan.cta }}</a>
+        {% endif %}
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  {# ───── Comparativa simple ───── #}
+  <section class="mb-16">
+    <div class="grid grid-cols-12 gap-6 mb-6">
+      <div class="col-span-12 md:col-span-3">
+        <div class="press text-oxblood">Comparativa</div>
+        <div class="rule mt-1 mb-3"></div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <h2 class="ff-display text-3xl md:text-4xl text-ink leading-tight" style='font-variation-settings:"opsz" 144,"wght" 600'>
+          Qué cambia con cada plan
+        </h2>
+      </div>
+    </div>
+    <div class="border border-ink overflow-hidden">
+      <table class="w-full text-sm">
+        <thead class="bg-ink text-paper">
+          <tr>
+            <th class="px-4 py-3 text-left press-sm">Característica</th>
+            <th class="px-4 py-3 text-center press-sm">Gratis</th>
+            <th class="px-4 py-3 text-center press-sm bg-oxblood">Starter</th>
+            <th class="px-4 py-3 text-center press-sm">Pro</th>
+            <th class="px-4 py-3 text-center press-sm">Enterprise</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% set filas = [
+            ("Búsquedas/día con IA", "10", "100", "Ilimitadas", "Ilimitadas"),
+            ("Candidatos analizados", "100", "300", "300 + texto BOE", "Custom"),
+            ("Modelo Gemini", "2.5 Flash", "2.5 Flash", "2.5 Flash + Pro", "2.5 Pro"),
+            ("Informes PDF sin marca", "—", "✓", "✓", "✓"),
+            ("Alertas en tiempo real", "Diarias", "Instantáneas", "Instantáneas", "Webhooks"),
+            ("Perfiles guardados", "1", "5", "Ilimitados", "Ilimitados"),
+            ("Descarga CSV/Excel", "—", "—", "✓", "✓"),
+            ("API REST", "—", "—", "✓", "✓"),
+            ("SLA", "—", "—", "—", "99.9%"),
+            ("Soporte", "FAQ", "Email", "WhatsApp", "Account manager"),
+          ] %}
+          {% for caract, free, starter, pro, ent in filas %}
+          <tr class="border-t border-ink/15">
+            <td class="px-4 py-3 text-ink font-medium">{{ caract }}</td>
+            <td class="px-4 py-3 text-center text-ink2">{{ free }}</td>
+            <td class="px-4 py-3 text-center text-ink2 bg-oxblood/5">{{ starter }}</td>
+            <td class="px-4 py-3 text-center text-ink2">{{ pro }}</td>
+            <td class="px-4 py-3 text-center text-ink2">{{ ent }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  {# ───── FAQ ───── #}
+  <section class="mb-16">
+    <div class="grid grid-cols-12 gap-6 mb-6">
+      <div class="col-span-12 md:col-span-3">
+        <div class="press text-oxblood">FAQ</div>
+        <div class="rule mt-1 mb-3"></div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <h2 class="ff-display text-3xl md:text-4xl text-ink leading-tight" style='font-variation-settings:"opsz" 144,"wght" 600'>
+          Preguntas frecuentes
+        </h2>
+      </div>
+    </div>
+    <div class="space-y-1">
+      {% set faqs = [
+        ("¿Puedo cancelar cuando quiera?", "Sí. Sin permanencia y sin penalizaciones. Cancela desde tu cuenta con un clic."),
+        ("¿El plan gratis tiene anuncios?", "No. Ni anuncios, ni cookies, ni venta de datos. Subvenia se mantiene con los planes de pago."),
+        ("¿Cuál es la diferencia real entre Starter y Pro?", "Pro lee el texto íntegro del PDF oficial del BOE para validar requisitos legales detalladas. Útil para empresas con perfiles complejos o asesorías que gestionan varias empresas."),
+        ("¿Qué pago se acepta?", "Tarjeta (Visa, Mastercard, AmEx) vía Stripe. Para Enterprise también transferencia bancaria con factura."),
+        ("¿Hay descuento anual?", "Sí. Pagar 12 meses por adelantado descuenta 2 meses (16% off). Selecciona la opción en el checkout."),
+        ("¿Datos personales y RGPD?", "Sólo guardamos email + perfiles de empresa que tú creas. Cumplimos RGPD; ver política de privacidad."),
+      ] %}
+      {% for q, a in faqs %}
+      <details class="border border-ink/30 group">
+        <summary class="cursor-pointer px-5 py-4 text-sm font-semibold text-ink flex items-center justify-between hover:bg-paperdk/40 transition">
+          <span class="ff-display" style='font-variation-settings:"opsz" 144,"wght" 600'>{{ q }}</span>
+          <svg class="w-4 h-4 text-ink3 group-open:rotate-180 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </summary>
+        <div class="px-5 pb-4 text-sm text-ink2 leading-relaxed">{{ a }}</div>
+      </details>
+      {% endfor %}
+    </div>
+  </section>
+
+  {# ───── CTA cierre ───── #}
+  <section class="bg-ink text-paper p-8 md:p-12 relative overflow-hidden grain">
+    <div class="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-oxblood/20 blur-3xl"></div>
+    <div class="relative grid grid-cols-12 gap-6 items-center">
+      <div class="col-span-12 md:col-span-8">
+        <div class="press text-ochrelt mb-3">¿Listo?</div>
+        <h2 class="ff-display text-3xl md:text-4xl text-paper leading-tight" style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 600'>
+          Empieza gratis. Sube de plan cuando lo necesites.
+        </h2>
+      </div>
+      <div class="col-span-12 md:col-span-4 md:text-right">
+        <a href="/" class="inline-flex items-center gap-2 bg-ochre text-ink border border-ochre hover:bg-ochrelt transition px-6 py-3 ff-display text-base" style='font-variation-settings:"opsz" 144,"wght" 700'>
+          Ir al buscador →
+        </a>
+      </div>
+    </div>
+  </section>
+
+</div>
+{% endblock %}

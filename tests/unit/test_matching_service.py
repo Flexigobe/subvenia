@@ -36,4 +36,7 @@ async def test_rank_for_returns_ranked_results(db_session, monkeypatch):
     assert len(results) == 1
     assert results[0].rank == 1
     assert results[0].score > 0
-    assert results[0].razon is None  # no LLM, so razon stays None
+    # Ahora razón es generada por el analyzer determinista
+    assert results[0].razon is not None
+    assert "CNAE" in results[0].razon or "tamaño" in results[0].razon or "Cierra" in results[0].razon
+    assert results[0].applicable is True

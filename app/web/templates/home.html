@@ -1,112 +1,612 @@
 {% extends "base.html" %}
 {% block content %}
-<header class="text-center mb-10 max-w-3xl mx-auto">
-  <h1 class="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
-    Encuentra las subvenciones que puede pedir tu empresa
-  </h1>
-  <p class="text-lg text-gray-600 mb-6">
-    Cruzamos tu perfil con la <strong>BDNS oficial</strong>, las convocatorias UE
-    y los datos del <strong>BORME</strong>. En segundos.
-  </p>
-  <div class="flex flex-wrap items-center justify-center gap-3 text-sm">
-    <span class="inline-flex items-center gap-1 bg-green-50 text-green-800 px-3 py-1.5 rounded-full border border-green-200">
-      <span class="font-semibold">✓ Gratis</span>
-    </span>
-    <span class="inline-flex items-center gap-1 bg-blue-50 text-blue-800 px-3 py-1.5 rounded-full border border-blue-200">
-      <span class="font-semibold">✓ Fuentes oficiales</span>
-    </span>
-    <span class="inline-flex items-center gap-1 bg-purple-50 text-purple-800 px-3 py-1.5 rounded-full border border-purple-200">
-      <span class="font-semibold">✓ Sin registro</span>
-    </span>
-  </div>
-  <p class="text-xs text-gray-500 mt-4">
-    <a href="/como-funciona" class="underline hover:text-gray-700">¿Cómo funciona?</a>
-    &nbsp;·&nbsp;
-    <a href="/subvenciones" class="underline hover:text-gray-700">Ver todas las subvenciones</a>
-  </p>
-</header>
 
-<form method="post" action="/search" id="search-form" class="bg-white rounded-2xl border border-gray-200 p-6 space-y-6">
-  <section>
-    <h2 class="text-xs font-semibold text-gray-500 uppercase mb-3">① Tu empresa</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="md:col-span-2 relative">
-        <label class="block text-sm mb-1">Razón social de tu empresa</label>
-        <input type="text"
-               name="razon_social"
-               id="razon_social"
-               required
-               minlength="2"
-               placeholder="Empieza a teclear el nombre…"
-               autocomplete="off"
-               class="w-full border border-gray-300 rounded px-3 py-2"
-               hx-get="/api/empresa/search"
-               hx-trigger="keyup changed delay:300ms"
-               hx-target="#empresa-suggestions"
-               hx-swap="innerHTML"
-               hx-include="this">
-        <div id="empresa-suggestions" class="relative"></div>
-        <p class="text-xs text-gray-500 mt-1">Te sugerimos empresas registradas oficialmente en BORME conforme tecleas. Si la tuya no aparece, sigue rellenando los demás campos a mano.</p>
-      </div>
-      <div>
-        <label class="block text-sm mb-1">NIF / CIF <span class="text-gray-400 text-xs">(opcional)</span></label>
-        <input type="text" name="nif" pattern=".{0,10}" placeholder="(opcional, para personalizar el informe)"
-               class="w-full border border-gray-300 rounded px-3 py-2">
-      </div>
-      <div>
-        <label class="block text-sm mb-1">CNAE (código de actividad)</label>
-        <input type="text" name="cnae" required pattern="\d{3,4}" placeholder="6201"
-               class="w-full border border-gray-300 rounded px-3 py-2">
-        <p class="text-xs text-gray-500 mt-1">Catálogo CNAE-2009. Busca en <a class="underline" target="_blank" href="https://www.ine.es/dyngs/INEbase/es/operacion.htm?c=Estadistica_C&cid=1254736177032">ine.es</a> si no lo sabes.</p>
-      </div>
-      <div>
-        <label class="block text-sm mb-1">Tamaño de empresa</label>
-        <select name="tamano" required class="w-full border border-gray-300 rounded px-3 py-2">
-          <option value="micro">Microempresa (&lt;10 empleados)</option>
-          <option value="pequena">Pequeña (10-49)</option>
-          <option value="mediana">Mediana (50-249)</option>
-          <option value="grande">Grande (250+)</option>
-        </select>
-      </div>
-      <div class="md:col-span-2">
-        <label class="block text-sm mb-1">Provincia</label>
-        <select name="provincia" id="provincia" required class="w-full border border-gray-300 rounded px-3 py-2">
-          {% for code, name in provincias %}
-            <option value="{{ code }}">{{ code }} — {{ name }}</option>
-          {% endfor %}
-        </select>
+{# ════════════════════════════════════════════════════════════════════════════
+   HOME — diseño editorial-treasury. Tres bandas verticales:
+   1) Hero "portada de periódico" con titular oversized + drop cap.
+   2) Formulario "ficha de archivo" sobre paper.
+   3) Stats "Bloomberg ticker" + bloques de garantías.
+   ════════════════════════════════════════════════════════════════════════════ #}
+
+<section class="relative">
+  {# Ticker superior estilo Bloomberg #}
+  <div class="border-b border-ink/20 bg-ink text-paper overflow-hidden">
+    <div class="max-w-7xl mx-auto px-5 md:px-8 py-2 flex items-center gap-6 press-sm">
+      <span class="text-ochrelt shrink-0">EN VIVO</span>
+      <div class="flex-1 overflow-hidden">
+        <div class="flex items-center gap-8 animate-ticker whitespace-nowrap">
+          <span>BDNS · {{ "{:,}".format(stats.bdns).replace(",", ".") }} convocatorias activas</span>
+          <span class="text-ochre">●</span>
+          <span>UE · {{ stats.eu }} calls Horizon / EIC / Digital</span>
+          <span class="text-ochre">●</span>
+          <span>Empresas indexadas · {{ "{:,}".format(stats.empresas).replace(",", ".") }}</span>
+          <span class="text-ochre">●</span>
+          <span>Datos oficiales · BDNS + BORME + F&amp;T Portal</span>
+          <span class="text-ochre">●</span>
+          <span>CNAEs cubiertos · {{ stats.cnaes }}</span>
+          <span class="text-ochre">●</span>
+          {# Duplicado para loop infinito #}
+          <span>BDNS · {{ "{:,}".format(stats.bdns).replace(",", ".") }} convocatorias activas</span>
+          <span class="text-ochre">●</span>
+          <span>UE · {{ stats.eu }} calls Horizon / EIC / Digital</span>
+          <span class="text-ochre">●</span>
+          <span>Empresas indexadas · {{ "{:,}".format(stats.empresas).replace(",", ".") }}</span>
+          <span class="text-ochre">●</span>
+          <span>Datos oficiales · BDNS + BORME + F&amp;T Portal</span>
+          <span class="text-ochre">●</span>
+          <span>CNAEs cubiertos · {{ stats.cnaes }}</span>
+          <span class="text-ochre">●</span>
+        </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <button type="submit" class="w-full bg-green-700 hover:bg-green-800 text-white font-semibold py-3 rounded-lg">
-    Buscar subvenciones →
-  </button>
-  <p class="text-xs text-gray-500 text-center mt-2">Verás todas las subvenciones aplicables a tu empresa con su tipo etiquetado.</p>
-</form>
+{# ────────── HERO + FORMULARIO en un solo viewport ────────── #}
+<section class="relative grain" id="form-section">
+  <div class="max-w-7xl mx-auto px-5 md:px-8 pt-6 md:pt-8 pb-8 md:pb-12">
 
+    {# Titular compacto en una línea — sin desperdiciar viewport #}
+    <div class="grid grid-cols-12 gap-6 md:gap-10 mb-6 md:mb-8 items-end">
+      <div class="col-span-12 md:col-span-8">
+        <div class="press text-oxblood mb-3 flex items-center gap-3">
+          <span>№ 01</span>
+          <span class="text-ink/30">/</span>
+          <span class="text-ink">Buscador a medida</span>
+        </div>
+
+        <h1 class="ff-display text-ink leading-[0.95] tracking-tight"
+            style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 700'>
+          <span class="block text-[38px] sm:text-[48px] md:text-[58px] lg:text-[64px]">Las subvenciones que <span class="ff-display-light text-oxblood">tu empresa</span></span>
+          <span class="block text-[38px] sm:text-[48px] md:text-[58px] lg:text-[64px]">puede pedir, <span class="ff-display-light">en treinta segundos.</span></span>
+        </h1>
+
+        <p class="font-sans text-ink2 text-[14px] md:text-[16px] leading-[1.5] mt-4 max-w-[62ch]">
+          Cruzamos tu empresa con BDNS + UE y te decimos cuáles puedes pedir hoy.
+          <span class="text-ink3">Sin registro · sin venta de datos.</span>
+        </p>
+      </div>
+
+      {# Mini KPIs Bloomberg — más compactos #}
+      <aside class="col-span-12 md:col-span-4">
+        <div class="rule mb-3"></div>
+        <dl class="grid grid-cols-2 gap-x-4 gap-y-2">
+          <div class="border-b border-ink/10 pb-2">
+            <dt class="press-sm text-ink3">BDNS activas</dt>
+            <dd class="num-bloomberg text-2xl text-ink leading-none">{{ "{:,}".format(stats.bdns).replace(",", ".") }}</dd>
+          </div>
+          <div class="border-b border-ink/10 pb-2">
+            <dt class="press-sm text-ink3">Calls UE</dt>
+            <dd class="num-bloomberg text-2xl text-ink leading-none">{{ stats.eu }}</dd>
+          </div>
+          <div class="border-b border-ink/10 pb-2">
+            <dt class="press-sm text-ink3">Empresas</dt>
+            <dd class="num-bloomberg text-2xl text-ink leading-none">{% if stats.empresas >= 1000000 %}{{ "%.1fM"|format(stats.empresas/1000000) }}{% elif stats.empresas >= 1000 %}{{ "%dK"|format(stats.empresas/1000) }}{% else %}{{ stats.empresas }}{% endif %}</dd>
+          </div>
+          <div class="border-b border-ink/10 pb-2">
+            <dt class="press-sm text-ink3">Coste</dt>
+            <dd class="num-bloomberg text-2xl text-oxblood leading-none">0€</dd>
+          </div>
+        </dl>
+      </aside>
+    </div>
+
+    <div class="rule mb-6"></div>
+
+    {# Formulario inmediatamente debajo del hero — sin barra editorial extra #}
+    <div class="grid grid-cols-12 gap-6 md:gap-10">
+
+      {# Lateral instructivo (más corto) #}
+      <aside class="col-span-12 md:col-span-4 lg:col-span-3 order-2 md:order-1">
+        <div class="press text-oxblood">№ 02</div>
+        <div class="rule mt-1 mb-3"></div>
+        <h2 class="ff-display text-2xl md:text-3xl leading-[1.1] mb-3"
+            style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 600'>
+          Tres campos. <span class="ff-display-light text-oxblood">Ningún formulario interminable.</span>
+        </h2>
+        <ul class="space-y-2 text-sm">
+          <li class="flex items-start gap-2.5">
+            <span class="ff-mono text-oxblood text-xs pt-0.5">01—</span>
+            <span class="text-ink2">Nombre de tu empresa. Autocompletado BORME + Wikidata.</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <span class="ff-mono text-oxblood text-xs pt-0.5">02—</span>
+            <span class="text-ink2">Qué hace (CNAE). Busca por palabra: "software", "ferretería"…</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <span class="ff-mono text-oxblood text-xs pt-0.5">03—</span>
+            <span class="text-ink2">Provincia. Para acotar ayudas autonómicas y locales.</span>
+          </li>
+        </ul>
+      </aside>
+
+      {# Formulario ficha #}
+      <div class="col-span-12 md:col-span-8 lg:col-span-9 order-1 md:order-2">
+        <form method="post" action="/search" id="search-form"
+              class="bg-paperdk/40 border border-ink p-6 md:p-8 lg:p-10 relative">
+
+          {# Sello esquina superior derecha #}
+          <div class="absolute top-5 right-5 md:top-7 md:right-7 border-2 border-oxblood text-oxblood px-2 py-1 -rotate-6 select-none">
+            <div class="press-sm leading-none">Expediente</div>
+            <div class="ff-mono text-[10px] leading-none mt-0.5 text-center">{{ "%07d"|format(range(1000000)|random) }}</div>
+          </div>
+
+          <div class="press text-ink2 mb-2">Solicitud de informe</div>
+          <div class="rule-double mb-6"></div>
+
+          {# Campo 00 — Tipo de solicitante #}
+          <fieldset class="mb-8">
+            <div class="flex items-baseline gap-3 mb-3">
+              <span class="ff-mono text-oxblood text-xs">00</span>
+              <span class="ff-display text-xl text-ink" style='font-variation-settings:"opsz" 144,"wght" 600'>
+                ¿Quién solicita?
+              </span>
+              <span class="ml-auto press-sm text-ink3">elige uno</span>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-2" id="tipo-solicitante-group" role="radiogroup">
+              {% set _tipos = [
+                ("empresa", "Empresa / Autónomo", "Empresa privada, SL, SA o autónomo con actividad económica"),
+                ("ong", "Asociación / ONG", "Club, fundación, asociación, cofradía, sin ánimo de lucro"),
+                ("particular", "Particular", "Persona física: becas, vivienda, ayudas individuales"),
+                ("ayuntamiento", "Entidad pública", "Ayuntamiento, mancomunidad, diputación, comarca"),
+                ("investigacion", "Investigación", "Universidad, centro investigación, consorcio I+D"),
+              ] %}
+              {% for value, label, desc in _tipos %}
+              <label class="tipo-solic-option block cursor-pointer">
+                <input type="radio" name="tipo_solicitante" value="{{ value }}" class="sr-only peer" {% if loop.first %}checked{% endif %}>
+                <div class="border-2 border-ink/20 hover:border-oxblood peer-checked:border-ink peer-checked:bg-ink peer-checked:text-paper px-3 py-3 transition text-center"
+                     title="{{ desc }}">
+                  <div class="ff-display text-sm leading-tight" style='font-variation-settings:"opsz" 144,"wght" 600'>{{ label }}</div>
+                </div>
+              </label>
+              {% endfor %}
+            </div>
+            <p class="press-sm text-ink3 mt-2" id="tipo-solic-help">
+              Determina qué subvenciones te aplican. Si eres empresa privada, deja la primera opción.
+            </p>
+          </fieldset>
+
+          {# Campo 01 — Empresa #}
+          <fieldset class="mb-8" id="fieldset-razon-social">
+            <div class="flex items-baseline gap-3 mb-2">
+              <span class="ff-mono text-oxblood text-xs">01</span>
+              <label for="razon_social" class="ff-display text-xl text-ink" style='font-variation-settings:"opsz" 144,"wght" 600'>
+                Razón social
+              </label>
+              <span class="ml-auto press-sm text-ink3">obligatorio</span>
+            </div>
+            <div class="relative">
+              <input type="text"
+                     name="razon_social"
+                     id="razon_social"
+                     required
+                     minlength="2"
+                     placeholder="Escribe el nombre exacto…"
+                     autocomplete="off"
+                     class="ed-input-box w-full text-lg font-medium"
+                     hx-get="/api/empresa/search"
+                     hx-trigger="keyup changed delay:120ms"
+                     hx-target="#empresa-suggestions"
+                     hx-swap="innerHTML"
+                     hx-include="this"
+                     hx-indicator="#empresa-spinner">
+              <span id="empresa-spinner" class="htmx-indicator absolute inset-y-0 right-0 flex items-center pr-3.5 text-oxblood">
+                <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
+                </svg>
+              </span>
+              <div id="empresa-suggestions"></div>
+            </div>
+
+            {# Panel empresa seleccionada #}
+            <div id="empresa-selected" class="hidden mt-3 border border-moss bg-moss/8 p-3.5 text-sm">
+              <div class="flex items-start gap-2.5">
+                <span class="ff-mono text-moss text-xs pt-0.5">SELECCIONADA —</span>
+                <div class="flex-1 min-w-0">
+                  <p class="ff-display text-ink font-semibold" id="empresa-selected-name"></p>
+                  <p class="text-xs text-ink2 mt-0.5" id="empresa-cnae-hint"></p>
+                  <p class="text-xs text-oxblood font-semibold mt-2">
+                    ⚠ Verifica abajo CNAE y Provincia.
+                    Los datos públicos pueden ser imprecisos o no estar disponibles para todas las empresas.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <p class="press-sm text-ink3 mt-2">Fuente · BORME + Wikidata + Empresite.eleconomista.es</p>
+          </fieldset>
+
+          {# Campo 02 — CNAE #}
+          <fieldset class="mb-8">
+            <div class="flex items-baseline gap-3 mb-2">
+              <span class="ff-mono text-oxblood text-xs">02</span>
+              <label for="cnae" class="ff-display text-xl text-ink" style='font-variation-settings:"opsz" 144,"wght" 600'>
+                Actividad económica
+              </label>
+              <span class="ml-auto press-sm text-ink3">CNAE-2009</span>
+            </div>
+            <div class="relative">
+              <input type="text"
+                     name="cnae"
+                     id="cnae"
+                     required
+                     pattern="\d{3,4}"
+                     placeholder="ferretería · software · restaurante · transporte · asesoría fiscal…"
+                     autocomplete="off"
+                     class="ed-input-box w-full text-lg"
+                     hx-get="/api/cnae/search"
+                     hx-trigger="keyup changed delay:120ms, focus"
+                     hx-target="#cnae-suggestions"
+                     hx-swap="innerHTML"
+                     hx-include="this">
+              <div id="cnae-suggestions"></div>
+            </div>
+            <p class="press-sm text-ink3 mt-2">
+              <span id="cnae-selected" class="hidden text-moss"></span>
+              <span class="" id="cnae-help">236 CNAEs cubiertos · busca por palabra o por código de 4 dígitos</span>
+            </p>
+          </fieldset>
+
+          {# Campo 03 — Provincia #}
+          <fieldset class="mb-8">
+            <div class="flex items-baseline gap-3 mb-2">
+              <span class="ff-mono text-oxblood text-xs">03</span>
+              <label for="provincia" class="ff-display text-xl text-ink" style='font-variation-settings:"opsz" 144,"wght" 600'>
+                Provincia
+              </label>
+            </div>
+            <select name="provincia" id="provincia" required class="ed-input-box w-full text-base">
+              <option value="">— Elige tu provincia —</option>
+              {% for code, name in provincias %}
+                <option value="{{ code }}">{{ code }} — {{ name }}</option>
+              {% endfor %}
+            </select>
+            <p class="press-sm text-ink3 mt-2">Si autocompletamos mal, corrígela antes de buscar.</p>
+          </fieldset>
+
+          {# Campo 04 — NIF opcional #}
+          <fieldset class="mb-10 pt-6 border-t border-ink/15">
+            <div class="flex items-baseline gap-3 mb-2">
+              <span class="ff-mono text-ink3 text-xs">04</span>
+              <label class="ff-display text-lg text-ink2" style='font-variation-settings:"opsz" 144,"wght" 500'>
+                NIF / CIF
+              </label>
+              <span class="press-sm text-ink3 italic">opcional</span>
+            </div>
+            <input type="text" name="nif" pattern=".{0,10}" placeholder="B12345678"
+                   class="ed-input-box w-full md:w-72 text-base font-mono">
+          </fieldset>
+
+          {# CTA — botón sello editorial #}
+          <div class="flex flex-col md:flex-row md:items-center gap-4">
+            <button type="submit" class="btn-sello px-7 py-4 flex items-center gap-3 group">
+              <span class="ff-display text-lg" style='font-variation-settings:"opsz" 144,"wght" 600'>Generar informe</span>
+              <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m0 0l-6-6m6 6l-6 6"/>
+              </svg>
+            </button>
+            <p class="press-sm text-ink3 md:max-w-xs">
+              Análisis instantáneo · sin esperas · datos cifrados en tránsito
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# Rule doble editorial #}
+<div class="border-t border-b border-ink"><div class="h-[3px] bg-paper"></div></div>
+
+{# ────────── ÚLTIMA HORA — feed en home ────────── #}
+{% if latest_news %}
+<section class="relative grain">
+  <div class="max-w-7xl mx-auto px-5 md:px-8 py-12 md:py-16">
+    <div class="grid grid-cols-12 gap-6 md:gap-10 mb-8 items-end">
+      <div class="col-span-12 md:col-span-7">
+        <div class="press text-oxblood mb-2 flex items-center gap-3">
+          <span>№ Última hora</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-moss animate-softblink"></span>
+          <span class="text-ink2">En directo</span>
+        </div>
+        <h2 class="ff-display text-3xl md:text-4xl lg:text-5xl text-ink leading-[1.02]"
+            style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 600'>
+          Recién <span class="ff-display-light text-oxblood">publicadas</span>.
+        </h2>
+        <p class="text-sm text-ink2 mt-3 max-w-2xl">
+          Convocatorias incorporadas a la base de datos en las últimas horas, sincronizadas desde BDNS y la Comisión Europea. Para ver todas, abre <a href="/noticias" class="ed-link">novedades</a>.
+        </p>
+      </div>
+      <div class="col-span-12 md:col-span-5 md:text-right">
+        <a href="/noticias" class="press text-ink ed-link inline-flex items-center gap-2">
+          Ver feed completo (BDNS · UE · BOE) →
+        </a>
+      </div>
+    </div>
+
+    <div class="border border-ink overflow-hidden">
+      <table class="w-full text-sm">
+        <thead class="bg-ink text-paper">
+          <tr>
+            <th class="px-4 py-3 text-left press-sm">Publicada</th>
+            <th class="px-4 py-3 text-left press-sm">Convocatoria</th>
+            <th class="px-4 py-3 text-left press-sm hidden md:table-cell">Ámbito</th>
+            <th class="px-4 py-3 text-left press-sm hidden lg:table-cell">Organismo</th>
+            <th class="px-4 py-3 text-left press-sm">Cierra</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in latest_news %}
+          <tr class="border-t border-ink/15 hover:bg-paperdk/50 transition">
+            <td class="px-4 py-3 align-top whitespace-nowrap">
+              <span class="ff-mono text-xs text-ink2">{{ s.fecha_inicio.strftime("%d.%m") if s.fecha_inicio else "—" }}</span>
+            </td>
+            <td class="px-4 py-3 align-top">
+              <a href="/subsidy/{{ s.id }}" class="ff-display text-base text-ink hover:text-oxblood transition line-clamp-2" style='font-variation-settings:"opsz" 144,"wght" 600'>{{ s.titulo or "—" }}</a>
+            </td>
+            <td class="px-4 py-3 align-top hidden md:table-cell">
+              <span class="press-sm border border-ink/40 text-ink2 px-2 py-0.5">{{ s.ambito|capitalize }}</span>
+            </td>
+            <td class="px-4 py-3 text-ink2 align-top text-xs hidden lg:table-cell">{{ (s.organismo or "—")|truncate(40, true, "…") }}</td>
+            <td class="px-4 py-3 align-top whitespace-nowrap">
+              <span class="ff-mono text-xs text-ink">{% if s.fecha_fin %}{{ s.fecha_fin.strftime("%d.%m.%Y") }}{% else %}—{% endif %}</span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+{# Rule doble editorial #}
+<div class="border-t border-b border-ink"><div class="h-[3px] bg-paper"></div></div>
+{% endif %}
+
+{# ────────── GARANTÍAS — tres columnas serif ────────── #}
+<section class="relative grain">
+  <div class="max-w-7xl mx-auto px-5 md:px-8 py-14 md:py-20">
+
+    <div class="grid grid-cols-12 gap-6 md:gap-10 mb-10 md:mb-14">
+      <div class="col-span-12 md:col-span-3">
+        <div class="press text-oxblood">№ 03</div>
+        <div class="rule mt-1 mb-3"></div>
+        <div class="press-sm text-ink2">Por qué confiar</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <h2 class="ff-display text-4xl md:text-5xl lg:text-6xl text-ink leading-[1.02] max-w-3xl"
+            style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 600'>
+          Datos oficiales. Filtros honestos.
+          <span class="ff-display-light text-oxblood">Cero spam.</span>
+        </h2>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-ink border border-ink">
+      {# Card 1 #}
+      <article class="bg-paper p-7 md:p-9">
+        <div class="flex items-baseline justify-between mb-4">
+          <span class="num-bloomberg text-4xl text-oxblood">01</span>
+          <span class="press-sm text-ink3">Fuente</span>
+        </div>
+        <h3 class="ff-display text-2xl mb-2 leading-tight"
+            style='font-variation-settings:"opsz" 144,"wght" 600'>
+          Bases oficiales,<br>nada de listas compradas
+        </h3>
+        <p class="text-sm text-ink2 leading-relaxed">
+          BDNS del Estado, BORME del Registro Mercantil, Wikidata, Empresite.eleconomista, y el portal Funding &amp; Tenders de la Comisión Europea. Sincronizadas todas las noches a las 3:00.
+        </p>
+      </article>
+
+      {# Card 2 #}
+      <article class="bg-paper p-7 md:p-9">
+        <div class="flex items-baseline justify-between mb-4">
+          <span class="num-bloomberg text-4xl text-oxblood">02</span>
+          <span class="press-sm text-ink3">Método</span>
+        </div>
+        <h3 class="ff-display text-2xl mb-2 leading-tight"
+            style='font-variation-settings:"opsz" 144,"wght" 600'>
+          Te decimos por qué encaja,<br>y por qué no
+        </h3>
+        <p class="text-sm text-ink2 leading-relaxed">
+          Filtramos las que excluyen a empresas con ánimo de lucro, las que son sólo para autónomos o personas físicas, las que cierran fuera de tu región. Lo demás te lo explica el algoritmo, fila a fila.
+        </p>
+      </article>
+
+      {# Card 3 #}
+      <article class="bg-paper p-7 md:p-9">
+        <div class="flex items-baseline justify-between mb-4">
+          <span class="num-bloomberg text-4xl text-oxblood">03</span>
+          <span class="press-sm text-ink3">Trato</span>
+        </div>
+        <h3 class="ff-display text-2xl mb-2 leading-tight"
+            style='font-variation-settings:"opsz" 144,"wght" 600'>
+          Sin cookies. Sin tracking.<br>Sin venta de datos.
+        </h3>
+        <p class="text-sm text-ink2 leading-relaxed">
+          Si dejas tu email es porque quieres alertas — y te das de baja con un clic. No usamos analítica de terceros. El código es abierto y los tests están publicados.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+{# ────────── CITA / pull-quote editorial ────────── #}
+<section class="border-t border-b border-ink bg-ink text-paper relative overflow-hidden">
+  <div class="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-oxblood/20 blur-3xl"></div>
+  <div class="absolute -bottom-20 -left-20 w-96 h-96 rounded-full bg-ochre/15 blur-3xl"></div>
+  <div class="max-w-7xl mx-auto px-5 md:px-8 py-16 md:py-24 relative grid grid-cols-12 gap-6 md:gap-10">
+    <div class="col-span-12 md:col-span-2">
+      <div class="ff-display text-[120px] md:text-[180px] leading-[0.5] text-ochre"
+           style='font-variation-settings:"opsz" 144,"wght" 800'>“</div>
+    </div>
+    <blockquote class="col-span-12 md:col-span-10 -mt-4">
+      <p class="ff-display text-3xl md:text-5xl lg:text-6xl leading-[1.08] max-w-5xl"
+         style='font-variation-settings:"opsz" 144,"SOFT" 50,"WONK" 1,"wght" 400'>
+        Los datos públicos deberían trabajar para las empresas que los financian con sus impuestos —
+        <span class="ff-display-light text-ochrelt">no esconderse detrás de doce PDFs.</span>
+      </p>
+      <footer class="mt-7 press text-ochrelt">
+        <span class="text-paper">Manifiesto Subvenia</span> · 2026
+      </footer>
+    </blockquote>
+  </div>
+</section>
+
+{# ────────── CIERRE — segunda CTA + colofón ────────── #}
+<section class="relative grain">
+  <div class="max-w-7xl mx-auto px-5 md:px-8 py-14 md:py-20 text-center">
+    <div class="press text-oxblood mb-3">¿A qué esperas?</div>
+    <h2 class="ff-display text-5xl md:text-7xl lg:text-8xl text-ink leading-[0.95] tracking-tight max-w-5xl mx-auto"
+        style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 700'>
+      Sube un poco más arriba, <span class="ff-display-light text-oxblood">empieza por tu nombre</span>.
+    </h2>
+    <div class="rule mt-8 mb-8 max-w-xs mx-auto"></div>
+    <a href="#search-form" class="btn-ghost inline-flex items-center gap-3 px-7 py-3.5">
+      <span class="ff-display text-lg" style='font-variation-settings:"opsz" 144,"wght" 600'>Ir al formulario</span>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7 7m0 0l7-7m-7 7V3"/></svg>
+    </a>
+  </div>
+</section>
+
+{# ───── Hidden form binding state for results page ───── #}
 <script>
-  // Plan 5: empresa autocomplete selector
-  function selectEmpresa(razon, provincia) {
-    var input = document.getElementById('razon_social');
-    var suggestions = document.getElementById('empresa-suggestions');
+  (function () {
+    var empresaInput = document.getElementById('razon_social');
+    var empresaSugg = document.getElementById('empresa-suggestions');
     var provinciaSelect = document.getElementById('provincia');
-    if (input) input.value = razon;
-    if (suggestions) suggestions.innerHTML = '';
-    if (provincia && provinciaSelect) {
-      var opt = Array.from(provinciaSelect.options).find(function (o) { return o.value === provincia; });
-      if (opt) provinciaSelect.value = provincia;
-    }
-  }
+    var cnaeInput = document.getElementById('cnae');
+    var cnaeSugg = document.getElementById('cnae-suggestions');
+    var cnaeSelected = document.getElementById('cnae-selected');
+    var cnaeHelp = document.getElementById('cnae-help');
+    var empresaSelected = document.getElementById('empresa-selected');
+    var empresaSelectedName = document.getElementById('empresa-selected-name');
+    var empresaCnaeHint = document.getElementById('empresa-cnae-hint');
 
-  // Hide suggestions when clicking outside
-  document.addEventListener('click', function (e) {
-    var input = document.getElementById('razon_social');
-    var suggestions = document.getElementById('empresa-suggestions');
-    if (!input || !suggestions) return;
-    if (e.target !== input && !suggestions.contains(e.target)) {
-      suggestions.innerHTML = '';
+    function applyEmpresaOption(btn, opts) {
+      opts = opts || {};
+      var silent = opts.silent || false;
+      var razon = btn.getAttribute('data-razon') || '';
+      var provincia = btn.getAttribute('data-provincia') || '';
+      var cnae = btn.getAttribute('data-cnae') || '';
+      var cnaeLabel = btn.getAttribute('data-cnae-label') || '';
+
+      if (empresaInput) empresaInput.value = razon;
+      if (provincia && provinciaSelect) {
+        var opt = Array.from(provinciaSelect.options).find(function (o) { return o.value === provincia; });
+        if (opt) provinciaSelect.value = provincia;
+      }
+      // Si el CNAE viene vacío (sistema no pudo detectar con confianza) o
+      // es el fallback histórico 8299, NO lo aplicamos — el usuario debe
+      // especificar su actividad real. Pedirlo explícitamente es más honesto
+      // que poner "Otros servicios" y mostrar resultados aleatorios.
+      var isFallback = (!cnae || cnae === '8299');
+      var cnaeAutoFilled = false;
+      if (cnae && cnaeInput && !cnaeInput.value && !isFallback) {
+        cnaeInput.value = cnae;
+        cnaeAutoFilled = true;
+        if (cnaeSelected) {
+          cnaeSelected.textContent = '✓ ' + (cnaeLabel || cnae);
+          cnaeSelected.classList.remove('hidden');
+        }
+        if (cnaeHelp) cnaeHelp.style.display = 'none';
+      }
+      if (empresaSelected) {
+        empresaSelected.classList.remove('hidden');
+        if (empresaSelectedName) empresaSelectedName.textContent = razon;
+        if (empresaCnaeHint) {
+          var parts = [];
+          if (provincia) parts.push('Provincia ' + provincia);
+          if (cnaeLabel && !isFallback) {
+            parts.push(cnaeLabel + ' (CNAE ' + cnae + ')');
+          } else if (isFallback) {
+            parts.push('⚠ No detectamos tu actividad — escríbela abajo (ferretería, software, farmacéutica…)');
+            empresaCnaeHint.classList.add('text-oxblood', 'font-semibold');
+          } else if (!cnaeAutoFilled) {
+            parts.push('Selecciona la actividad abajo');
+          }
+          empresaCnaeHint.textContent = parts.join(' · ');
+        }
+      }
+      if (empresaSugg) empresaSugg.innerHTML = '';
+      // Si no se autocompletó CNAE (o fue fallback), hacer focus al campo CNAE
+      // para que el usuario lo rellene inmediatamente.
+      if ((!cnaeAutoFilled || isFallback) && cnaeInput && !silent) {
+        setTimeout(function () {
+          cnaeInput.focus();
+        }, 100);
+      }
     }
-  });
+
+    if (empresaSugg) {
+      // SOLO seleccionar empresa al hacer CLIC en una opción
+      empresaSugg.addEventListener('click', function (e) {
+        var btn = e.target.closest('.empresa-option');
+        if (!btn) return;
+        e.preventDefault();
+        applyEmpresaOption(btn);
+      });
+    }
+
+    if (empresaInput) {
+      // Enter: selecciona la primera opción SOLO si hay sugerencias visibles
+      // (permite navegación rápida con teclado SIN romper el "hay que clicar")
+      empresaInput.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter') return;
+        var options = empresaSugg ? empresaSugg.querySelectorAll('.empresa-option') : [];
+        if (options.length > 0) {
+          e.preventDefault();
+          applyEmpresaOption(options[0]);
+        }
+      });
+      // NO autocompletamos en blur ni en afterSwap — el usuario debe clicar
+      // explícitamente. Si pierde el foco con texto a medio escribir, se queda
+      // ese texto literal y los demás campos vacíos.
+    }
+
+    if (cnaeSugg) {
+      cnaeSugg.addEventListener('click', function (e) {
+        var btn = e.target.closest('.cnae-option');
+        if (!btn) return;
+        e.preventDefault();
+        var code = btn.getAttribute('data-code') || '';
+        var desc = btn.getAttribute('data-description') || '';
+        if (cnaeInput) cnaeInput.value = code;
+        if (cnaeSelected) {
+          cnaeSelected.textContent = '✓ ' + desc;
+          cnaeSelected.classList.remove('hidden');
+        }
+        if (cnaeHelp) cnaeHelp.style.display = 'none';
+        cnaeSugg.innerHTML = '';
+      });
+    }
+
+    document.addEventListener('click', function (e) {
+      if (empresaInput && empresaSugg && e.target !== empresaInput && !empresaSugg.contains(e.target)) {
+        empresaSugg.innerHTML = '';
+      }
+      if (cnaeInput && cnaeSugg && e.target !== cnaeInput && !cnaeSugg.contains(e.target)) {
+        cnaeSugg.innerHTML = '';
+      }
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        if (empresaSugg) empresaSugg.innerHTML = '';
+        if (cnaeSugg) cnaeSugg.innerHTML = '';
+      }
+    });
+
+    if (empresaInput) {
+      empresaInput.addEventListener('input', function () {
+        if (empresaSelected) empresaSelected.classList.add('hidden');
+      });
+    }
+    if (cnaeInput) {
+      cnaeInput.addEventListener('input', function () {
+        if (cnaeSelected) cnaeSelected.classList.add('hidden');
+        if (cnaeHelp) cnaeHelp.style.display = '';
+      });
+    }
+  })();
 </script>
 {% endblock %}

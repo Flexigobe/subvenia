@@ -1,91 +1,121 @@
 {% extends "base.html" %}
-
-{% block title %}Cómo funciona el buscador de subvenciones · Datos oficiales y gratuitos{% endblock %}
-{% block meta_description %}Te explicamos cómo cruzamos tu perfil de empresa con las fuentes oficiales (BDNS, BORME, UE) para encontrar las subvenciones públicas a las que puedes optar. Gratis, sin registro, sin cookies.{% endblock %}
-{% block og_title %}Cómo funciona — Buscador de subvenciones{% endblock %}
-{% block og_description %}Cómo cruzamos tu perfil con BDNS, BORME y UE para encontrar las subvenciones que puede pedir tu empresa.{% endblock %}
-
+{% block title %}Método · Subvenia{% endblock %}
+{% block meta_description %}Cómo Subvenia cruza tu perfil de empresa con BDNS, BORME y la Comisión Europea para encontrar las subvenciones que puedes pedir. Sin registro, sin cookies.{% endblock %}
 {% block content %}
-<article class="max-w-3xl mx-auto bg-white border border-gray-200 rounded-2xl p-8 prose prose-sm">
-  <h1 class="text-3xl font-bold mb-2">Cómo funciona</h1>
-  <p class="text-gray-600 mb-8">El recorrido completo de un click en "Buscar" hasta tu informe personalizado, en 5 pasos.</p>
 
-  <ol class="space-y-8">
-    <li>
-      <h2 class="text-xl font-semibold flex items-baseline gap-2">
-        <span class="bg-green-700 text-white text-sm font-bold rounded-full w-7 h-7 inline-flex items-center justify-center">1</span>
-        Tú rellenas el formulario
-      </h2>
-      <p class="text-gray-700 mt-2">Nos das tu razón social (con autocompletado contra el <strong>BORME oficial</strong> mientras tecleas), tu CNAE, tu tamaño, tu provincia y qué tipo de financiación buscas (digitalización, I+D, contratación, etc.). El NIF es opcional, solo para personalizar el informe.</p>
-    </li>
+<div class="max-w-7xl mx-auto px-5 md:px-8 py-10 md:py-14">
 
-    <li>
-      <h2 class="text-xl font-semibold flex items-baseline gap-2">
-        <span class="bg-green-700 text-white text-sm font-bold rounded-full w-7 h-7 inline-flex items-center justify-center">2</span>
-        Filtramos en bases oficiales
-      </h2>
-      <p class="text-gray-700 mt-2">Tenemos sincronizadas a diario:</p>
-      <ul class="list-disc pl-6 mt-2 space-y-1 text-gray-700">
-        <li><strong>BDNS</strong> (Base de Datos Nacional de Subvenciones) — todas las convocatorias estatales, autonómicas y locales que se publican en España por ley.</li>
-        <li><strong>EU Funding &amp; Tenders Portal</strong> — programas de financiación europea (Horizon Europe, Digital Europe, EIC...) a los que España puede optar.</li>
-        <li><strong>BORME</strong> (Boletín Oficial del Registro Mercantil) — para el autocompletado de razón social.</li>
-      </ul>
-      <p class="text-gray-700 mt-2">Hacemos un primer filtro SQL (CNAE compatible, ámbito territorial, finalidad solapada) y nos quedamos con las 30 convocatorias más prometedoras.</p>
-    </li>
+  {# ───── Portadilla ───── #}
+  <header class="grid grid-cols-12 gap-6 mb-12">
+    <div class="col-span-12 md:col-span-3">
+      <div class="press text-oxblood">№ Método</div>
+      <div class="rule mt-1 mb-3"></div>
+      <div class="press-sm text-ink2">El recorrido completo, paso a paso.</div>
+    </div>
+    <div class="col-span-12 md:col-span-9">
+      <h1 class="ff-display text-ink leading-[0.93] tracking-tight text-[48px] md:text-[78px] lg:text-[96px]"
+          style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 700'>
+        Así <span class="ff-display-light text-oxblood">funciona</span>.
+      </h1>
+      <div class="rule mt-6 mb-3"></div>
+      <p class="text-base md:text-lg text-ink2 leading-relaxed max-w-3xl">
+        De un click en "Buscar" hasta tu informe, en cinco pasos. Sin caja negra, sin promesas comerciales.
+      </p>
+    </div>
+  </header>
 
-    <li>
-      <h2 class="text-xl font-semibold flex items-baseline gap-2">
-        <span class="bg-green-700 text-white text-sm font-bold rounded-full w-7 h-7 inline-flex items-center justify-center">3</span>
-        Las puntuamos con IA
-      </h2>
-      <p class="text-gray-700 mt-2">Para cada una de esas 30, Google Gemini lee el texto completo de la convocatoria y la compara con tu perfil concreto. Devuelve un score 0-100 y una frase explicando por qué encaja (o no). Eso es lo que ves como <em>"96% match · Porque tu CNAE 62.01 cumple el requisito de PYME tecnológica"</em>.</p>
-      <p class="text-gray-700 mt-2">Si la IA no está disponible o tarda, caemos a un ranking determinista por reglas — siempre verás resultados.</p>
+  {# ───── Pasos numerados ───── #}
+  <ol class="space-y-px bg-ink border border-ink mb-16">
+    {% set steps = [
+      ("01", "Rellenas el formulario",
+       "Tres campos. Tu razón social (autocompletada contra BORME y Wikidata mientras tecleas), tu actividad (CNAE) y tu provincia. El NIF es opcional, sólo para personalizar el informe."),
+      ("02", "Filtramos en bases oficiales",
+       "<strong>BDNS</strong> (Estado, CCAA, ayuntamientos), <strong>EU Funding &amp; Tenders</strong> (Horizon, Digital Europe, EIC), <strong>BORME + Wikidata + Empresite.eleconomista</strong> para el autocompletado. Sincronizadas todas las noches. Filtro SQL: CNAE compatible, ámbito territorial, finalidad solapada. Nos quedamos con las 30 más prometedoras."),
+      ("03", "Las puntuamos",
+       "Para cada una, el sistema lee el texto completo y la compara con tu perfil. Devuelve un score 0-100 y una frase explicando por qué encaja (o no). Si la IA no está disponible, caemos a un ranking determinista por reglas — siempre verás resultados."),
+      ("04", "Te enseñamos el informe",
+       "Las tres mejor puntuadas como portada. Las otras en una tabla. Cada una con enlace directo a la convocatoria oficial publicada en el BOE. Si una <em>no</em> aplica, te decimos exactamente por qué (no eres NGO, eres autónomo, está fuera de tu región, etc.)."),
+      ("05", "Si quieres, alertas",
+       "Dejas tu email y te enviamos el informe en PDF y avisos cuando salga una nueva convocatoria afín a tu perfil. Te das de baja con un clic. Cumplimos RGPD."),
+    ] %}
+    {% for num, title, body in steps %}
+    <li class="bg-paper p-7 md:p-10 grid grid-cols-12 gap-6 md:gap-8 items-start">
+      <div class="col-span-12 md:col-span-2">
+        <div class="num-bloomberg text-[64px] md:text-[88px] leading-[0.85] text-oxblood">{{ num }}</div>
+      </div>
+      <div class="col-span-12 md:col-span-10">
+        <h2 class="ff-display text-2xl md:text-3xl lg:text-4xl leading-[1.05] text-ink mb-3" style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 600'>
+          {{ title }}
+        </h2>
+        <div class="rule-thin mb-3"></div>
+        <p class="text-base text-ink2 leading-relaxed max-w-3xl">{{ body|safe }}</p>
+      </div>
     </li>
-
-    <li>
-      <h2 class="text-xl font-semibold flex items-baseline gap-2">
-        <span class="bg-green-700 text-white text-sm font-bold rounded-full w-7 h-7 inline-flex items-center justify-center">4</span>
-        Te enseñamos el informe
-      </h2>
-      <p class="text-gray-700 mt-2">Las 3 mejor puntuadas como tarjetas grandes destacadas. Las otras en una tabla compacta. Cada una tiene un enlace directo a la <strong>convocatoria oficial publicada en el BOE</strong> (o portal correspondiente).</p>
-    </li>
-
-    <li>
-      <h2 class="text-xl font-semibold flex items-baseline gap-2">
-        <span class="bg-green-700 text-white text-sm font-bold rounded-full w-7 h-7 inline-flex items-center justify-center">5</span>
-        Opcional: alertas por email
-      </h2>
-      <p class="text-gray-700 mt-2">Si quieres, dejas tu email al final y te enviamos:</p>
-      <ul class="list-disc pl-6 mt-2 space-y-1 text-gray-700">
-        <li>El informe en PDF inmediatamente.</li>
-        <li>Un aviso cuando salga una nueva convocatoria afín a tu perfil (cron diario a las 9:00).</li>
-      </ul>
-      <p class="text-gray-700 mt-2">Te das de baja con un clic en cualquier email. Cumplimos RGPD; <a href="/privacidad" class="underline">léelo aquí</a>.</p>
-    </li>
+    {% endfor %}
   </ol>
 
-  <hr class="my-8 border-gray-200">
+  {# ───── Qué NO hacemos ───── #}
+  <section class="border-t border-b border-ink py-12 mb-16">
+    <div class="grid grid-cols-12 gap-6 md:gap-10">
+      <div class="col-span-12 md:col-span-4">
+        <div class="press text-oxblood mb-2">Qué NO hacemos</div>
+        <div class="rule mb-4"></div>
+        <h2 class="ff-display text-4xl md:text-5xl leading-[1.02] text-ink" style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 600'>
+          Honestidad <span class="ff-display-light text-oxblood">explícita</span>.
+        </h2>
+      </div>
+      <div class="col-span-12 md:col-span-8">
+        <ul class="space-y-5">
+          {% set noes = [
+            ("No tramitamos la subvención por ti", "Te llevamos al BOE oficial y tú (o tu gestor) la solicitas. Somos un buscador, no una asesoría."),
+            ("No autocompletamos la razón social a partir del NIF", "AEAT no expone esa correspondencia en fuentes públicas gratuitas — es decisión política. Por eso te pedimos tu razón social y el NIF es opcional."),
+            ("No garantizamos que recibas la subvención", "Las convocatorias tienen requisitos, plazos y presupuestos limitados. Mostramos las que podrías pedir; aprobarla es decisión del organismo."),
+            ("No vendemos tus datos", "Ni a terceros, ni a la industria de los leads. Si nos das tu email es para enviarte alertas, punto."),
+          ] %}
+          {% for title, body in noes %}
+          <li class="flex items-start gap-4 pb-5 border-b border-ink/15 last:border-0">
+            <span class="ff-mono text-oxblood text-xs pt-1.5 shrink-0">{{ "%02d"|format(loop.index) }}—</span>
+            <div>
+              <div class="ff-display text-xl text-ink mb-1" style='font-variation-settings:"opsz" 144,"wght" 600'>{{ title }}</div>
+              <div class="text-sm text-ink2 leading-relaxed">{{ body }}</div>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </section>
 
-  <h2 class="text-2xl font-bold mb-4">Qué NO hacemos</h2>
-  <p class="text-gray-700 mb-2">Honestidad: hay cosas que el sistema español o europeo no permite, y queremos que las sepas:</p>
-  <ul class="list-disc pl-6 space-y-2 text-gray-700">
-    <li><strong>No tramitamos la subvención por ti.</strong> Te llevamos al BOE oficial y tú (o tu gestor) la solicitas. Somos un buscador, no una asesoría.</li>
-    <li><strong>No autocompletamos la razón social a partir del NIF.</strong> España (AEAT) no expone esa correspondencia en fuentes públicas gratuitas — es decisión política. Por eso te pedimos tu razón social (autocompletada desde BORME) y el NIF es opcional.</li>
-    <li><strong>No garantizamos que recibas la subvención.</strong> Las convocatorias tienen requisitos, plazos y presupuestos limitados. Mostramos las que podrías pedir; aprobarla es decisión del organismo.</li>
-    <li><strong>No vendemos tus datos.</strong> Ni a terceros, ni a la "industria de los leads". Si nos das tu email es para enviarte alertas, punto.</li>
-  </ul>
+  {# ───── Stack técnico ───── #}
+  <section class="bg-ink text-paper p-8 md:p-12 mb-12 relative overflow-hidden grain">
+    <div class="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-oxblood/30 blur-3xl"></div>
+    <div class="absolute -bottom-20 -left-20 w-96 h-96 rounded-full bg-ochre/20 blur-3xl"></div>
+    <div class="relative grid grid-cols-12 gap-6">
+      <div class="col-span-12 md:col-span-3">
+        <div class="press text-ochrelt">Stack</div>
+        <div class="rule mt-1 mb-4 bg-paper"></div>
+        <div class="press-sm text-paper/70">Para los curiosos</div>
+      </div>
+      <div class="col-span-12 md:col-span-9">
+        <h2 class="ff-display text-3xl md:text-4xl text-paper mb-4" style='font-variation-settings:"opsz" 144,"wght" 600'>
+          Código abierto. Tests publicados.
+        </h2>
+        <p class="text-base text-paper/80 leading-relaxed max-w-3xl">
+          Python 3.12 · FastAPI · PostgreSQL · APScheduler. Frontend con HTMX + Tailwind, sin SPA.
+          Sincronización diaria con BDNS, EU Funding &amp; Tenders y BORME. Hosting en Railway (UE).
+          LLM Google Gemini 2.0 Flash. Email Brevo. 200+ tests automáticos. Despliegue continuo.
+        </p>
+      </div>
+    </div>
+  </section>
 
-  <hr class="my-8 border-gray-200">
-
-  <h2 class="text-2xl font-bold mb-4">Stack técnico (para los curiosos)</h2>
-  <p class="text-gray-700">Python 3.12 + FastAPI + PostgreSQL + APScheduler. Frontend con HTMX y Tailwind, sin SPA. Sincronización diaria con BDNS, EU Funding &amp; Tenders y BORME. Hosting en Railway (UE). LLM: Google Gemini 2.0 Flash (free tier). Email: Brevo. Código limpio, 200+ tests automáticos, despliegue continuo.</p>
-
-  <hr class="my-8 border-gray-200">
-
-  <div class="text-center mt-8">
-    <a href="/" class="inline-block bg-green-700 hover:bg-green-800 text-white font-semibold px-8 py-3 rounded-lg">
-      Probar el buscador →
+  {# ───── CTA cierre ───── #}
+  <div class="text-center pt-6">
+    <a href="/" class="btn-sello inline-flex items-center gap-3 px-8 py-4">
+      <span class="ff-display text-lg" style='font-variation-settings:"opsz" 144,"wght" 600'>Probar Subvenia ahora</span>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m0 0l-6-6m6 6l-6 6"/></svg>
     </a>
   </div>
-</article>
+
+</div>
 {% endblock %}

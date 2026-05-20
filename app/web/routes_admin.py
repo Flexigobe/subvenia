@@ -39,6 +39,8 @@ _log = logging.getLogger(__name__)
 
 TEMPLATES_DIR = Path(__file__).resolve().parent / "templates"
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
+from app.web._template_globals import inject_globals
+inject_globals(templates)
 
 router = APIRouter(prefix="/admin")
 
