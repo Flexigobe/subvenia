@@ -1,23 +1,9 @@
-# Multi-stage build: smaller final image, no build tools in production.
+FROM python:3.12-slim
 
-FROM python:3.12-slim AS builder
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1
-
-WORKDIR /build
-COPY pyproject.toml ./
-# Install runtime deps only (no dev extras in production image)
-RUN python -m venv /opt/venv \
- && /opt/venv/bin/pip install --upgrade pip \
- && /opt/venv/bin/pip install .
-
-
-FROM python:3.12-slim AS runtime
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PATH="/opt/venv/bin:$PATH"
 
 # WeasyPrint system deps + libpq for psycopg
 RUN apt-get update \
@@ -27,18 +13,19 @@ RUN apt-get update \
       libpq5 \
  && rm -rf /var/lib/apt/lists/*
 
-# Non-root user
-RUN useradd --create-home --shell /bin/bash app
 WORKDIR /app
 
-COPY --from=builder /opt/venv /opt/venv
-COPY --chown=app:app . /app
+# Copy and install deps first for layer caching
+COPY pyproject.toml ./
+RUN pip install --upgrade pip && pip install .
 
-USER app
+# Then copy code
+COPY . /app
 
-# Railway sets $PORT. Default to 8000 for local docker run.
+# Reinstall to register the package with the actual source
+RUN pip install --no-deps .
+
 ENV PORT=8000
 EXPOSE 8000
 
-# Run migrations then start uvicorn
 CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port ${PORT} --proxy-headers"]
