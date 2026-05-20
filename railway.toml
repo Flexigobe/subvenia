@@ -8,7 +8,7 @@ dockerfilePath = "Dockerfile"
 [deploy]
 # Run migrations then start the FastAPI server.
 # Railway injects $PORT — uvicorn must bind to 0.0.0.0:$PORT.
-startCommand = "echo '[start] skipping alembic, going direct to uvicorn on port:' $PORT; exec python -u -m uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers"
+startCommand = "echo '[start] alembic upgrade head'; alembic upgrade head; echo '[start] starting uvicorn on port:' $PORT; exec python -u -m uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers"
 healthcheckPath = "/healthz"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
