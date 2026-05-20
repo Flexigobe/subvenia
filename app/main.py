@@ -112,6 +112,15 @@ _register_seo_globals()
 
 @app.get("/healthz")
 def healthz() -> dict:
+    """Liveness probe — responde inmediatamente sin tocar dependencias.
+    Railway lo usa para validar que el container arrancó.
+    """
+    return {"status": "ok"}
+
+
+@app.get("/healthz/full")
+def healthz_full() -> dict:
+    """Readiness probe — chequea DB y scheduler. Útil para monitoring."""
     import time as _time
 
     from sqlalchemy import text
