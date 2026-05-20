@@ -1,9 +1,17 @@
 """Settings centralizados leídos del entorno."""
 
+import os
 from functools import lru_cache
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import field_validator
+
+
+# Railway crea SQLALCHEMY_URL por defecto al añadir Postgres; nuestro código lee
+# DATABASE_URL. Si la primera está y la segunda no, hacemos el alias antes de que
+# pydantic-settings construya Settings.
+if "DATABASE_URL" not in os.environ and "SQLALCHEMY_URL" in os.environ:
+    os.environ["DATABASE_URL"] = os.environ["SQLALCHEMY_URL"]
 
 
 class Settings(BaseSettings):
