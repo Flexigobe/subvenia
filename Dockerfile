@@ -15,15 +15,27 @@ RUN apt-get update \
 
 WORKDIR /app
 
-# Copy and install deps first for layer caching
+# Install deps from a requirements list (no package install)
 COPY pyproject.toml ./
-RUN pip install --upgrade pip && pip install .
+RUN pip install --upgrade pip && \
+    pip install \
+      "fastapi[standard]>=0.115.0" \
+      "uvicorn[standard]>=0.32.0" \
+      "sqlalchemy>=2.0.36" \
+      "alembic>=1.13.3" \
+      "psycopg[binary]>=3.2.3" \
+      "pydantic>=2.9.2" \
+      "pydantic-settings>=2.6.0" \
+      "jinja2>=3.1.4" \
+      "httpx>=0.27.2" \
+      "apscheduler>=3.10.4" \
+      "python-multipart>=0.0.12" \
+      "google-generativeai>=0.8.3" \
+      "weasyprint>=63.0" \
+      "pypdf>=4.0"
 
-# Then copy code
+# Copy source code — app/ is importable from WORKDIR
 COPY . /app
-
-# Reinstall to register the package with the actual source
-RUN pip install --no-deps .
 
 ENV PORT=8000
 EXPOSE 8000
