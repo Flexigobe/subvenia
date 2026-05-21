@@ -171,31 +171,40 @@ async def search(
     )
 
     # Si el matching peta o tarda demasiado, NO devolvemos 500. Caemos al
-    # filter determinista (sin LLM) que es rápido (~1-2s) y siempre da resultados.
+    # filter determinista (sin LLM). Política conservadora: SOLO marcamos como
+    # aplicable las que tienen el CNAE del usuario explícitamente en cnae_elegible
+    # (alta confianza). El resto va a "descartadas" para evitar falsos positivos.
     import logging as _logging
     _log = _logging.getLogger(__name__)
     try:
         ranked = await rank_for(db, perfil, limit=30)
     except Exception as exc:
         _log.exception("rank_for() failed in /search, falling back to filter-only: %s", exc)
-        # Fallback: usa solo el filter determinista (sin LLM) y crea RankedResult
-        # provisionales para no romper el template.
-        from app.matching.filter import find_candidates as _find
+        from app.matching.filter import find_candidates as _find, cnae_match_variants as _cnae_var
         from app.matching.service import RankedResult as _Ranked
         candidates = _find(db, perfil, limit=30)
-        ranked = [
-            _Ranked(
-                subvencion=c.subvencion,
-                score=c.score,
+        user_cnae_variants = set(_cnae_var(perfil.cnae))
+        ranked = []
+        for idx, c in enumerate(candidates):
+            sub = c.subvencion
+            sub_cnaes = set(sub.cnae_elegible or [])
+            # Aplicable solo si CNAE del usuario está EXPLÍCITAMENTE listado.
+            # cnae_elegible vacío → no aplicable en fallback (no podemos confirmar).
+            has_explicit_match = bool(sub_cnaes & user_cnae_variants)
+            ranked.append(_Ranked(
+                subvencion=sub,
+                score=c.score if has_explicit_match else max(0, c.score - 40),
                 razon=None,
                 rank=idx,
-                applicable=True,
-                match_reasons=("Encaje preliminar (matching IA temporalmente no disponible)",),
-                exclusion_reasons=(),
+                applicable=has_explicit_match,
+                match_reasons=(
+                    "CNAE compatible (matching IA temporalmente no disponible — verificar requisitos)",
+                ) if has_explicit_match else (),
+                exclusion_reasons=(
+                    "Matching IA no disponible y CNAE no listado explícitamente — verificar manualmente",
+                ) if not has_explicit_match else (),
                 urgency_days=-1,
-            )
-            for idx, c in enumerate(candidates)
-        ]
+            ))
 
     # Persistir search_results
     for r in ranked:
