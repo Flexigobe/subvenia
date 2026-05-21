@@ -348,39 +348,6 @@ _POST_LLM_BLACKLIST_PATTERNS = [
     (r"\b(asociaciones?\s+sin\s+[áa]nimo\s+de\s+lucro|asoc\.\s+sin\s+[áa]nimo)", "Asociaciones sin ánimo de lucro"),
     (r"\b(consejo\s+(de\s+)?hermandades|junta\s+de\s+cofrad[ií]as)", "Consejo hermandades / junta cofradías"),
     (r"\bproyectos?\s+de\s+(igualdad|inclusi[oó]n|integraci[oó]n)\s+social", "Proyectos sociales (entidades sociales)"),
-
-    # ════════════════════════════════════════════════════════════════════
-    # POLÍTICA CERO FALSOS POSITIVOS — Horizon Europe "open topic" calls
-    # de I+D fundamental que el LLM confunde con asociación de palabras.
-    # Estas convocatorias requieren capacidad de I+D innovador (universidades,
-    # startups deeptech, consorcios), NO son para PYMEs comerciales/industriales
-    # tradicionales aunque el "tema" suene parecido.
-    # ════════════════════════════════════════════════════════════════════
-
-    # Water Resilience / I+D agua europea (no aplica a fontaneros/distribuidores)
-    (r"\b(european\s+)?water\s+resilience\s+strategy", "EU Water Resilience Strategy: I+D hídrica para consorcios"),
-    (r"\binnovative\s+solutions?\s+for\s+(the\s+)?(european\s+)?water", "I+D hídrica EU (no para comercio fontanería)"),
-    (r"\bwater[\s\-](cycle|smart|industry)", "I+D hídrica EU"),
-
-    # Energy / climate I+D (no para empresas no energéticas)
-    (r"\b(climate\s+(adaptation|resilience|mitigation)\s+(strategy|research))", "I+D climática EU"),
-    (r"\b(net[\s\-]?zero|carbon[\s\-]?neutral)\s+(industry|cities|emissions?)\s+(research|innovation)", "I+D descarbonización"),
-
-    # Cualquier "Open topic:" o "Two-stage" es típicamente I+D fundamental EU
-    (r"^open\s+topic[:\s]", "Open topic Horizon: I+D fundamental (consorcios/universidades)"),
-    (r"\btwo[\s\-]?stage\s+\(20\d{2}\)", "Convocatoria Horizon two-stage I+D"),
-
-    # Espacios de datos / sectores estratégicos cuando NO es Kit/Red.es accesible
-    # Detectamos por "spaces of data" sin contexto de PYMEs concretas
-    (r"\bdata\s+spaces?\s+for\s+(health|mobility|energy|manufacturing|tourism)\s+", "Data Spaces sectorial específico (no transversal)"),
-
-    # Asociación PYME Innovadora / Eurostars: requieren capacidad I+D real
-    # No es para empresas sin departamento I+D ni proyecto innovador concreto
-    (r"\b(eurostars|asociaci[oó]n\s+europea\s+para\s+(las\s+)?pyme\s+innovador)", "Eurostars/EU PYME Innovadora: requiere proyecto I+D concreto"),
-
-    # Calls específicas de instrumentos del PRTR para sectores estratégicos
-    # No son universales aunque el LLM las trate como tal
-    (r"\bsectores?\s+productivos?\s+estrat[eé]gicos\s+mediante\s+(la\s+creaci[oó]n\s+de\s+)?demostradores", "Demostradores sectores estratégicos (I+D específico)"),
 ]
 
 
@@ -590,28 +557,6 @@ def _sector_blacklist(sub, cnae: str) -> str | None:
     return None
 
 
-# Umbrales de confianza por origen — política cero falsos positivos
-_MIN_CONFIDENCE_BDNS = 90    # BDNS: subvenciones nacionales con CNAE/sección elegible explícitos
-_MIN_CONFIDENCE_EU = 95      # EU: "open topic" Horizon/EIC son trampas frecuentes; confidence casi total
-_MIN_CONFIDENCE_EU_NO_CNAE = 98  # EU sin CNAE elegible: prácticamente sólo aplica si LLM está casi seguro
-
-
-def _required_confidence(sub) -> int:
-    """Confidence mínima requerida según origen de la subvención y datos disponibles.
-
-    Para EU calls de I+D ("open topic", Horizon, EIC), si no hay cnae_elegible
-    el LLM puede caer en asociaciones de palabras (water/fontanería, food/comercio
-    alimentación, etc.). Subimos el umbral para evitar falsos positivos.
-    """
-    source = (getattr(sub, "source", "") or "").lower()
-    cnae_elegible = getattr(sub, "cnae_elegible", None) or []
-    if source == "eu":
-        if not cnae_elegible:
-            return _MIN_CONFIDENCE_EU_NO_CNAE
-        return _MIN_CONFIDENCE_EU
-    return _MIN_CONFIDENCE_BDNS
-
-
 async def rank_for(
     session: Session,
     perfil: EmpresaProfile,
@@ -686,21 +631,6 @@ async def rank_for(
                     llm_applicable = False
                     llm_razon = blacklist_reason
                     llm_score = max(0, 25)  # score visible pero bajo
-
-            # POLÍTICA CERO FALSOS POSITIVOS: confidence dinámico por origen.
-            # EU calls sin cnae_elegible necesitan ~98% de confianza del LLM;
-            # BDNS necesita 90%; el resto del flujo ya pasó el filtro _MIN_CONFIDENCE
-            # del scorer (90), aquí lo reforzamos para casos sospechosos.
-            if llm_applicable and llm_confidence > 0:
-                required = _required_confidence(c.subvencion)
-                if llm_confidence < required:
-                    llm_applicable = False
-                    llm_razon = (
-                        f"Análisis IA: confianza {llm_confidence}% por debajo del "
-                        f"umbral exigido ({required}%) para este tipo de convocatoria. "
-                        f"Descartada por política de cero falsos positivos."
-                    )
-                    llm_score = max(0, llm_confidence - 20)
 
             if llm_applicable:
                 # Aplicable según LLM — montamos match_reasons con razón LLM primera
