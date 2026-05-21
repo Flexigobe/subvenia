@@ -177,12 +177,15 @@ async def search(
     import logging as _logging
     _log = _logging.getLogger(__name__)
     try:
-        ranked = await rank_for(db, perfil, limit=30)
+        # limit=20: balance entre cobertura y tiempo de respuesta. 30 candidatos
+        # tardaban 60-80s en Render Starter, demasiado cerca del HTTP timeout (60s).
+        # Con 20 candidatos × 6 por batch = 4 batches paralelos a Gemini → ~25-40s total.
+        ranked = await rank_for(db, perfil, limit=20)
     except Exception as exc:
         _log.exception("rank_for() failed in /search, falling back to filter-only: %s", exc)
         from app.matching.filter import find_candidates as _find, cnae_match_variants as _cnae_var
         from app.matching.service import RankedResult as _Ranked
-        candidates = _find(db, perfil, limit=30)
+        candidates = _find(db, perfil, limit=20)
         user_cnae_variants = set(_cnae_var(perfil.cnae))
         ranked = []
         for idx, c in enumerate(candidates):
