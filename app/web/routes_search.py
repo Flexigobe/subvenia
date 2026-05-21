@@ -267,12 +267,16 @@ def subsidy_detail(
     if sub is None:
         raise HTTPException(status_code=404, detail="Subvención no encontrada")
 
-    # Política cero convocatorias caducadas: si está claramente cerrada
-    # (fecha_fin pasada O fecha_fin=NULL y fecha_inicio >1 año), 404.
+    # Política cero convocatorias caducadas: 404 si está claramente cerrada.
+    # Casos cerrada:
+    # - estado='cerrada' (marcado explícitamente por sync o limpieza manual)
+    # - fecha_fin pasada
+    # - fecha_fin=NULL y fecha_inicio >1 año (huérfana antigua)
     today = _date.today()
     one_year_ago = today - timedelta(days=365)
     is_closed = (
-        (sub.fecha_fin is not None and sub.fecha_fin < today)
+        sub.estado == "cerrada"
+        or (sub.fecha_fin is not None and sub.fecha_fin < today)
         or (sub.fecha_fin is None and sub.fecha_inicio is not None and sub.fecha_inicio < one_year_ago)
     )
     if is_closed:

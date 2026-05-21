@@ -23,9 +23,10 @@ def is_open_filter(today: date | None = None):
     """SQL filter que devuelve solo convocatorias razonablemente abiertas.
 
     Reglas:
+    - estado='cerrada' (explícito) → NUNCA (excluido)
     - fecha_fin >= hoy → abierta segura
     - fecha_fin IS NULL Y fecha_inicio reciente (<1 año) → posiblemente abierta
-    - fecha_fin IS NULL Y sin fecha_inicio → asumimos abierta (no podemos saberlo)
+    - fecha_fin IS NULL Y sin fecha_inicio → asumimos abierta
     - Resto → cerrada, fuera
 
     Uso:
@@ -33,13 +34,16 @@ def is_open_filter(today: date | None = None):
     """
     today = today or date.today()
     one_year_ago = today - timedelta(days=_INDEFINIDA_MAX_AGE_DAYS)
-    return or_(
-        Subvencion.fecha_fin >= today,
-        and_(
-            Subvencion.fecha_fin.is_(None),
-            or_(
-                Subvencion.fecha_inicio.is_(None),
-                Subvencion.fecha_inicio >= one_year_ago,
+    return and_(
+        Subvencion.estado != "cerrada",
+        or_(
+            Subvencion.fecha_fin >= today,
+            and_(
+                Subvencion.fecha_fin.is_(None),
+                or_(
+                    Subvencion.fecha_inicio.is_(None),
+                    Subvencion.fecha_inicio >= one_year_ago,
+                ),
             ),
         ),
     )
