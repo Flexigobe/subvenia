@@ -33,7 +33,8 @@ RUN pip install --upgrade pip && \
       "google-generativeai>=0.8.3" \
       "anthropic>=0.39.0" \
       "weasyprint>=63.0" \
-      "pypdf>=4.0"
+      "pypdf>=4.0" \
+      "bleach>=6.1.0"
 
 # Copy source code — app/ is importable from WORKDIR
 COPY . /app

@@ -46,3 +46,46 @@ def inject_globals(templates) -> None:
 
     templates.env.globals["today_iso"] = _DynamicDateStr("%Y.%m.%d")
     templates.env.globals["current_year"] = _DynamicYear()
+
+    # Filtro Jinja para renderizar descripciones que pueden venir como HTML
+    # (algunas convocatorias EU traen <p>, <strong>, <a> en la descripción).
+    # Sanitizamos con bleach para evitar XSS y permitir solo tags seguros.
+    import re as _re
+    try:
+        import bleach as _bleach
+
+        _ALLOWED_TAGS = [
+            "p", "br", "strong", "b", "em", "i", "u", "ul", "ol", "li",
+            "a", "h1", "h2", "h3", "h4", "h5", "h6", "blockquote", "code",
+        ]
+        _ALLOWED_ATTRS = {
+            "a": ["href", "title", "rel", "target"],
+        }
+
+        def _safe_html(text: str | None) -> str:
+            if not text:
+                return ""
+            # Detectar si tiene HTML real (no solo < > sueltos en texto)
+            if not _re.search(r"<(p|br|strong|em|h[1-6]|ul|ol|li|a|div|span)[\s>/]", text, _re.IGNORECASE):
+                # Texto plano: dejar al template el escape automático
+                return text
+            # HTML: sanitizar y devolver Markup
+            cleaned = _bleach.clean(
+                text,
+                tags=_ALLOWED_TAGS,
+                attributes=_ALLOWED_ATTRS,
+                strip=True,
+                strip_comments=True,
+            )
+            # Linkify URLs sueltas
+            cleaned = _bleach.linkify(cleaned)
+            from markupsafe import Markup
+            return Markup(cleaned)
+    except ImportError:
+        # bleach no instalado (dev local sin deps completas) → strip HTML
+        def _safe_html(text: str | None) -> str:
+            if not text:
+                return ""
+            return _re.sub(r"<[^>]+>", "", text)
+
+    templates.env.filters["safe_html"] = _safe_html

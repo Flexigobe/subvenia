@@ -323,14 +323,24 @@
       </section>
       {% endif %}
 
-      {# Descripción — gran cuerpo de prosa #}
+      {# Descripción — gran cuerpo de prosa.
+         safe_html renderiza HTML si lo hay (sanitizado con bleach), si no lo
+         deja como texto plano. Resuelve el caso de convocatorias EU que traen
+         <p><strong>...</strong></p> en la descripción. #}
       {% if sub.descripcion %}
       <section class="mb-10">
         <div class="press text-oxblood mb-2">Descripción</div>
         <div class="rule mb-5"></div>
         <div class="border-l-4 border-oxblood pl-6 py-2 bg-paperdk/30">
-          <p class="whitespace-pre-line text-ink leading-relaxed text-[17px] max-w-[68ch]"
-             style="font-family: 'Fraunces', Georgia, serif; font-variation-settings: 'opsz' 14, 'wght' 400;">{{ sub.descripcion }}</p>
+          <div class="prose-editorial text-ink leading-relaxed text-[17px] max-w-[68ch]"
+               style="font-family: 'Fraunces', Georgia, serif; font-variation-settings: 'opsz' 14, 'wght' 400;">
+            {% set _html = sub.descripcion|safe_html %}
+            {% if '<p' in _html|string or '<strong' in _html|string or '<a ' in _html|string %}
+              {{ _html }}
+            {% else %}
+              <p class="whitespace-pre-line">{{ _html }}</p>
+            {% endif %}
+          </div>
         </div>
       </section>
       {% endif %}

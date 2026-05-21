@@ -555,6 +555,51 @@
       40%           { transform: scaleY(1.0); opacity: 1; }
     }
     body.is-loading { overflow: hidden; }
+
+    /* Prose editorial — renderizado de HTML sanitizado en descripciones.
+       Usado en sub.descripcion cuando viene con <p>, <strong>, <a>, etc.
+       (típico de convocatorias EU). */
+    .prose-editorial p { margin-bottom: 1em; }
+    .prose-editorial p:last-child { margin-bottom: 0; }
+    .prose-editorial strong, .prose-editorial b { font-weight: 600; color: #13110D; }
+    .prose-editorial em, .prose-editorial i { font-style: italic; }
+    .prose-editorial a {
+      color: #7B2D1A;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      text-decoration-thickness: 1px;
+    }
+    .prose-editorial a:hover { text-decoration-thickness: 2px; }
+    .prose-editorial ul, .prose-editorial ol {
+      margin: 1em 0;
+      padding-left: 1.5em;
+    }
+    .prose-editorial ul { list-style: disc; }
+    .prose-editorial ol { list-style: decimal; }
+    .prose-editorial li { margin-bottom: 0.3em; }
+    .prose-editorial h1, .prose-editorial h2, .prose-editorial h3,
+    .prose-editorial h4, .prose-editorial h5, .prose-editorial h6 {
+      font-family: 'Fraunces', Georgia, serif;
+      font-weight: 600;
+      margin: 1.5em 0 0.5em;
+    }
+    .prose-editorial h1 { font-size: 1.5em; }
+    .prose-editorial h2 { font-size: 1.3em; }
+    .prose-editorial h3 { font-size: 1.15em; }
+    .prose-editorial blockquote {
+      border-left: 3px solid #7B2D1A;
+      padding-left: 1em;
+      margin: 1em 0;
+      font-style: italic;
+      color: #3A3530;
+    }
+    .prose-editorial code {
+      font-family: 'Geist Mono', monospace;
+      background: #EAE3D2;
+      padding: 0.1em 0.3em;
+      border-radius: 2px;
+      font-size: 0.9em;
+    }
   </style>
 
   <script>

@@ -313,13 +313,40 @@ def parse_item(raw: dict[str, Any]) -> dict[str, Any] | None:
     ext_id = _first(md.get("identifier")) or ""
     is_europeaid = str(ext_id).startswith("EuropeAid/")
 
-    if framework and call_title:
+    # Patrones de call_title que claramente NO son organismos (son cohorts,
+    # call IDs, cluster names sueltos, etc.). Si call_title matchea esto,
+    # NO lo usamos como organismo.
+    _NOT_ORGANISMO_PATTERNS = [
+        r"^cohorte\s+del\s+ciclo",
+        r"^call\s+\d+\s*-\s*(single|two)[\s-]?stage",
+        r"^(batteries?|mobility|energy|digital|space|industry|health|culture)\b",
+        r"^cluster\s+\d",
+        r"^civil\s+security",
+        r"^innovative\s+models?",
+        r"^enhancing",
+        r"^accelerating",
+    ]
+
+    def _is_real_organismo(s: str) -> bool:
+        if not s:
+            return False
+        s_lower = s.lower().strip()
+        for pat in _NOT_ORGANISMO_PATTERNS:
+            if re.search(pat, s_lower):
+                return False
+        return True
+
+    if framework and call_title and _is_real_organismo(framework):
         organismo = f"{framework} · {call_title}"
     elif is_europeaid:
-        organismo = "EuropeAid (DG INTPA · Cooperación al Desarrollo) · " + (call_title or "")
-        organismo = organismo.rstrip(" ·")
+        organismo = "EuropeAid (DG INTPA · Cooperación al Desarrollo)"
+    elif framework and _is_real_organismo(framework):
+        organismo = framework
+    elif ca_name and not re.fullmatch(r"\d+", str(ca_name).strip()) and _is_real_organismo(str(ca_name)):
+        organismo = str(ca_name)
     else:
-        organismo = call_title or framework or ca_name or "Comisión Europea"
+        # Fallback robusto: nunca mostrar call_title genérico como organismo.
+        organismo = "Comisión Europea (F&T Portal)"
 
     # Fechas
     deadline_raw = _first(md.get("deadlineDate"))
