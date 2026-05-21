@@ -40,4 +40,4 @@ COPY . /app
 ENV PORT=8000
 EXPOSE 8000
 
-CMD ["sh", "-c", "set -e; echo '[start] running alembic'; alembic upgrade head 2>&1; echo '[start] alembic done, starting uvicorn on port '${PORT}; exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT} --proxy-headers --log-level info 2>&1"]
+CMD ["sh", "-c", "set +e; echo '[start] env'; env | grep -E '^(DATABASE_URL|PGHOST|RAILWAY_PRIVATE_DOMAIN|PORT)' | sed 's/:[^@]*@/:HIDDEN@/g'; echo '[start] running alembic (timeout 60s)'; timeout 60 alembic upgrade head 2>&1; echo '[start] alembic exit=' $?; echo '[start] starting uvicorn on port '${PORT}; exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT} --proxy-headers --log-level info"]

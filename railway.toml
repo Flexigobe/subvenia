@@ -6,10 +6,9 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-# Alembic se ejecuta en startCommand con timeout corto para no bloquear el healthcheck
-# si la DB no está accesible. Si alembic falla, uvicorn arranca igualmente y /healthz
-# responde 200 — las rutas que tocan DB fallarán hasta que se solucione el problema.
-startCommand = "set +e; echo '[start] env'; env | grep -E '^(DATABASE_URL|PGHOST|RAILWAY_PRIVATE_DOMAIN)' | sed 's/:.*@/:***@/'; echo '[start] alembic'; timeout 60 alembic upgrade head 2>&1; echo '[start] alembic_done'; echo '[start] uvicorn on port:' $PORT; exec python -u -m uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers"
+# startCommand omitido a propósito: usamos el CMD del Dockerfile que es más
+# fiable con el escapado de comillas. El CMD ya incluye alembic con timeout
+# y luego uvicorn.
 healthcheckPath = "/healthz"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
