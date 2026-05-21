@@ -1,5 +1,7 @@
 {% extends "base.html" %}
-{% block title %}Planes y precios · Subvenia{% endblock %}
+{% block title %}Por qué es gratis · Radar Ayudas{% endblock %}
+{% block meta_description %}Radar Ayudas es gratis y sin registro. Sin anuncios, sin venta de datos, sin tarjeta. Cruzamos datos públicos para ahorrarte horas leyendo BOE/BDNS.{% endblock %}
+{% block og_title %}Radar Ayudas es gratis — y así seguirá{% endblock %}
 {% block content %}
 
 <div class="max-w-7xl mx-auto px-5 md:px-8 py-10 md:py-14">
@@ -7,110 +9,101 @@
   {# ───── Cabecera ───── #}
   <header class="grid grid-cols-12 gap-6 mb-12">
     <div class="col-span-12 md:col-span-3">
-      <div class="press text-oxblood">№ Precios</div>
+      <div class="press text-oxblood">№ Manifiesto</div>
       <div class="rule mt-1 mb-3"></div>
-      <div class="press-sm text-ink2">Elige el plan que encaje con tu uso.</div>
+      <div class="press-sm text-ink2">Por qué es gratis.</div>
     </div>
     <div class="col-span-12 md:col-span-9">
       <h1 class="ff-display text-ink leading-[0.95] tracking-tight text-[44px] md:text-[68px] lg:text-[84px]"
           style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 700'>
-        Análisis IA <span class="ff-display-light text-oxblood">a tu medida</span>.
+        Es gratis. <span class="ff-display-light text-oxblood">Y seguirá siéndolo.</span>
       </h1>
       <div class="rule mt-6 mb-3"></div>
       <p class="text-base md:text-lg text-ink2 leading-relaxed max-w-3xl">
-        El plan gratis cubre la mayoría de empresas. Los planes de pago activan análisis exhaustivo de 300 candidatos por búsqueda con lectura íntegra de bases reguladoras del BOE.
+        Radar Ayudas no tiene planes de pago, ni tarjeta, ni registro. Cruza datos públicos
+        (BDNS, BORME, F&amp;T Portal de la Comisión Europea) para decirte qué subvenciones
+        puede pedir tu empresa, en 30 segundos. Sin coste.
       </p>
     </div>
   </header>
 
-  {# ───── Planes (4 cards) ───── #}
-  <section class="mb-16">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-ink border border-ink">
-      {% for plan in planes %}
-      <article class="bg-paper p-7 md:p-8 flex flex-col {% if plan.highlight %}relative{% endif %}">
-        {% if plan.highlight %}
-        <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-oxblood text-paper press-sm px-3 py-1">
-          MÁS POPULAR
-        </div>
-        {% endif %}
-
-        <div class="press text-oxblood mb-2">{{ plan.id|upper }}</div>
-        <h2 class="ff-display text-3xl text-ink leading-none mb-1" style='font-variation-settings:"opsz" 144,"wght" 700'>{{ plan.nombre }}</h2>
-        <div class="flex items-baseline gap-2 mb-2">
-          <span class="num-bloomberg text-4xl text-ink">{{ plan.precio }}</span>
-          <span class="press-sm text-ink3">{{ plan.subtitulo }}</span>
-        </div>
-        <div class="rule-thin mb-4"></div>
-
-        <ul class="space-y-2 text-sm text-ink2 mb-6 flex-1">
-          {% for f in plan.features %}
-          <li class="flex items-start gap-2">
-            <span class="ff-mono text-moss text-xs mt-0.5">✓</span>
-            <span>{{ f }}</span>
-          </li>
-          {% endfor %}
-        </ul>
-
-        {% if plan.id == "free" %}
-        <a href="/" class="btn-ghost text-center py-3 press-sm">{{ plan.cta }}</a>
-        {% elif plan.id == "enterprise" %}
-        <a href="mailto:comercial@flexigobe.com?subject=Subvenia Enterprise" class="btn-sello text-center py-3 press-sm">{{ plan.cta }}</a>
-        {% else %}
-        <a href="/comprar/checkout?plan={{ plan.id }}" class="btn-sello text-center py-3 press-sm">{{ plan.cta }}</a>
-        {% endif %}
+  {# ───── Manifesto ───── #}
+  <section class="mb-16 grid grid-cols-12 gap-6">
+    <div class="col-span-12 md:col-span-3">
+      <div class="press text-oxblood">Por qué</div>
+      <div class="rule mt-1 mb-3"></div>
+    </div>
+    <div class="col-span-12 md:col-span-9 space-y-6">
+      <article>
+        <h2 class="ff-display text-2xl md:text-3xl text-ink mb-2" style='font-variation-settings:"opsz" 144,"wght" 600'>
+          Los datos ya son públicos. La gestión, no debería ser cara.
+        </h2>
+        <p class="text-ink2 leading-relaxed">
+          BDNS, BORME y el portal Funding &amp; Tenders publican toda la información necesaria
+          para saber qué ayudas existen. El problema no son los datos: es la herramienta para
+          cruzarlos contra tu empresa. Eso es lo que automatizamos, y no nos cuesta tanto como
+          para cobrártelo.
+        </p>
       </article>
-      {% endfor %}
+      <article>
+        <h2 class="ff-display text-2xl md:text-3xl text-ink mb-2" style='font-variation-settings:"opsz" 144,"wght" 600'>
+          Cero tracking. Cero venta de datos.
+        </h2>
+        <p class="text-ink2 leading-relaxed">
+          No usamos cookies de terceros. No vendemos emails. Si dejas un correo para alertas,
+          se usa para alertas, punto. Y te das de baja con un clic. El código está abierto,
+          los tests publicados.
+        </p>
+      </article>
+      <article>
+        <h2 class="ff-display text-2xl md:text-3xl text-ink mb-2" style='font-variation-settings:"opsz" 144,"wght" 600'>
+          ¿Cómo se sostiene esto?
+        </h2>
+        <p class="text-ink2 leading-relaxed">
+          La infraestructura tiene un coste modesto (servidor + base de datos) que asumimos
+          como parte del proyecto. Si alguna vez necesitamos cobrar algo, lo haremos por
+          consultoría B2B explícita (acompañamiento en solicitudes), nunca por el acceso a
+          la herramienta básica.
+        </p>
+      </article>
     </div>
   </section>
 
-  {# ───── Comparativa simple ───── #}
+  {# ───── Lo que sí y lo que no ───── #}
   <section class="mb-16">
     <div class="grid grid-cols-12 gap-6 mb-6">
       <div class="col-span-12 md:col-span-3">
-        <div class="press text-oxblood">Comparativa</div>
+        <div class="press text-oxblood">Trato</div>
         <div class="rule mt-1 mb-3"></div>
       </div>
       <div class="col-span-12 md:col-span-9">
         <h2 class="ff-display text-3xl md:text-4xl text-ink leading-tight" style='font-variation-settings:"opsz" 144,"wght" 600'>
-          Qué cambia con cada plan
+          Qué incluye, qué no.
         </h2>
       </div>
     </div>
-    <div class="border border-ink overflow-hidden">
-      <table class="w-full text-sm">
-        <thead class="bg-ink text-paper">
-          <tr>
-            <th class="px-4 py-3 text-left press-sm">Característica</th>
-            <th class="px-4 py-3 text-center press-sm">Gratis</th>
-            <th class="px-4 py-3 text-center press-sm bg-oxblood">Starter</th>
-            <th class="px-4 py-3 text-center press-sm">Pro</th>
-            <th class="px-4 py-3 text-center press-sm">Enterprise</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% set filas = [
-            ("Búsquedas/día con IA", "10", "100", "Ilimitadas", "Ilimitadas"),
-            ("Candidatos analizados", "100", "300", "300 + texto BOE", "Custom"),
-            ("Modelo Gemini", "2.5 Flash", "2.5 Flash", "2.5 Flash + Pro", "2.5 Pro"),
-            ("Informes PDF sin marca", "—", "✓", "✓", "✓"),
-            ("Alertas en tiempo real", "Diarias", "Instantáneas", "Instantáneas", "Webhooks"),
-            ("Perfiles guardados", "1", "5", "Ilimitados", "Ilimitados"),
-            ("Descarga CSV/Excel", "—", "—", "✓", "✓"),
-            ("API REST", "—", "—", "✓", "✓"),
-            ("SLA", "—", "—", "—", "99.9%"),
-            ("Soporte", "FAQ", "Email", "WhatsApp", "Account manager"),
-          ] %}
-          {% for caract, free, starter, pro, ent in filas %}
-          <tr class="border-t border-ink/15">
-            <td class="px-4 py-3 text-ink font-medium">{{ caract }}</td>
-            <td class="px-4 py-3 text-center text-ink2">{{ free }}</td>
-            <td class="px-4 py-3 text-center text-ink2 bg-oxblood/5">{{ starter }}</td>
-            <td class="px-4 py-3 text-center text-ink2">{{ pro }}</td>
-            <td class="px-4 py-3 text-center text-ink2">{{ ent }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-ink border border-ink">
+      <article class="bg-paper p-7">
+        <div class="press text-moss mb-3">Sí</div>
+        <ul class="space-y-2 text-sm text-ink2">
+          <li class="flex items-start gap-2"><span class="ff-mono text-moss mt-0.5">✓</span><span>Búsqueda ilimitada en BDNS + UE + BORME.</span></li>
+          <li class="flex items-start gap-2"><span class="ff-mono text-moss mt-0.5">✓</span><span>Matching automático con tu CNAE, provincia y tamaño.</span></li>
+          <li class="flex items-start gap-2"><span class="ff-mono text-moss mt-0.5">✓</span><span>Filtros honestos: excluye las que no aplican.</span></li>
+          <li class="flex items-start gap-2"><span class="ff-mono text-moss mt-0.5">✓</span><span>Alertas por email opcionales — solo si las pides.</span></li>
+          <li class="flex items-start gap-2"><span class="ff-mono text-moss mt-0.5">✓</span><span>Sin registro, sin tarjeta, sin tracking.</span></li>
+          <li class="flex items-start gap-2"><span class="ff-mono text-moss mt-0.5">✓</span><span>Información actualizada diariamente desde fuentes oficiales.</span></li>
+        </ul>
+      </article>
+      <article class="bg-paper p-7">
+        <div class="press text-oxblood mb-3">No</div>
+        <ul class="space-y-2 text-sm text-ink2">
+          <li class="flex items-start gap-2"><span class="ff-mono text-oxblood mt-0.5">×</span><span>No tramitamos solicitudes por ti.</span></li>
+          <li class="flex items-start gap-2"><span class="ff-mono text-oxblood mt-0.5">×</span><span>No sustituimos a una consultoría especializada.</span></li>
+          <li class="flex items-start gap-2"><span class="ff-mono text-oxblood mt-0.5">×</span><span>No garantizamos que te concedan la subvención.</span></li>
+          <li class="flex items-start gap-2"><span class="ff-mono text-oxblood mt-0.5">×</span><span>No vendemos tus datos. A nadie. Nunca.</span></li>
+          <li class="flex items-start gap-2"><span class="ff-mono text-oxblood mt-0.5">×</span><span>No mostramos anuncios.</span></li>
+        </ul>
+      </article>
     </div>
   </section>
 
@@ -129,12 +122,12 @@
     </div>
     <div class="space-y-1">
       {% set faqs = [
-        ("¿Puedo cancelar cuando quiera?", "Sí. Sin permanencia y sin penalizaciones. Cancela desde tu cuenta con un clic."),
-        ("¿El plan gratis tiene anuncios?", "No. Ni anuncios, ni cookies, ni venta de datos. Subvenia se mantiene con los planes de pago."),
-        ("¿Cuál es la diferencia real entre Starter y Pro?", "Pro lee el texto íntegro del PDF oficial del BOE para validar requisitos legales detalladas. Útil para empresas con perfiles complejos o asesorías que gestionan varias empresas."),
-        ("¿Qué pago se acepta?", "Tarjeta (Visa, Mastercard, AmEx) vía Stripe. Para Enterprise también transferencia bancaria con factura."),
-        ("¿Hay descuento anual?", "Sí. Pagar 12 meses por adelantado descuenta 2 meses (16% off). Selecciona la opción en el checkout."),
-        ("¿Datos personales y RGPD?", "Sólo guardamos email + perfiles de empresa que tú creas. Cumplimos RGPD; ver política de privacidad."),
+        ("¿De verdad no cuesta nada?", "Sí, de verdad. Sin tarjeta, sin registro, sin trial que se convierte en plan de pago. Si algún día cambia, será un servicio aparte (consultoría) y nunca tocará el acceso básico a la herramienta."),
+        ("¿Cómo financiáis la infraestructura?", "Servidor y base de datos cuestan menos de 20€ al mes. Lo cubrimos como parte del proyecto. Si Radar Ayudas crece mucho y los costes suben, lo evaluaremos; mientras tanto, gratis."),
+        ("¿Datos personales y RGPD?", "Solo guardamos email si te suscribes a alertas. Nada más. Cumplimos RGPD; mira la política de privacidad para detalles."),
+        ("¿Por qué confiar en datos sin pagar?", "Las fuentes son oficiales: BDNS (Base de Datos Nacional de Subvenciones), BORME (Registro Mercantil), F&T Portal (Comisión Europea). Nosotros solo cruzamos; los datos no los inventamos."),
+        ("¿Puedo recibir alertas cuando salga una ayuda nueva?", "Sí. Deja tu email en el formulario de alertas. Te avisamos cuando aparece una subvención nueva que encaja con tu perfil. Te das de baja con un clic."),
+        ("¿Funciona para autónomos?", "Sí. Indica tu CNAE y provincia, te mostramos ayudas estatales, autonómicas y europeas aplicables."),
       ] %}
       {% for q, a in faqs %}
       <details class="border border-ink/30 group">
@@ -155,7 +148,7 @@
       <div class="col-span-12 md:col-span-8">
         <div class="press text-ochrelt mb-3">¿Listo?</div>
         <h2 class="ff-display text-3xl md:text-4xl text-paper leading-tight" style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 600'>
-          Empieza gratis. Sube de plan cuando lo necesites.
+          Empieza a buscar. Sin coste. Sin compromiso.
         </h2>
       </div>
       <div class="col-span-12 md:col-span-4 md:text-right">

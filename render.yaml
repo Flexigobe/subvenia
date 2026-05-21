@@ -17,7 +17,7 @@ services:
       - key: LOG_LEVEL
         value: INFO
       - key: BASE_URL
-        value: https://subvenia-app.onrender.com
+        value: https://radarayudas.com
       - key: BDNS_BASE_URL
         value: https://www.infosubvenciones.es/bdnstrans/api
       - key: BDNS_PAGE_SIZE
@@ -37,7 +37,7 @@ services:
       - key: RATE_LIMIT_PER_HOUR
         value: "60"
       - key: SEO_CANONICAL_ORIGIN
-        value: https://subvenia-app.onrender.com
+        value: https://radarayudas.com
       # Secretos: definir desde el dashboard, no en git
       - key: GEMINI_API_KEY
         sync: false

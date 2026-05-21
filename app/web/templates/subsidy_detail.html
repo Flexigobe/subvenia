@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ sub.titulo[:130] }} — Subvenia{% endblock %}
+{% block title %}{{ sub.titulo[:130] }} — Radar Ayudas{% endblock %}
 {% block meta_description %}{{ (sub.descripcion or sub.titulo)|striptags|truncate(160, true) }}{% endblock %}
 {% block og_title %}{{ sub.titulo[:120] }}{% endblock %}
 {% block og_description %}{{ (sub.descripcion or sub.titulo)|striptags|truncate(200, true) }}{% endblock %}

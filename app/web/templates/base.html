@@ -3,21 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Subvenia — Boletín inteligente de subvenciones públicas para empresas españolas{% endblock %}</title>
+  <title>{% block title %}Radar Ayudas — Boletín inteligente de subvenciones públicas para empresas españolas{% endblock %}</title>
 
-  <meta name="description" content="{% block meta_description %}Subvenia. El boletín inteligente que cruza tu empresa con BDNS, BORME y la Comisión Europea para decirte qué subvenciones puedes pedir. Gratis. Sin registro. Sin spam.{% endblock %}">
+  <meta name="description" content="{% block meta_description %}Radar Ayudas. El boletín inteligente que cruza tu empresa con BDNS, BORME y la Comisión Europea para decirte qué subvenciones puedes pedir. Gratis. Sin registro. Sin spam.{% endblock %}">
   <meta name="robots" content="{% block meta_robots %}index, follow{% endblock %}">
   <link rel="canonical" href="{% block canonical %}{{ request.url }}{% endblock %}">
 
   <meta property="og:type" content="website">
-  <meta property="og:title" content="{% block og_title %}Subvenia — Subvenciones que tu empresa puede pedir{% endblock %}">
+  <meta property="og:title" content="{% block og_title %}Radar Ayudas — Subvenciones que tu empresa puede pedir{% endblock %}">
   <meta property="og:description" content="{% block og_description %}Boletín inteligente. Datos oficiales BDNS + UE + BORME. Análisis automático. Gratis.{% endblock %}">
   <meta property="og:url" content="{% block og_url %}{{ request.url }}{% endblock %}">
   <meta property="og:locale" content="es_ES">
-  <meta property="og:site_name" content="Subvenia">
+  <meta property="og:site_name" content="Radar Ayudas">
 
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="{% block twitter_title %}Subvenia{% endblock %}">
+  <meta name="twitter:title" content="{% block twitter_title %}Radar Ayudas{% endblock %}">
   <meta name="twitter:description" content="{% block twitter_description %}Subvenciones públicas, cruzadas con tu empresa, en segundos.{% endblock %}">
 
   {# ─── JSON-LD Schema.org: Organization + WebSite con SearchAction ─── #}
@@ -28,7 +28,7 @@
       {
         "@type": "Organization",
         "@id": "{{ request.url.scheme }}://{{ request.url.netloc }}/#organization",
-        "name": "Subvenia",
+        "name": "Radar Ayudas",
         "url": "{{ request.url.scheme }}://{{ request.url.netloc }}/",
         "description": "Buscador público de subvenciones España + UE. Cruza tu empresa con BDNS, BORME, Funding & Tenders Portal y TED.",
         "areaServed": [
@@ -40,7 +40,7 @@
         "@type": "WebSite",
         "@id": "{{ request.url.scheme }}://{{ request.url.netloc }}/#website",
         "url": "{{ request.url.scheme }}://{{ request.url.netloc }}/",
-        "name": "Subvenia",
+        "name": "Radar Ayudas",
         "inLanguage": "es-ES",
         "potentialAction": {
           "@type": "SearchAction",
@@ -438,7 +438,7 @@
     {# Masthead principal #}
     <div class="max-w-7xl mx-auto px-5 md:px-8 py-4 md:py-5 flex items-end justify-between gap-6">
       <a href="/" class="flex items-end gap-3 group">
-        <span class="ff-display text-5xl md:text-6xl font-bold leading-none text-ink select-none" style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 800'>Subvenia</span>
+        <span class="ff-display text-5xl md:text-6xl font-bold leading-none text-ink select-none" style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 800'>Radar Ayudas</span>
         <span class="hidden sm:block text-ink3 press-sm pb-1.5 border-l border-ink/30 pl-3 leading-tight">
           Boletín inteligente<br>de subvenciones
         </span>
@@ -465,7 +465,7 @@
   <footer class="mt-24 border-t border-ink relative grain">
     <div class="max-w-7xl mx-auto px-5 md:px-8 py-12 grid grid-cols-1 md:grid-cols-12 gap-8">
       <div class="md:col-span-5">
-        <div class="ff-display text-3xl font-bold text-ink leading-none mb-3" style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1'>Subvenia</div>
+        <div class="ff-display text-3xl font-bold text-ink leading-none mb-3" style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1'>Radar Ayudas</div>
         <p class="text-sm text-ink2 leading-relaxed max-w-md">
           Boletín inteligente que cruza tu empresa con
           <span class="ed-link">BDNS</span>,
@@ -500,7 +500,7 @@
     </div>
     <div class="border-t border-ink/30">
       <div class="max-w-7xl mx-auto px-5 md:px-8 py-3 flex flex-wrap justify-between text-ink3 press-sm gap-2">
-        <span>© <span class="ff-display italic">Subvenia</span> — Madrid · Barcelona · UE</span>
+        <span>© <span class="ff-display italic">Radar Ayudas</span> — Madrid · Barcelona · UE</span>
         <span>Hecho con cuidado, sin grandilocuencia</span>
       </div>
     </div>
