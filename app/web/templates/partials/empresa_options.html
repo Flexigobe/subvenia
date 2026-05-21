@@ -1,28 +1,28 @@
 {% if empresas %}
-<ul class="absolute left-0 right-0 top-full mt-1 bg-paper border-2 border-ink max-h-[28rem] overflow-y-auto z-50 shadow-[5px_5px_0_0_rgba(19,17,13,0.85)]">
+<ul class="absolute left-0 right-0 top-full mt-1 bg-paper border border-line rounded-lg max-h-[28rem] overflow-y-auto z-50 shadow-float">
   {% for e in empresas %}
   <li>
     <button type="button"
-            class="empresa-option block w-full text-left px-4 py-3 hover:bg-paperdk focus:bg-paperdk focus:outline-none text-sm border-b border-ink/15 last:border-b-0 transition"
+            class="empresa-option block w-full text-left px-4 py-3 hover:bg-paperdk focus:bg-paperdk focus:outline-none text-sm border-b border-line2 last:border-b-0 transition"
             data-razon="{{ e.razon_social }}"
             data-provincia="{{ e.provincia or '' }}"
             data-cnae="{{ e.cnae_sugerido or '' }}"
             data-cnae-label="{{ e.cnae_label or '' }}">
       <div class="flex items-start justify-between gap-3">
         <div class="flex-1 min-w-0">
-          <div class="ff-display text-ink text-base leading-tight line-clamp-1" style='font-variation-settings:"opsz" 144,"wght" 600'>{{ e.razon_social }}</div>
-          <div class="press-sm text-ink3 mt-1 truncate">
+          <div class="font-semibold text-ink line-clamp-1">{{ e.razon_social }}</div>
+          <div class="text-xs text-ink3 mt-0.5 truncate">
             {% if e.domicilio %}{{ e.domicilio }}{% elif e.provincia %}Provincia {{ e.provincia }}{% else %}Sin domicilio{% endif %}
           </div>
           {% if e.objeto_social %}
-          <div class="text-xs text-ink2 mt-1 line-clamp-1 italic" style="font-family:'Fraunces',serif">
-            «{{ e.objeto_social[:90] }}{% if e.objeto_social|length > 90 %}…{% endif %}»
+          <div class="text-xs text-ink2 mt-1 line-clamp-1 italic">
+            {{ e.objeto_social[:90] }}{% if e.objeto_social|length > 90 %}…{% endif %}
           </div>
           {% endif %}
         </div>
         {% if e.cnae_sugerido %}
         <div class="shrink-0">
-          <span class="ff-mono text-[10px] font-bold border border-oxblood text-oxblood px-1.5 py-0.5">CNAE {{ e.cnae_sugerido }}</span>
+          <span class="pill pill-accent text-[10px]">CNAE {{ e.cnae_sugerido }}</span>
         </div>
         {% endif %}
       </div>

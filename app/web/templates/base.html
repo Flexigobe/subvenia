@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Radar Ayudas — Boletín inteligente de subvenciones públicas para empresas españolas{% endblock %}</title>
+  <title>{% block title %}Radar Ayudas — Subvenciones para tu empresa, en segundos{% endblock %}</title>
 
-  <meta name="description" content="{% block meta_description %}Radar Ayudas. El boletín inteligente que cruza tu empresa con BDNS, BORME y la Comisión Europea para decirte qué subvenciones puedes pedir. Gratis. Sin registro. Sin spam.{% endblock %}">
+  <meta name="description" content="{% block meta_description %}Cruza tu empresa con BDNS, BORME y la Comisión Europea para descubrir qué subvenciones puedes pedir hoy. Gratis, sin registro, sin spam.{% endblock %}">
   <meta name="robots" content="{% block meta_robots %}index, follow{% endblock %}">
   <link rel="canonical" href="{% block canonical %}{{ request.url }}{% endblock %}">
 
   <meta property="og:type" content="website">
   <meta property="og:title" content="{% block og_title %}Radar Ayudas — Subvenciones que tu empresa puede pedir{% endblock %}">
-  <meta property="og:description" content="{% block og_description %}Boletín inteligente. Datos oficiales BDNS + UE + BORME. Análisis automático. Gratis.{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}Datos oficiales BDNS + UE + BORME. Análisis automático. Gratis.{% endblock %}">
   <meta property="og:url" content="{% block og_url %}{{ request.url }}{% endblock %}">
   <meta property="og:locale" content="es_ES">
   <meta property="og:site_name" content="Radar Ayudas">
@@ -20,7 +20,7 @@
   <meta name="twitter:title" content="{% block twitter_title %}Radar Ayudas{% endblock %}">
   <meta name="twitter:description" content="{% block twitter_description %}Subvenciones públicas, cruzadas con tu empresa, en segundos.{% endblock %}">
 
-  {# ─── JSON-LD Schema.org: Organization + WebSite con SearchAction ─── #}
+  {# ─── JSON-LD Schema.org ─── #}
   <script type="application/ld+json">
   {% raw %}{{% endraw %}
     "@context": "https://schema.org",
@@ -30,7 +30,7 @@
         "@id": "{{ request.url.scheme }}://{{ request.url.netloc }}/#organization",
         "name": "Radar Ayudas",
         "url": "{{ request.url.scheme }}://{{ request.url.netloc }}/",
-        "description": "Buscador público de subvenciones España + UE. Cruza tu empresa con BDNS, BORME, Funding & Tenders Portal y TED.",
+        "description": "Buscador público de subvenciones España + UE.",
         "areaServed": [
           {"@type": "Country", "name": "España"},
           {"@type": "Place", "name": "Unión Europea"}
@@ -52,13 +52,11 @@
   {% raw %}}{% endraw %}
   </script>
 
-  {# ─── Favicon: monograma S serif sobre ivory ─── #}
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23F4EFE3'/%3E%3Ctext x='16' y='23' font-family='Georgia,serif' font-size='22' font-weight='700' text-anchor='middle' fill='%237B2D1A' font-style='italic'%3ES%3C/text%3E%3C/svg%3E">
+  {# Favicon: radar dot moderno sobre blanco #}
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%236366F1'/%3E%3Ccircle cx='16' cy='16' r='4' fill='white'/%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='white' stroke-width='1.2' opacity='0.6'/%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='white' stroke-width='1' opacity='0.3'/%3E%3C/svg%3E">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  {# Fraunces: display variable serif con opsz + soft + wonk. Geist: body sans Vercel. Geist Mono: cifras. #}
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://rsms.me/">
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/htmx.org@2.0.3"></script>
@@ -67,591 +65,414 @@
       theme: {
         extend: {
           fontFamily: {
-            sans:    ['"Geist"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-            display: ['"Fraunces"', '"GT Sectra"', 'Georgia', 'serif'],
-            mono:    ['"Geist Mono"', 'ui-monospace', 'monospace'],
+            sans: ['"Inter var"', '"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            display: ['"Inter Display"', '"Inter var"', '"Inter"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', '"SF Mono"', 'ui-monospace', 'monospace'],
           },
           colors: {
-            // Paleta editorial-treasury
-            paper:    '#F4EFE3',  // parchment / ivory
-            paperdk:  '#EAE3D2',  // ivory oscuro para layered
-            ink:      '#13110D',  // casi-negro cálido
-            ink2:     '#3A3530',  // ink medio
-            ink3:     '#6E6759',  // ink suave
-            rule:     '#1F1B14',  // líneas
-            // Acentos
-            oxblood:  '#7B2D1A',  // rojo profundo Banco de España
-            oxblood2: '#5E2010',  // hover
-            ochre:    '#C4892C',  // oro/ochre treasury
-            ochrelt:  '#E3B65C',  // highlight suave
-            moss:     '#5B6F4A',  // status verde apagado (no SaaS)
-            moss2:    '#3F4F33',
+            // Sistema neutro + acentos. Stripe/Linear style.
+            ink:     '#0F172A',  // slate-900 — texto principal
+            ink2:    '#334155',  // slate-700 — texto secundario
+            ink3:    '#64748B',  // slate-500 — texto terciario
+            line:    '#E2E8F0',  // slate-200 — bordes
+            line2:   '#F1F5F9',  // slate-100 — bordes muy suaves
+            paper:   '#FFFFFF',  // fondo
+            paperdk: '#F8FAFC',  // slate-50 — fondo alterno
+            accent:  '#6366F1',  // indigo-500 — acento principal
+            accent2: '#4F46E5',  // indigo-600 — hover
+            accent3: '#EEF2FF',  // indigo-50 — bg suave
+            success: '#10B981',  // emerald-500
+            warn:    '#F59E0B',  // amber-500
+            danger:  '#EF4444',  // red-500
           },
-          letterSpacing: {
-            'press':  '0.18em',   // small caps
-            'press2': '0.08em',
-          },
-          keyframes: {
-            'editorial-up': {
-              '0%':   { opacity: '0', transform: 'translateY(14px)' },
-              '100%': { opacity: '1', transform: 'translateY(0)' },
-            },
-            'rule-grow': {
-              '0%':   { transform: 'scaleX(0)' },
-              '100%': { transform: 'scaleX(1)' },
-            },
-            'ticker': {
-              '0%':   { transform: 'translateX(0)' },
-              '100%': { transform: 'translateX(-50%)' },
-            },
-            'ticker-slow': {
-              '0%':   { transform: 'translateX(0)' },
-              '100%': { transform: 'translateX(-50%)' },
-            },
-            'softblink': {
-              '0%, 100%': { opacity: '1' },
-              '50%':       { opacity: '0.35' },
-            },
-          },
-          animation: {
-            'editorial-up': 'editorial-up 0.75s cubic-bezier(.2,.7,.2,1) both',
-            'rule-grow':    'rule-grow 0.9s cubic-bezier(.2,.7,.2,1) both',
-            'ticker':       'ticker 50s linear infinite',
-            'softblink':    'softblink 2.6s ease-in-out infinite',
+          boxShadow: {
+            soft: '0 1px 2px 0 rgba(15, 23, 42, 0.04), 0 1px 3px 0 rgba(15, 23, 42, 0.06)',
+            elev: '0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05)',
+            float: '0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.05)',
+            glow: '0 0 0 4px rgba(99, 102, 241, 0.12)',
           },
         },
       },
     };
   </script>
 
-  <style>
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: 'Geist', ui-sans-serif, system-ui, sans-serif;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      background:
-        radial-gradient(at 80% -10%, rgba(196,137,44,0.10) 0px, transparent 50%),
-        radial-gradient(at 0% 110%, rgba(123,45,26,0.06) 0px, transparent 50%),
-        #F4EFE3;
-      color: #13110D;
-    }
-
-    /* Display Fraunces con opsz + wonk para carácter editorial */
-    .ff-display {
-      font-family: 'Fraunces', 'GT Sectra', Georgia, serif;
-      font-optical-sizing: auto;
-      font-variation-settings: "opsz" 144, "SOFT" 30, "WONK" 1;
-      letter-spacing: -0.025em;
-      font-feature-settings: "ss01" on, "liga" on, "dlig" on;
-    }
-    .ff-display-light {
-      font-family: 'Fraunces', Georgia, serif;
-      font-variation-settings: "opsz" 144, "SOFT" 60, "WONK" 0;
-      font-style: italic;
-    }
-    .ff-mono { font-family: 'Geist Mono', ui-monospace, monospace; font-feature-settings: "ss01" on; }
-
-    /* Sello / press: typography institucional pequeña */
-    .press {
-      font-size: 10.5px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      font-weight: 600;
-    }
-    .press-sm {
-      font-size: 9.5px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      font-weight: 600;
-    }
-
-    /* Rule: línea horizontal con grano editorial */
-    .rule         { height: 1px; background: #13110D; }
-    .rule-thin    { height: 1px; background: rgba(19,17,13,0.18); }
-    .rule-double  { border-top: 1px solid #13110D; border-bottom: 1px solid #13110D; height: 5px; }
-
-    /* Drop cap para hero */
-    .dropcap::first-letter {
-      font-family: 'Fraunces', Georgia, serif;
-      font-variation-settings: "opsz" 144, "SOFT" 30, "WONK" 1;
-      font-weight: 700;
-      font-size: 5.2em;
-      line-height: 0.82;
-      float: left;
-      margin: 0.06em 0.08em 0 -0.04em;
-      color: #7B2D1A;
-    }
-
-    /* Texturas: grano suave */
-    .grain::before {
-      content: '';
-      position: absolute; inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.07  0 0 0 0 0.06  0 0 0 0 0.05  0 0 0 .12 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      opacity: 0.5;
-      pointer-events: none;
-      mix-blend-mode: multiply;
-    }
-
-    /* Link editorial subrayado */
-    .ed-link {
-      color: #7B2D1A;
-      background-image: linear-gradient(currentColor, currentColor);
-      background-size: 100% 1px;
-      background-position: 0 100%;
-      background-repeat: no-repeat;
-      transition: background-size 0.3s;
-    }
-    .ed-link:hover { color: #5E2010; }
-
-    /* Botón primario "sello" */
-    .btn-sello {
-      background: #13110D;
-      color: #F4EFE3;
-      border: 1px solid #13110D;
-      transition: all 0.18s ease;
-      position: relative;
-    }
-    .btn-sello:hover {
-      background: #7B2D1A;
-      border-color: #7B2D1A;
-      transform: translate(-2px, -2px);
-      box-shadow: 4px 4px 0 0 #13110D;
-    }
-    .btn-sello:active { transform: translate(0, 0); box-shadow: none; }
-
-    .btn-ghost {
-      background: transparent;
-      color: #13110D;
-      border: 1px solid #13110D;
-      transition: all 0.18s ease;
-    }
-    .btn-ghost:hover {
-      background: #13110D;
-      color: #F4EFE3;
-    }
-
-    /* Card editorial: bordes finos, sin sombras de SaaS */
-    .ed-card {
-      background: #F8F4E9;
-      border: 1px solid rgba(19,17,13,0.15);
-      transition: all 0.2s ease;
-    }
-    .ed-card:hover {
-      border-color: #13110D;
-      transform: translate(-1px, -1px);
-      box-shadow: 3px 3px 0 0 rgba(19,17,13,0.85);
-    }
-
-    /* Input editorial: underline en vez de box */
-    .ed-input {
-      background: transparent;
-      border: none;
-      border-bottom: 1.5px solid #13110D;
-      border-radius: 0;
-      padding: 0.5rem 0;
-      font-family: 'Geist', sans-serif;
-      transition: border-color 0.15s;
-    }
-    .ed-input:focus {
-      outline: none;
-      border-bottom-color: #7B2D1A;
-      border-bottom-width: 2px;
-    }
-    .ed-input::placeholder { color: #6E6759; }
-
-    /* Box-bordered (alternative form fields que sí necesitan caja) */
-    .ed-input-box {
-      background: #F8F4E9;
-      border: 1px solid #13110D;
-      border-radius: 0;
-      padding: 0.65rem 0.85rem;
-      font-family: 'Geist', sans-serif;
-      transition: all 0.15s;
-    }
-    .ed-input-box:focus {
-      outline: none;
-      background: #FFFCF5;
-      box-shadow: 3px 3px 0 0 rgba(19,17,13,0.85);
-      transform: translate(-1px, -1px);
-    }
-
-    /* Numeric display Bloomberg-style */
-    .num-bloomberg {
-      font-family: 'Fraunces', Georgia, serif;
-      font-variation-settings: "opsz" 144, "wght" 700;
-      font-feature-settings: "tnum" on, "lnum" on;
-      letter-spacing: -0.04em;
-    }
-
-    /* Stagger helpers */
-    .stagger > * { opacity: 0; animation: editorial-up 0.7s cubic-bezier(.2,.7,.2,1) both; }
-    .stagger > *:nth-child(1) { animation-delay: 0.05s; }
-    .stagger > *:nth-child(2) { animation-delay: 0.14s; }
-    .stagger > *:nth-child(3) { animation-delay: 0.22s; }
-    .stagger > *:nth-child(4) { animation-delay: 0.30s; }
-    .stagger > *:nth-child(5) { animation-delay: 0.38s; }
-    .stagger > *:nth-child(6) { animation-delay: 0.46s; }
-    .stagger > *:nth-child(7) { animation-delay: 0.54s; }
-    .stagger > *:nth-child(8) { animation-delay: 0.62s; }
-
-    /* Animated rule */
-    .rule-anim { transform-origin: left; animation: rule-grow 0.85s cubic-bezier(.2,.7,.2,1) 0.2s both; }
-
-    /* HTMX indicator */
-    .htmx-indicator { opacity: 0; transition: opacity 200ms; }
-    .htmx-request .htmx-indicator,
-    .htmx-request.htmx-indicator { opacity: 1; }
-
-    /* Focus visible */
-    *:focus-visible { outline: none; }
-    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible {
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(123,45,26,0.32);
-    }
-
-    /* Line-clamp utilities (Tailwind no incluye por defecto) */
-    .line-clamp-1, .line-clamp-2, .line-clamp-3 {
-      display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden;
-    }
-    .line-clamp-1 { -webkit-line-clamp: 1; }
-    .line-clamp-2 { -webkit-line-clamp: 2; }
-    .line-clamp-3 { -webkit-line-clamp: 3; }
-
-    /* Prose ajustes editorial */
-    .prose-ed h2 { font-family: 'Fraunces', Georgia, serif; font-variation-settings: "opsz" 144, "wght" 700; letter-spacing: -0.02em; }
-    .prose-ed h3 { font-family: 'Fraunces', Georgia, serif; }
-    .prose-ed a  { color: #7B2D1A; text-decoration: underline; text-underline-offset: 3px; }
-    .prose-ed strong { color: #13110D; }
-
-    /* Print-only / Print-hide utility classes */
-    .print-only { display: none; }
-    @media print { .print-only { display: block !important; } }
-
-    /* ───── Print stylesheet — PDF/papel A4 ─────
-       Quitar el "letter-spacing" enorme del .press (que en pantalla queda institucional
-       pero en papel se ve roto: "N U E VA  C O N S U LTA"). Reducir font-sizes,
-       cortar paddings, esconder elementos no imprimibles (filtros, ticker, form
-       suscripción, cita motivacional, CTAs decorativas). */
-    @media print {
-      @page { size: A4; margin: 1.2cm 1.4cm; }
-      html, body {
-        background: #ffffff !important;
-        color: #000 !important;
-        font-size: 10pt;
-        line-height: 1.35;
-      }
-      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      /* Quitar texturas/animaciones que no aportan en papel */
-      .grain::before, .grain { background-image: none !important; }
-      .grain::before { display: none !important; }
-      .stagger > * { opacity: 1 !important; animation: none !important; }
-      .animate-ticker, .animate-softblink, .animate-pulse-soft { animation: none !important; }
-      /* Tipografía — quitar letter-spacing exagerado y reducir tamaños */
-      .press, .press-sm {
-        letter-spacing: 0.05em !important;
-        font-size: 8pt !important;
-      }
-      .ff-display, h1, h2, h3 { letter-spacing: -0.01em !important; }
-      h1.ff-display { font-size: 22pt !important; line-height: 1.1 !important; }
-      h2.ff-display { font-size: 16pt !important; line-height: 1.15 !important; }
-      h3.ff-display { font-size: 12pt !important; line-height: 1.2 !important; }
-      .num-bloomberg { letter-spacing: -0.03em !important; }
-      /* Reducir num-bloomberg sizes en print */
-      .num-bloomberg.text-5xl { font-size: 22pt !important; }
-      .num-bloomberg.text-4xl { font-size: 18pt !important; }
-      .num-bloomberg.text-3xl { font-size: 14pt !important; }
-      .num-bloomberg.text-2xl { font-size: 12pt !important; }
-      /* Reducir padding/margin general */
-      .py-10, .py-12, .py-14, .py-16, .py-20, .py-24 { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
-      .px-5, .px-8 { padding-left: 0 !important; padding-right: 0 !important; }
-      .mb-8, .mb-10, .mb-12, .mb-14, .mb-16 { margin-bottom: 0.6rem !important; }
-      .mt-8, .mt-10, .mt-12 { margin-top: 0.6rem !important; }
-      .p-7, .p-8, .p-9, .p-10 { padding: 0.4rem !important; }
-      /* Esconder elementos no útiles en papel */
-      header, footer,
-      .print-hide,
-      .filter-btn, #filters,
-      .animate-ticker, [class*="overflow-hidden"]:has(.animate-ticker),
-      form#search-form,
-      [hx-post], button[type="submit"],
-      a[href^="javascript:"],
-      a[href="#search-form"], a[href="#form-section"],
-      details summary svg,
-      .htmx-indicator
-      { display: none !important; }
-      /* Cita pull-quote (manifiesto): demasiado dramática en papel */
-      blockquote, blockquote + footer { display: none !important; }
-      section.bg-ink { display: none !important; }
-      /* Tablas: bordes finos y compactos */
-      table { border-collapse: collapse !important; font-size: 9pt !important; }
-      table th, table td { padding: 4pt 6pt !important; border: 0.4pt solid #999 !important; }
-      thead { background: #f0f0f0 !important; color: #000 !important; }
-      thead th { color: #000 !important; }
-      /* Cards: borde fino sin sombras hard */
-      .ed-card, .border, .border-ink, [class*="border-"] { box-shadow: none !important; transform: none !important; }
-      .bg-ink, .bg-paperdk\/40, .bg-paperdk\/30 { background: #fafafa !important; }
-      .bg-paper { background: #fff !important; }
-      /* Color overrides */
-      .text-paper, .text-paper\/80, .text-ink3, .text-ink2 { color: #000 !important; }
-      .text-oxblood, .text-ochre, .text-ochrelt, .text-moss { color: #444 !important; }
-      .gradient-text { background: none !important; -webkit-text-fill-color: #000 !important; color: #000 !important; }
-      .ff-display-light { font-style: italic; }
-      /* Hipervínculos: añadir URL después */
-      a[href^="http"]::after { content: " — " attr(href); font-size: 7pt; color: #555; }
-      /* Pero NO para los links internos al subsidy */
-      a[href^="/subsidy/"]::after { content: ""; }
-      a[href^="/"]::after { content: ""; }
-      /* Esconder rules decorativas */
-      .rule, .rule-thin, .rule-double, hr { border: none !important; height: 0.6pt !important; background: #ccc !important; margin: 6pt 0 !important; }
-      /* Page break inside avoid */
-      tr, .ed-card, section, article { page-break-inside: avoid; }
-      /* Esconder Filtros section completa */
-      .border-t.border-b.border-ink.py-3.mb-8 { display: none !important; }
-      /* Suscripción al boletín al final */
-      section.mt-16 { display: none !important; }
-      /* Leyenda explicativa: simpler */
-      .grid.md\\:grid-cols-3.gap-3.text-xs { font-size: 8pt !important; }
-    }
-  </style>
-
+  {# Plausible analytics (sin cookies, opcional) #}
   {% if plausible_domain %}
   <script defer data-domain="{{ plausible_domain }}" src="{{ plausible_src }}"></script>
   {% endif %}
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter var', 'Inter', ui-sans-serif, system-ui, sans-serif;
+      font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'ss01';
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      background: #FFFFFF;
+      color: #0F172A;
+      letter-spacing: -0.011em;
+    }
+
+    /* Headings: Inter Display tracking tight + buen weight */
+    .display { letter-spacing: -0.025em; line-height: 1.05; }
+    .display-tight { letter-spacing: -0.04em; line-height: 1.0; }
+
+    /* Eyebrow / caps tag */
+    .eyebrow {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #6366F1;
+    }
+
+    /* Botones */
+    .btn-primary {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      padding: 0.625rem 1.125rem;
+      background: #0F172A;
+      color: white;
+      font-weight: 500;
+      font-size: 0.875rem;
+      border-radius: 8px;
+      transition: all 0.15s ease;
+      box-shadow: 0 1px 2px rgba(15,23,42,0.08);
+    }
+    .btn-primary:hover { background: #1E293B; box-shadow: 0 4px 12px rgba(15,23,42,0.15); transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-accent {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+      color: white;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border-radius: 10px;
+      transition: all 0.15s ease;
+      box-shadow: 0 2px 8px rgba(99,102,241,0.25), inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+    .btn-accent:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(99,102,241,0.35), inset 0 1px 0 rgba(255,255,255,0.15); }
+    .btn-accent:active { transform: translateY(0); }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      padding: 0.625rem 1.125rem;
+      background: white;
+      color: #0F172A;
+      font-weight: 500;
+      font-size: 0.875rem;
+      border-radius: 8px;
+      border: 1px solid #E2E8F0;
+      transition: all 0.15s ease;
+    }
+    .btn-ghost:hover { border-color: #CBD5E1; background: #F8FAFC; }
+
+    /* Inputs */
+    .input {
+      width: 100%;
+      padding: 0.625rem 0.875rem;
+      background: white;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      font-size: 0.9375rem;
+      color: #0F172A;
+      transition: all 0.15s ease;
+    }
+    .input::placeholder { color: #94A3B8; }
+    .input:hover { border-color: #CBD5E1; }
+    .input:focus {
+      outline: none;
+      border-color: #6366F1;
+      box-shadow: 0 0 0 4px rgba(99,102,241,0.12);
+    }
+
+    /* Cards */
+    .card {
+      background: white;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      box-shadow: 0 1px 2px rgba(15,23,42,0.04);
+      transition: all 0.2s ease;
+    }
+    .card-hover:hover {
+      border-color: #CBD5E1;
+      box-shadow: 0 4px 12px rgba(15,23,42,0.08);
+      transform: translateY(-2px);
+    }
+
+    /* Links inline */
+    .link { color: #6366F1; font-weight: 500; transition: color 0.15s ease; }
+    .link:hover { color: #4F46E5; }
+    .link-underline { color: #6366F1; text-decoration: underline; text-underline-offset: 2px; text-decoration-thickness: 1px; transition: all 0.15s ease; }
+    .link-underline:hover { color: #4F46E5; text-decoration-thickness: 2px; }
+
+    /* Pills / badges */
+    .pill {
+      display: inline-flex; align-items: center; gap: 0.375rem;
+      padding: 0.25rem 0.625rem;
+      background: #F1F5F9;
+      color: #334155;
+      font-size: 0.75rem;
+      font-weight: 500;
+      border-radius: 999px;
+    }
+    .pill-accent { background: #EEF2FF; color: #4338CA; }
+    .pill-success { background: #ECFDF5; color: #047857; }
+    .pill-warn { background: #FFFBEB; color: #B45309; }
+    .pill-danger { background: #FEF2F2; color: #B91C1C; }
+
+    /* Hero background sutil */
+    .hero-bg {
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(99,102,241,0.10), transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 0%, rgba(139,92,246,0.08), transparent 60%),
+        #FFFFFF;
+    }
+
+    /* Sutil grid background opcional */
+    .grid-bg {
+      background-image:
+        linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+      mask-image: radial-gradient(ellipse 70% 50% at 50% 0%, black 30%, transparent 80%);
+    }
+
+    /* Animaciones suaves */
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fade-up 0.5s ease-out both; }
+
+    /* Loader spinner moderno */
+    @keyframes spin-soft {
+      to { transform: rotate(360deg); }
+    }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid rgba(99,102,241,0.15);
+      border-top-color: #6366F1;
+      border-radius: 50%;
+      animation: spin-soft 0.8s linear infinite;
+    }
+
+    body.is-loading { overflow: hidden; }
+
+    /* Prose para HTML renderizado (EU descriptions) */
+    .prose-clean p { margin-bottom: 1em; }
+    .prose-clean p:last-child { margin-bottom: 0; }
+    .prose-clean strong, .prose-clean b { font-weight: 600; color: #0F172A; }
+    .prose-clean em, .prose-clean i { font-style: italic; }
+    .prose-clean a { color: #6366F1; text-decoration: underline; text-underline-offset: 2px; }
+    .prose-clean a:hover { color: #4F46E5; }
+    .prose-clean ul, .prose-clean ol { margin: 1em 0; padding-left: 1.5em; }
+    .prose-clean ul { list-style: disc; }
+    .prose-clean ol { list-style: decimal; }
+    .prose-clean li { margin-bottom: 0.3em; }
+    .prose-clean h1, .prose-clean h2, .prose-clean h3 {
+      font-weight: 600; margin: 1.5em 0 0.5em; color: #0F172A;
+    }
+    .prose-clean h1 { font-size: 1.4em; }
+    .prose-clean h2 { font-size: 1.2em; }
+    .prose-clean h3 { font-size: 1.1em; }
+    .prose-clean blockquote {
+      border-left: 3px solid #6366F1;
+      padding-left: 1em; margin: 1em 0;
+      color: #475569;
+    }
+    .prose-clean code {
+      font-family: 'JetBrains Mono', 'SF Mono', monospace;
+      background: #F1F5F9;
+      padding: 0.1em 0.3em; border-radius: 4px;
+      font-size: 0.875em;
+    }
+
+    /* Print: reset clean */
+    @media print {
+      body { background: white; }
+      header, footer, nav, .print-hide { display: none !important; }
+    }
+  </style>
+
+  {% block extra_head %}{% endblock %}
 </head>
+
 <body class="min-h-screen flex flex-col">
 
-  {# ───── HEADER editorial — masthead estilo periódico ───── #}
-  <header class="border-b border-ink relative grain">
-    {# Top strip: fecha / edición / ticker breve #}
-    <div class="border-b border-ink/30 bg-paper/60 backdrop-blur-sm">
-      <div class="max-w-7xl mx-auto px-5 md:px-8 py-1.5 flex items-center justify-between text-ink2">
-        <div class="press-sm">Edición {{ today_iso or now_iso }} · España + UE</div>
-        <div class="hidden sm:flex items-center gap-3 press-sm">
-          <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-moss animate-softblink"></span>Datos en directo</span>
-          <span class="text-ink/40">·</span>
-          <span>Gratuito · Sin registro</span>
-        </div>
+  {# ─── Status bar superior ─── #}
+  <div class="bg-paperdk border-b border-line">
+    <div class="max-w-6xl mx-auto px-5 md:px-8 py-2 flex items-center justify-between text-xs text-ink3">
+      <div class="flex items-center gap-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-success pulse-dot"></span>
+        <span class="font-medium">Datos en directo</span>
+        <span class="text-line">·</span>
+        <span>Actualizado {{ today_iso }}</span>
+      </div>
+      <div class="hidden sm:flex items-center gap-3">
+        <span>Gratis · Sin registro</span>
       </div>
     </div>
+  </div>
 
-    {# Masthead principal #}
-    <div class="max-w-7xl mx-auto px-5 md:px-8 py-4 md:py-5 flex items-end justify-between gap-6">
-      <a href="/" class="flex items-end gap-3 group">
-        <span class="ff-display text-5xl md:text-6xl font-bold leading-none text-ink select-none" style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 800'>Radar Ayudas</span>
-        <span class="hidden sm:block text-ink3 press-sm pb-1.5 border-l border-ink/30 pl-3 leading-tight">
-          Boletín inteligente<br>de subvenciones
+  {# ─── Header / nav ─── #}
+  <header class="border-b border-line bg-paper sticky top-0 z-40 backdrop-blur-sm bg-paper/95">
+    <div class="max-w-6xl mx-auto px-5 md:px-8 h-16 flex items-center justify-between gap-6">
+      <a href="/" class="flex items-center gap-2.5 group">
+        <span class="inline-flex w-8 h-8 rounded-lg items-center justify-center bg-gradient-to-br from-accent to-purple-500 shadow-soft">
+          <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="12" cy="12" r="3"></circle>
+            <circle cx="12" cy="12" r="7" opacity="0.5"></circle>
+            <circle cx="12" cy="12" r="11" opacity="0.25"></circle>
+          </svg>
         </span>
+        <span class="font-semibold text-ink tracking-tight">Radar Ayudas</span>
       </a>
-      <nav class="hidden md:flex items-end gap-5 text-sm pb-1.5">
-        <a href="/" class="ed-link">Buscar</a>
-        <a href="/subvenciones" class="ed-link">Catálogo</a>
-        <a href="/licitaciones" class="ed-link">Licitaciones</a>
-        <a href="/noticias" class="ed-link">Novedades</a>
-        <a href="/como-funciona" class="ed-link">Método</a>
+      <nav class="hidden md:flex items-center gap-6 text-sm">
+        <a href="/" class="text-ink2 hover:text-ink transition font-medium">Buscar</a>
+        <a href="/subvenciones" class="text-ink2 hover:text-ink transition font-medium">Catálogo</a>
+        <a href="/licitaciones" class="text-ink2 hover:text-ink transition font-medium">Licitaciones</a>
+        <a href="/noticias" class="text-ink2 hover:text-ink transition font-medium">Novedades</a>
+        <a href="/como-funciona" class="text-ink2 hover:text-ink transition font-medium">Método</a>
       </nav>
-      <a href="/" class="md:hidden btn-sello px-3 py-2 text-xs press-sm">Buscar</a>
+      <div class="flex items-center gap-3">
+        <a href="/comprar" class="hidden sm:inline-flex text-sm font-medium text-ink2 hover:text-ink transition">
+          Por qué es gratis
+        </a>
+        <a href="/" class="btn-primary">
+          Buscar ayudas
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m0 0l-6-6m6 6l-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
     </div>
-
-    {# Rule editorial doble #}
-    <div class="border-t border-b border-ink/80 h-[3px] bg-paper"></div>
   </header>
 
   <main class="flex-1 w-full">
     {% block content %}{% endblock %}
   </main>
 
-  {# ───── FOOTER editorial — colofón ───── #}
-  <footer class="mt-24 border-t border-ink relative grain">
-    <div class="max-w-7xl mx-auto px-5 md:px-8 py-12 grid grid-cols-1 md:grid-cols-12 gap-8">
+  {# ───── FOOTER ───── #}
+  <footer class="mt-24 border-t border-line bg-paperdk">
+    <div class="max-w-6xl mx-auto px-5 md:px-8 py-14 grid grid-cols-1 md:grid-cols-12 gap-10">
       <div class="md:col-span-5">
-        <div class="ff-display text-3xl font-bold text-ink leading-none mb-3" style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1'>Radar Ayudas</div>
+        <div class="flex items-center gap-2.5 mb-4">
+          <span class="inline-flex w-8 h-8 rounded-lg items-center justify-center bg-gradient-to-br from-accent to-purple-500 shadow-soft">
+            <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <circle cx="12" cy="12" r="3"></circle>
+              <circle cx="12" cy="12" r="7" opacity="0.5"></circle>
+              <circle cx="12" cy="12" r="11" opacity="0.25"></circle>
+            </svg>
+          </span>
+          <span class="font-semibold text-ink">Radar Ayudas</span>
+        </div>
         <p class="text-sm text-ink2 leading-relaxed max-w-md">
-          Boletín inteligente que cruza tu empresa con
-          <span class="ed-link">BDNS</span>,
-          <span class="ed-link">BORME</span>,
-          <span class="ed-link">Wikidata</span>,
-          <span class="ed-link">eInforma</span> y la
-          <span class="ed-link">Comisión Europea</span>
+          Cruza tu empresa con
+          <a href="https://www.infosubvenciones.es/" class="link-underline" target="_blank" rel="noopener">BDNS</a>,
+          <a href="https://www.boe.es/diario_borme/" class="link-underline" target="_blank" rel="noopener">BORME</a> y la
+          <a href="https://ec.europa.eu/info/funding-tenders/opportunities/" class="link-underline" target="_blank" rel="noopener">Comisión Europea</a>
           para mostrarte qué subvenciones públicas puedes pedir hoy.
         </p>
-        <div class="mt-5 press-sm text-ink3">Sin cookies · Sin tracking · Sin registro</div>
+        <div class="mt-5 flex flex-wrap gap-2">
+          <span class="pill">Sin cookies</span>
+          <span class="pill">Sin tracking</span>
+          <span class="pill">Sin registro</span>
+        </div>
       </div>
       <div class="md:col-span-3">
-        <div class="press text-ink mb-3">Secciones</div>
-        <ul class="space-y-1.5 text-sm">
-          <li><a href="/" class="ed-link">Buscar a medida</a></li>
-          <li><a href="/subvenciones" class="ed-link">Catálogo completo</a></li>
-          <li><a href="/noticias" class="ed-link">Fuentes y novedades</a></li>
-          <li><a href="/como-funciona" class="ed-link">Método</a></li>
+        <div class="eyebrow mb-3">Producto</div>
+        <ul class="space-y-2 text-sm">
+          <li><a href="/" class="text-ink2 hover:text-ink transition">Buscar a medida</a></li>
+          <li><a href="/subvenciones" class="text-ink2 hover:text-ink transition">Catálogo completo</a></li>
+          <li><a href="/licitaciones" class="text-ink2 hover:text-ink transition">Licitaciones</a></li>
+          <li><a href="/noticias" class="text-ink2 hover:text-ink transition">Novedades</a></li>
+          <li><a href="/como-funciona" class="text-ink2 hover:text-ink transition">Cómo funciona</a></li>
+          <li><a href="/comprar" class="text-ink2 hover:text-ink transition">Por qué es gratis</a></li>
         </ul>
       </div>
       <div class="md:col-span-4">
-        <div class="press text-ink mb-3">Colofón</div>
+        <div class="eyebrow mb-3">Legal</div>
         <p class="text-xs text-ink3 leading-relaxed mb-4">
           Información orientativa elaborada a partir de fuentes oficiales abiertas.
-          Consulta siempre la convocatoria oficial publicada antes de solicitar.
+          Consulta siempre la convocatoria oficial antes de solicitar.
         </p>
-        <ul class="space-y-1.5 text-sm">
-          <li><a href="/privacidad" class="ed-link">Política de privacidad</a></li>
-          <li><a href="/terminos" class="ed-link">Términos de uso</a></li>
+        <ul class="space-y-2 text-sm">
+          <li><a href="/privacidad" class="text-ink2 hover:text-ink transition">Política de privacidad</a></li>
+          <li><a href="/terminos" class="text-ink2 hover:text-ink transition">Términos de uso</a></li>
         </ul>
       </div>
     </div>
-    <div class="border-t border-ink/30">
-      <div class="max-w-7xl mx-auto px-5 md:px-8 py-3 flex flex-wrap justify-between text-ink3 press-sm gap-2">
-        <span>© <span class="ff-display italic">Radar Ayudas</span> — Madrid · Barcelona · UE</span>
-        <span>Hecho con cuidado, sin grandilocuencia</span>
+    <div class="border-t border-line">
+      <div class="max-w-6xl mx-auto px-5 md:px-8 py-4 flex flex-wrap justify-between text-ink3 text-xs gap-2">
+        <span>© {{ current_year }} Radar Ayudas · Hecho en España + UE</span>
+        <span>Sin venta de datos. Nunca.</span>
       </div>
     </div>
   </footer>
 
   {# ─── Overlay loader (Generando informe) ─── #}
   <div id="search-loading-overlay"
-       class="hidden fixed inset-0 z-[9999] bg-paper/95 backdrop-blur-sm flex items-center justify-center"
+       class="hidden fixed inset-0 z-[9999] bg-paper/95 backdrop-blur-md flex items-center justify-center"
        aria-live="polite" aria-busy="true">
-    <div class="text-center max-w-lg px-6">
-      {# Sello editorial #}
-      <div class="inline-block border-2 border-oxblood text-oxblood px-3 py-1 -rotate-3 mb-8 select-none">
-        <div class="press-sm leading-none">Expediente en proceso</div>
-        <div class="ff-mono text-[10px] leading-none mt-0.5 text-center" id="loader-expediente"></div>
+    <div class="text-center max-w-md px-6">
+      <div class="mb-6 flex justify-center">
+        <div class="spinner"></div>
       </div>
-
-      {# Spinner editorial: barras tipográficas #}
-      <div class="flex justify-center gap-2 mb-6" aria-hidden="true">
-        <span class="loader-bar"></span>
-        <span class="loader-bar" style="animation-delay:0.15s"></span>
-        <span class="loader-bar" style="animation-delay:0.3s"></span>
-        <span class="loader-bar" style="animation-delay:0.45s"></span>
-        <span class="loader-bar" style="animation-delay:0.6s"></span>
-      </div>
-
-      <h2 class="ff-display text-3xl md:text-5xl text-ink leading-tight mb-3"
-          style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 700'>
-        Generando informe<span id="loader-dots" class="text-oxblood"></span>
+      <h2 class="text-2xl md:text-3xl font-semibold text-ink display mb-2">
+        Analizando tu empresa<span id="loader-dots" class="text-accent"></span>
       </h2>
-
-      <div class="rule-double max-w-xs mx-auto my-6"></div>
-
-      <p class="text-ink2 text-base md:text-lg leading-relaxed mb-4" id="loader-status">
-        Cruzando tu empresa con BDNS, BORME y la Comisión Europea
+      <p class="text-ink2 mb-6 text-base" id="loader-status">
+        Cruzando con BDNS, BORME y la Comisión Europea
       </p>
-      <p class="press-sm text-ink3">
-        Puede tardar unos segundos. No cierres esta ventana.
-      </p>
+      <div class="inline-flex items-center gap-2 text-xs text-ink3">
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2" stroke-linecap="round"/></svg>
+        <span>Tarda unos segundos. No cierres la ventana.</span>
+      </div>
     </div>
   </div>
-
-  <style>
-    .loader-bar {
-      display:inline-block;
-      width: 8px;
-      height: 32px;
-      background: #7B2D1A;
-      animation: loader-bounce 0.9s ease-in-out infinite;
-    }
-    @keyframes loader-bounce {
-      0%, 80%, 100% { transform: scaleY(0.4); opacity: 0.4; }
-      40%           { transform: scaleY(1.0); opacity: 1; }
-    }
-    body.is-loading { overflow: hidden; }
-
-    /* Prose editorial — renderizado de HTML sanitizado en descripciones.
-       Usado en sub.descripcion cuando viene con <p>, <strong>, <a>, etc.
-       (típico de convocatorias EU). */
-    .prose-editorial p { margin-bottom: 1em; }
-    .prose-editorial p:last-child { margin-bottom: 0; }
-    .prose-editorial strong, .prose-editorial b { font-weight: 600; color: #13110D; }
-    .prose-editorial em, .prose-editorial i { font-style: italic; }
-    .prose-editorial a {
-      color: #7B2D1A;
-      text-decoration: underline;
-      text-underline-offset: 2px;
-      text-decoration-thickness: 1px;
-    }
-    .prose-editorial a:hover { text-decoration-thickness: 2px; }
-    .prose-editorial ul, .prose-editorial ol {
-      margin: 1em 0;
-      padding-left: 1.5em;
-    }
-    .prose-editorial ul { list-style: disc; }
-    .prose-editorial ol { list-style: decimal; }
-    .prose-editorial li { margin-bottom: 0.3em; }
-    .prose-editorial h1, .prose-editorial h2, .prose-editorial h3,
-    .prose-editorial h4, .prose-editorial h5, .prose-editorial h6 {
-      font-family: 'Fraunces', Georgia, serif;
-      font-weight: 600;
-      margin: 1.5em 0 0.5em;
-    }
-    .prose-editorial h1 { font-size: 1.5em; }
-    .prose-editorial h2 { font-size: 1.3em; }
-    .prose-editorial h3 { font-size: 1.15em; }
-    .prose-editorial blockquote {
-      border-left: 3px solid #7B2D1A;
-      padding-left: 1em;
-      margin: 1em 0;
-      font-style: italic;
-      color: #3A3530;
-    }
-    .prose-editorial code {
-      font-family: 'Geist Mono', monospace;
-      background: #EAE3D2;
-      padding: 0.1em 0.3em;
-      border-radius: 2px;
-      font-size: 0.9em;
-    }
-  </style>
 
   <script>
   (function(){
     var overlay = document.getElementById('search-loading-overlay');
     if (!overlay) return;
-
     var form = document.getElementById('search-form');
     if (!form) return;
 
     var dotsEl = document.getElementById('loader-dots');
     var statusEl = document.getElementById('loader-status');
-    var expedienteEl = document.getElementById('loader-expediente');
 
-    // Mensajes editoriales rotativos durante la espera
     var STATUS_MESSAGES = [
-      'Cruzando tu empresa con BDNS, BORME y la Comisión Europea',
-      'Analizando 164.303 convocatorias del catálogo público',
-      'Filtrando las que excluyen a empresas privadas',
-      'Comprobando provincia, CNAE y forma jurídica',
-      'Verificando fechas de cierre y bases reguladoras',
+      'Cruzando con BDNS, BORME y la Comisión Europea',
+      'Analizando 164.000+ convocatorias activas',
+      'Filtrando las que no aplican a tu sector',
+      'Verificando provincia, CNAE y forma jurídica',
+      'Comprobando fechas y requisitos oficiales',
       'Generando ranking por relevancia',
-      'Preparando tu informe personalizado'
+      'Preparando tu informe'
     ];
 
-    var dotsTimer = null;
-    var statusTimer = null;
-    var startedAt = null;
+    var dotsTimer = null, statusTimer = null;
 
     function showLoader(){
-      // Expediente aleatorio para el sello
-      if (expedienteEl) {
-        expedienteEl.textContent = String(Math.floor(Math.random() * 9000000) + 1000000);
-      }
-
       overlay.classList.remove('hidden');
       document.body.classList.add('is-loading');
-      startedAt = Date.now();
 
-      // Animar los puntos suspensivos
       var dotsState = 0;
       dotsTimer = setInterval(function(){
         dotsState = (dotsState + 1) % 4;
         if (dotsEl) dotsEl.textContent = '.'.repeat(dotsState);
       }, 400);
 
-      // Rotar mensajes de estado cada 2.2s
       var msgIndex = 0;
       statusTimer = setInterval(function(){
         msgIndex = (msgIndex + 1) % STATUS_MESSAGES.length;
         if (statusEl) {
-          // Fade in/out simple via opacidad
           statusEl.style.opacity = '0';
           setTimeout(function(){
             statusEl.textContent = STATUS_MESSAGES[msgIndex];
@@ -664,19 +485,14 @@
     }
 
     form.addEventListener('submit', function(e){
-      // Validación HTML5: si el form no es válido, no mostramos loader
       if (!form.checkValidity()) return;
-
-      // Si ya está cargando, ignoramos
       if (document.body.classList.contains('is-loading')) {
         e.preventDefault();
         return;
       }
-
       showLoader();
     });
 
-    // Cuando volvemos al historial (back/forward), restablecemos
     window.addEventListener('pageshow', function(ev){
       if (ev.persisted) {
         overlay.classList.add('hidden');
