@@ -372,6 +372,120 @@ _POST_LLM_BLACKLIST_PATTERNS = [
 
     # Eurostars / EU PYME Innovadora: requieren capacidad I+D real
     (r"\b(eurostars|asociaci[oó]n\s+europea\s+para\s+(las\s+)?pyme\s+innovador)", "Eurostars/EU PYME Innovadora: requiere proyecto I+D concreto"),
+
+    # ════════════════════════════════════════════════════════════════════
+    # RONDA AUDIT MASIVO (8 perfiles testeados, ~40 falsos positivos
+    # detectados). Patrones añadidos tras agentes de auditoría.
+    # ════════════════════════════════════════════════════════════════════
+
+    # LEADER: ayudas rural exclusivas zonas rurales y sectores agroalimentarios.
+    # Solo aplica a CNAE 01-03 (agricultura/pesca) o 10-11 (alimentación) en zonas
+    # rurales. Para resto de empresas urbanas/servicios = falso positivo seguro.
+    (r"\bLEADER\b.*\b(medida|grupo\s+(de\s+)?acci[oó]n\s+local|GAL|sierra|comarca|rural)\b", "LEADER: subvención rural exclusiva agricultura/pesca/alimentación"),
+    (r"\b(grupo\s+(de\s+)?acci[oó]n\s+local|GAL)\b", "Grupo de Acción Local LEADER (rural)"),
+
+    # Kit Digital sectoriales (no son transversales)
+    (r"\bkit\s+digital\b.*\bsector\s+(agr[ií]cola|pesca|pesquero|ganader|mar[ií]timo|servicios\s+de\s+I\.?E\.?G)", "Kit Digital sectorial específico (no aplica a tu CNAE)"),
+    (r"\bsector\s+(agr[ií]cola|pesca|pesquero|ganadero|mar[ií]timo)\b.*\b(kit\s+digital|digitalizaci)", "Kit Digital sectorial específico"),
+
+    # Cooperación internacional terceros países (ampliado)
+    (r"\b(palestina|palestine|mauritania|colombia|honduras|per[uú]\b|nicaragua|guatemala|bolivia|el\s+salvador|haiti|hait[ií])\b.*\b(cooperaci|fortalecimiento|atenci[oó]n|salud|educaci|emergencia)", "Cooperación al desarrollo país tercero"),
+    (r"\b(yesh\s+din|oxfam|m[eé]decins?\s+(du|sans|sin|du)\s+(monde|frontieres|fronteras))", "ONG internacional específica"),
+    (r"\b(ayuda\s+humanitaria|acci[oó]n\s+humanitaria|prevenci[oó]n\s+de\s+conflictos)", "Ayuda humanitaria"),
+
+    # Premios universitarios institucionales (UCM, UCLM, UAM, etc.)
+    (r"\b(premios?|certamen|concurso)\s+(nacionales?\s+)?.*\b(UCM|UCLM|UAM|UPM|UPV|UAB|URV|URJC|UNIR|UNED)\b", "Premios universitarios institucionales (estudiantes/preincubación)"),
+    (r"\b(uam|ucm|uclm|upm|upv|uab|urv|urjc|unir|uned)\s+(preincubadora|premios?|empresarial(es)?\s+universitari)", "Premios/preincubadoras universitarias"),
+    (r"\bpremios?\s+(de\s+)?emprendimiento\s+(de\s+)?(universidad|UCM|UCLM|UAM)", "Premios emprendimiento universitarios (estudiantes)"),
+    (r"\bpremios?\s+nacionales?\s+investigaci[oó]n\s+gobierno\s+abierto", "Premios nacionales gobierno abierto (académicos)"),
+
+    # Convenios nominativos ampliados (ahora SÍ funcionan sin .lower())
+    (r"\b(convenio|acuerdo)\s+(con|entre|de\s+colaboraci[oó]n\s+con)\s+(la\s+|el\s+|los\s+|las\s+)?(ayuntamiento|universidad|fundaci[oó]n|asociaci[oó]n|federaci[oó]n|club|hermandad|cofrad[ií]a|cruz\s+roja|c[aá]ritas)\b", "Convenio nominativo con entidad específica"),
+    (r"\bsubvenci[oó]n\s+(directa\s+)?(a\s+(favor\s+de\s+)?)?la\s+(fundaci[oó]n|asociaci[oó]n)\s+[a-zñáéíóúA-ZÑÁÉÍÓÚ]", "Subvención nominativa a fundación/asociación"),
+    (r"\badenda\s+convenio\b", "Adenda a convenio nominativo"),
+
+    # Aportaciones del Estado a organismos internacionales (no son convocatorias)
+    (r"\b(aportaci[oó]n|contribuci[oó]n)\s+(voluntaria|del\s+estado|del\s+ministerio)", "Aportación del Estado a organismo internacional (no es convocatoria)"),
+    (r"\b(european\s+cooperation\s+in\s+science|cooperaci[oó]n\s+europea\s+en\s+ciencia\s+y\s+tecnolog)", "Aportación a COST (cooperación científica)"),
+
+    # PERTEs sectoriales muy específicos
+    (r"\bperte\s+(aeroespacial|naval|chip|microelectr[oó]nica|salud\s+de\s+vanguardia)\b", "PERTE sectorial específico (no transversal)"),
+
+    # Subvenciones a otras administraciones públicas
+    (r"\bsubvenci[oó]n\s+(directa\s+)?al\s+ayuntamiento\s+de\b", "Subvención a ayuntamiento específico"),
+    (r"\b(via|v[ií]a)\s+ciclopeatonal\b", "Subvención en especie a ayuntamiento (infraestructura)"),
+
+    # Grupos parlamentarios / asambleas (políticos)
+    (r"\b(grupos?\s+parlamentarios?|asamblea\s+(de\s+madrid|legislativa)|junta\s+(general\s+)?del\s+principado)\b", "Subvención política interna"),
+
+    # Inserción laboral / colectivos vulnerables (entidades sociales / personas)
+    (r"\bayudas?\s+para\s+(la\s+)?inserci[oó]n\s+laboral\b", "Ayudas inserción laboral (personas físicas/entidades sociales)"),
+    (r"\b(colectivos?\s+vulnerables?|personas?\s+(en\s+situaci[oó]n\s+de\s+)?riesgo\s+(de\s+)?exclusi)", "Colectivos vulnerables (entidades sociales)"),
+
+    # Sector circo y artistas itinerantes
+    (r"\b(circo|circenses?|artistas?\s+itinerantes)\b", "Sector circo/itinerante (muy específico)"),
+
+    # Orquestas, corales, bandas (instituciones culturales)
+    (r"\b(orquesta\s+(sinf[oó]nica|filarm[oó]nica|de\s+c[aá]mara)|banda\s+municipal|coral\s+polif[oó]nica)\b", "Institución musical (no para empresas)"),
+
+    # Convocatorias educativas / estudiantes (ampliado)
+    (r"\b(SEPIE|SICUE|BIP|erasmus\+?\s+(KA|joven\s+emprendedor))\b", "Convocatoria educativa SEPIE/SICUE/BIP/Erasmus+"),
+    (r"\bmovilidad\s+(de\s+)?(estudiantes?|personal\s+investigador|investigadores?)", "Movilidad estudiantil/investigadores"),
+    (r"\b(programa\s+de\s+)?doctorado\b.*\bsalud\s+p[uú]blica", "Doctorado Salud Pública (investigadores)"),
+    (r"\bayudas?\s+para\s+estudiantes\b", "Ayudas a estudiantes"),
+
+    # Decarbonización industrias pesadas (Horizon)
+    (r"\b(clean\s+steel|energy\s+intensive\s+industries|processes4planet|industrial\s+decarbonisation)\b", "Decarbonización industrias pesadas (acero, química)"),
+
+    # Refugiados / migrantes / asilo
+    (r"\b(refugiados?|solicitantes?\s+de\s+asilo|menas?\s+menores|menores?\s+extranjeros?\s+no\s+acompa)", "Refugiados/asilo (ONGs/entidades sociales)"),
+
+    # Programa CERV (sociedad civil)
+    (r"\bCERV\b|\bcitizens?,?\s+equality,?\s+rights\s+and\s+values\b", "Programa CERV (sociedad civil, no empresas)"),
+
+    # Voluntariado europeo
+    (r"\b(european\s+solidarity\s+corps|cuerpo\s+europeo\s+de\s+solidarid|voluntariado\s+(europeo|juvenil))\b", "Voluntariado europeo (jóvenes)"),
+
+    # LIFE programme (medioambiental, ONGs/admin)
+    (r"\bLIFE[\s\-]+(climate|nature|environment|biodiversity|adaptation)\b", "Programa LIFE (medio ambiente, ONGs/administraciones)"),
+
+    # Creative Europe / Europa Creativa
+    (r"\b(creative\s+europe|europa\s+creativa|media\s+sub-?programme)\b", "Creative Europe (cultura audiovisual)"),
+
+    # Premios deportivos individuales
+    (r"\b(deportistas?\s+ol[ií]mpicos?|atletas?\s+ol[ií]mpicos?|paral[ií]mpic|juegos\s+ol[ií]mpicos)\b", "Premios deportistas olímpicos/individuales"),
+
+    # Religioso/cofradías ampliado
+    (r"\b(hermandad|cofrad[ií]a|parroquia|di[oó]cesis|orden\s+religiosa)\b", "Entidad religiosa"),
+
+    # Personas mayores / tercera edad
+    (r"\b(personas?\s+mayores?|tercera\s+edad|envejecimiento\s+activo)\b", "Ayudas a personas mayores"),
+
+    # Mujeres víctimas violencia ya estaba; añadimos prevención violencia
+    (r"\bprevenci[oó]n\s+de\s+la\s+violencia\s+(de\s+g[eé]nero|machista)", "Prevención violencia género (entidades sociales)"),
+
+    # Acuerdos JGL ya estaba, añadimos otros internos
+    (r"\b(consejo\s+de\s+gobierno|junta\s+de\s+gobierno)\s+(local|insular)\b", "Acuerdo interno administración"),
+
+    # Premios Princesa de Asturias y similares
+    (r"\b(premios?\s+princesa\s+de\s+asturias|princess\s+of\s+asturias)\b", "Premio honorífico institucional"),
+
+    # Erasmus Mundus específicos
+    (r"\berasmus\s+mundus\b", "Erasmus Mundus (movilidad estudiantil internacional)"),
+
+    # Detection threats/cargo (seguridad fronteriza)
+    (r"\bdetection\s+(and\s+characterisation\s+)?of\s+threats\b", "Seguridad fronteriza/aduanas (entidades públicas)"),
+    (r"\billegal/smuggled\s+goods", "Bienes ilegales (autoridades aduaneras)"),
+
+    # Subvenciones en especie / infraestructura municipal
+    (r"\bsubvenci[oó]n\s+en\s+especie\b", "Subvención en especie a administración"),
+
+    # Trastornos del juego / adicciones (entidades sociales/sanitarias)
+    (r"\btrastornos?\s+(del\s+juego|por\s+(consumo|uso)\s+de)", "Adicciones (entidades sociales/sanitarias)"),
+
+    # Mission Ocean / Living labs comunidad (ya algunos, ampliamos)
+    (r"\baccelerating\s+uptake\s+through\s+open\s+proposals", "Open proposals SME (consorcios I+D específicos)"),
+    (r"\bcommunity-?led\s+(action|research|invest)", "Community-led (sociedad civil)"),
 ]
 
 
@@ -379,8 +493,11 @@ def _post_llm_blacklist_match(sub) -> str | None:
     """Devuelve un motivo de exclusión si la subvención matchea blacklist, None si no.
 
     Se llama TRAS el veredicto del LLM. Si retorna un motivo, fuerza applicable=false.
+
+    NOTA: NO hacer .lower() aquí — usamos re.IGNORECASE en search() y algunos
+    patrones tienen [A-Z] para detectar nombres propios (mayúsculas).
     """
-    haystack = ((sub.titulo or "") + " " + (sub.organismo or "")).lower()
+    haystack = (sub.titulo or "") + " " + (sub.organismo or "")
     for pattern, motivo in _POST_LLM_BLACKLIST_PATTERNS:
         if _re.search(pattern, haystack, _re.IGNORECASE):
             return motivo
@@ -568,7 +685,7 @@ _SECTOR_TITLE_PATTERNS: list[tuple[str, list[str], str]] = _FERIAS_ICEX + _HORIZ
 def _sector_blacklist(sub, cnae: str) -> str | None:
     """Si el título indica un sector específico Y el CNAE del usuario NO está
     en la lista permitida → devuelve motivo de exclusión."""
-    haystack = ((sub.titulo or "") + " " + (sub.organismo or "")).lower()
+    haystack = (sub.titulo or "") + " " + (sub.organismo or "")
     for pattern, allowed_prefixes, motivo in _SECTOR_TITLE_PATTERNS:
         if _re.search(pattern, haystack, _re.IGNORECASE):
             # ¿El CNAE del usuario tiene alguno de los prefijos permitidos?
@@ -753,13 +870,38 @@ async def rank_for(
                 urgency_days=a.urgency_days,
             ))
 
+    # Deduplicación por título normalizado (lowercase + sin tildes + collapse spaces).
+    # BDNS contiene títulos casi idénticos con typos (p.ej. "AYUDAS PARA INSERCIÓN
+    # LABORAL" repetida 7 veces, una con typo "LABORL"). Quitamos duplicados
+    # quedándonos con el de mayor score.
+    import unicodedata as _unicodedata
+
+    def _norm_titulo(t: str) -> str:
+        if not t:
+            return ""
+        t = _unicodedata.normalize("NFKD", t)
+        t = "".join(c for c in t if not _unicodedata.combining(c))
+        t = _re.sub(r"\s+", " ", t.lower()).strip()
+        return t
+
+    seen_titles: dict[str, "RankedResult"] = {}
+    for r in final_results:
+        key = _norm_titulo(r.subvencion.titulo or "")
+        if not key:
+            seen_titles[id(r)] = r  # sin título → no dedup
+            continue
+        existing = seen_titles.get(key)
+        if existing is None or r.score > existing.score:
+            seen_titles[key] = r
+    deduped_results = list(seen_titles.values())
+
     # Separar aplicables / descartadas, ordenar
     aplicables_final = sorted(
-        [r for r in final_results if r.applicable],
+        [r for r in deduped_results if r.applicable],
         key=lambda x: -x.score,
     )
     no_aplicables_final = sorted(
-        [r for r in final_results if not r.applicable],
+        [r for r in deduped_results if not r.applicable],
         key=lambda x: x.subvencion.titulo or "",
     )
 

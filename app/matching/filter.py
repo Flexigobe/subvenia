@@ -328,6 +328,30 @@ def find_candidates(session: Session, perfil: EmpresaProfile, limit: int = 30) -
         ~Subvencion.titulo.op("~*")(r"^(ordenanza|reglamento|bases reguladoras|real decreto|decreto|ley )")
     )
 
+    # Excluir convocatorias EXCLUSIVAS para ONGs cuando el usuario es empresa.
+    # BDNS marca "PERSONAS JURÍDICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+    # como único tipo en ~8.455 convocatorias activas. Esas NUNCA aplican a
+    # empresas mercantiles con CIF.
+    if perfil.tipo_solicitante == "empresa":
+        stmt = stmt.where(
+            ~Subvencion.titulo.op("~*")(
+                r"(?i)\b(personas?\s+jur[ií]dicas?\s+que\s+no\s+desarrollan\s+actividad\s+econ[oó]mica|"
+                r"asociaciones?\s+sin\s+[áa]nimo\s+de\s+lucro|"
+                r"ong[s]?\s+(de\s+)?desarrollo|"
+                r"cooperaci[oó]n\s+al\s+desarrollo)\b"
+            )
+        )
+        # También excluir si el organismo es Cabildo Insular (excepto Canarias)
+        # y si es Diputación Foral (excepto País Vasco)
+        if perfil.provincia not in ("35", "38"):  # Las Palmas, Tenerife
+            stmt = stmt.where(
+                ~Subvencion.organismo.op("~*")(r"(?i)cabildo\s+insular")
+            )
+        if perfil.provincia not in ("01", "20", "48"):  # País Vasco
+            stmt = stmt.where(
+                ~Subvencion.organismo.op("~*")(r"(?i)diputaci[oó]n\s+foral|foru\s+aldundia")
+            )
+
     # CNAE: matching jerárquico CNAE-2009. BDNS guarda cnae_elegible mezclando formatos:
     # letras de sector ('J' = "Información y comunicaciones", que incluye 6201), códigos
     # con puntos ('62.0', '62.01'), o prefijos numéricos puros ('6', '62', '620', '6201').
