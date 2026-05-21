@@ -11,7 +11,7 @@
       </td>
       <td style="border:none !important;padding:0;text-align:right;font-size:8pt;color:#444;">
         Informe N.º <strong style="color:#000;">{{ "%07d"|format(range(1000000)|random) }}</strong><br>
-        Emisión 2026.05.18<br>
+        Emisión {{ today_iso }}<br>
         Generado por radarayudas.com
       </td>
     </tr>
@@ -38,7 +38,7 @@
       <div class="press-sm text-ink3">
         Informe №<br>
         <span class="ff-mono text-ink">{{ "%07d"|format(range(1000000)|random) }}</span><br>
-        Emisión {{ "2026.05.18" }}
+        Emisión {{ today_iso }}
       </div>
     </div>
     <div class="col-span-12 md:col-span-9">

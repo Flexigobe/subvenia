@@ -194,6 +194,7 @@ async def search(
         "finalidad": finalidad,
     })
 
+    today = _date.today()
     return templates.TemplateResponse(
         request,
         "results.html",
@@ -206,6 +207,7 @@ async def search(
             "total": len(ranked),
             "total_aplicables": len(applicables),
             "perfil_json": perfil_json,
+            "today_iso": today.strftime("%Y.%m.%d"),
         },
     )
 
