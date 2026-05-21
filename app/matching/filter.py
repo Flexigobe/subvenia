@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import date, timedelta
 
 from sqlalchemy import and_, func, or_, select
 from sqlalchemy.orm import Session
@@ -318,8 +318,23 @@ def find_candidates(session: Session, perfil: EmpresaProfile, limit: int = 30) -
     # El flag BDNS `estado='abierta'` no es fiable (muchos records marcados 'cerrada'
     # siguen aceptando solicitudes). Usamos fecha_fin como fuente de verdad.
     today = date.today()
+    # fecha_fin como source of truth de "abierta":
+    # - fecha_fin >= hoy: abierta segura
+    # - fecha_fin IS NULL: ambiguo, pero solo si fecha_inicio es reciente
+    #   (último año). Si fecha_inicio es >365 días antigua y no hay fecha_fin,
+    #   asumimos que ya está cerrada aunque BDNS no la haya marcado.
+    one_year_ago = today - timedelta(days=365)
     stmt = select(Subvencion).where(
-        (Subvencion.fecha_fin.is_(None)) | (Subvencion.fecha_fin >= today)
+        or_(
+            Subvencion.fecha_fin >= today,
+            and_(
+                Subvencion.fecha_fin.is_(None),
+                or_(
+                    Subvencion.fecha_inicio.is_(None),
+                    Subvencion.fecha_inicio >= one_year_ago,
+                ),
+            ),
+        )
     )
 
     # Excluir records regulatorios (ordenanzas, reglamentos, bases reguladoras, decretos, leyes)

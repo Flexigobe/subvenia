@@ -115,7 +115,14 @@ def browse(
     if importe_min < 0:
         importe_min = 0
 
+    from app.db.queries import is_open_filter as _is_open
+
     stmt = select(Subvencion)
+
+    # POLÍTICA ZERO CERRADAS: siempre filtramos las cerradas, da igual qué pida
+    # el usuario. No mostramos nunca convocatorias cuya fecha ya pasó o están
+    # claramente caducadas (fecha_fin NULL con fecha_inicio >1 año).
+    stmt = stmt.where(_is_open())
 
     # Búsqueda libre en título, descripción y organismo
     if q:
@@ -130,19 +137,10 @@ def browse(
     if ambito:
         stmt = stmt.where(Subvencion.ambito == ambito)
 
-    # Estado: "vigentes" combina abierta+proximamente con fecha_fin futura/NULL
     today = date.today()
-    if estado == "vigentes":
-        stmt = stmt.where(
-            Subvencion.estado.in_(("abierta", "proximamente")),
-        ).where(
-            or_(Subvencion.fecha_fin.is_(None), Subvencion.fecha_fin >= today)
-        )
-    elif estado == "abierta":
-        stmt = stmt.where(Subvencion.estado == "abierta")
-    elif estado == "cerrada":
-        stmt = stmt.where(Subvencion.estado == "cerrada")
-    # "todas" → sin filtro
+    # Mantener compat: estado="abierta"/"vigentes" son lo mismo ahora; "cerrada"
+    # se ignora porque las cerradas NO aparecen nunca por política.
+    # "proximamente" sigue siendo válido (abierta no ha empezado pero está cerca).
 
     if finalidad:
         # Usar overlap con el array de finalidad de la subvención

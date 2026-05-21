@@ -5,7 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import uuid
-from datetime import date as _date
+from datetime import date as _date, timedelta
 from pathlib import Path
 from typing import Annotated
 from uuid import UUID
@@ -65,13 +65,17 @@ def home(request: Request, db: Session = Depends(get_db)) -> HTMLResponse:
 
     from sqlalchemy import func as _func, text as _text
 
+    from app.db.queries import is_open_filter as _is_open
+
     bdns_count = db.query(_func.count(Subvencion.id)).filter(
         Subvencion.source == "bdns",
         Subvencion.estado.in_(("abierta", "proximamente")),
+        _is_open(),
     ).scalar() or 0
     eu_count = db.query(_func.count(Subvencion.id)).filter(
         Subvencion.source == "eu",
         Subvencion.estado.in_(("abierta", "proximamente")),
+        _is_open(),
     ).scalar() or 0
     empresas_count = int(db.execute(
         _text("SELECT reltuples::bigint FROM pg_class WHERE relname = 'empresa'")
@@ -82,7 +86,7 @@ def home(request: Request, db: Session = Depends(get_db)) -> HTMLResponse:
     today = _date.today()
     latest_news = (
         db.query(Subvencion)
-        .filter((Subvencion.fecha_fin.is_(None)) | (Subvencion.fecha_fin >= today))
+        .filter(_is_open())
         .order_by(Subvencion.created_at.desc())
         .limit(8)
         .all()
@@ -262,4 +266,19 @@ def subsidy_detail(
     sub = db.get(Subvencion, subsidy_id)
     if sub is None:
         raise HTTPException(status_code=404, detail="Subvención no encontrada")
+
+    # Política cero convocatorias caducadas: si está claramente cerrada
+    # (fecha_fin pasada O fecha_fin=NULL y fecha_inicio >1 año), 404.
+    today = _date.today()
+    one_year_ago = today - timedelta(days=365)
+    is_closed = (
+        (sub.fecha_fin is not None and sub.fecha_fin < today)
+        or (sub.fecha_fin is None and sub.fecha_inicio is not None and sub.fecha_inicio < one_year_ago)
+    )
+    if is_closed:
+        raise HTTPException(
+            status_code=404,
+            detail="Convocatoria cerrada. Solo mostramos convocatorias abiertas.",
+        )
+
     return templates.TemplateResponse(request, "subsidy_detail.html", {"sub": sub})

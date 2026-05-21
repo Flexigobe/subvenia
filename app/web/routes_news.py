@@ -106,12 +106,13 @@ async def news(request: Request, db: Session = Depends(get_db)) -> HTMLResponse:
     # 1) Últimas 30 añadidas: ordenadas por created_at DESC, filtradas a las que
     #    aún están abiertas (fecha_fin >= hoy o null) Y publicadas en últimos 90 días
     # El filtro de created_at es CRÍTICO — sin él escanea toda la tabla (163k).
+    from app.db.queries import is_open_filter as _is_open
     cutoff_90 = today - timedelta(days=90)
     latest = (
         db.query(Subvencion)
         .filter(
             Subvencion.created_at >= cutoff_90,
-            (Subvencion.fecha_fin.is_(None)) | (Subvencion.fecha_fin >= today),
+            _is_open(),
         )
         .order_by(Subvencion.created_at.desc())
         .limit(30)

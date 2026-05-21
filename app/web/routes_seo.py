@@ -76,9 +76,14 @@ def sitemap(request: Request, db: Session = Depends(get_db)) -> Response:
     ]
 
     # Top 5.000 subvenciones vigentes (abiertas + próximamente) por importe
+    # Política zero cerradas: solo URLs que llevan a fichas vivas.
+    from app.db.queries import is_open_filter as _is_open
     stmt = (
         select(Subvencion.id, Subvencion.updated_at)
-        .where(Subvencion.estado.in_(("abierta", "proximamente")))
+        .where(
+            Subvencion.estado.in_(("abierta", "proximamente")),
+            _is_open(),
+        )
         .order_by(Subvencion.importe_total.desc().nullslast(), Subvencion.updated_at.desc())
         .limit(5000)
     )
