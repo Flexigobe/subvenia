@@ -23,8 +23,17 @@ async def send_email(
     subject: str,
     body_html: str,
     attachments: list[dict[str, Any]] | None = None,
+    unsubscribe_url: str | None = None,
 ) -> bool:
     """Envía un email vía Brevo. Devuelve True si OK (o si log-only mode).
+
+    Args:
+        to: destinatario
+        subject: asunto
+        body_html: cuerpo HTML del mensaje
+        attachments: lista [{filename, base64}] de adjuntos
+        unsubscribe_url: si se pasa, añade headers List-Unsubscribe (Gmail Feb 2024
+                         lo exige para mejor deliverability).
 
     Raises:
         httpx.HTTPStatusError on >=400 responses (caller decides retry).
@@ -41,7 +50,7 @@ async def send_email(
         return True
 
     payload: dict[str, Any] = {
-        "sender": {"email": settings.alert_from_email},
+        "sender": {"email": settings.alert_from_email, "name": "Radar Ayudas"},
         "to": [{"email": to}],
         "subject": subject,
         "htmlContent": body_html,
@@ -53,6 +62,13 @@ async def send_email(
             for a in attachments
         ]
 
+    # List-Unsubscribe headers (Gmail/Yahoo requirements Feb 2024 para no marcar como spam)
+    if unsubscribe_url:
+        payload["headers"] = {
+            "List-Unsubscribe": f"<{unsubscribe_url}>, <mailto:{settings.alert_from_email}?subject=unsubscribe>",
+            "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        }
+
     async with httpx.AsyncClient(timeout=30.0) as client:
         r = await client.post(
             BREVO_API_URL,
@@ -63,5 +79,18 @@ async def send_email(
             },
             json=payload,
         )
-        r.raise_for_status()
+        if r.status_code >= 400:
+            # Capturar mensaje detallado de Brevo para debug en logs
+            try:
+                error_body = r.json()
+                logger.error(
+                    "Brevo API %d to=%s: code=%s message=%s",
+                    r.status_code,
+                    to,
+                    error_body.get("code"),
+                    error_body.get("message"),
+                )
+            except Exception:
+                logger.error("Brevo API %d to=%s: body=%s", r.status_code, to, r.text[:500])
+            r.raise_for_status()
         return True
