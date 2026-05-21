@@ -35,21 +35,21 @@
 {% set tamanos = (sub.beneficiarios or {}).get("tamanos") or [] %}
 {% set raisc = rp.get("raisc_stats") or {} %}
 
-<div class="max-w-7xl mx-auto px-5 md:px-8 py-10 md:py-14">
+<div class="max-w-6xl mx-auto px-5 md:px-8 py-10">
 
-  {# Breadcrumb SEO-friendly #}
-  <nav aria-label="breadcrumb" class="mb-6 press-sm text-ink3">
+  {# Breadcrumb SEO #}
+  <nav aria-label="breadcrumb" class="mb-6 text-xs text-ink3">
     <ol class="flex flex-wrap items-center gap-2" itemscope itemtype="https://schema.org/BreadcrumbList">
       <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-        <a href="/" itemprop="item" class="hover:text-oxblood transition"><span itemprop="name">Inicio</span></a>
+        <a href="/" itemprop="item" class="hover:text-accent2 transition"><span itemprop="name">Inicio</span></a>
         <meta itemprop="position" content="1">
       </li>
-      <li class="text-ink3">›</li>
+      <li class="text-line">›</li>
       <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-        <a href="/subvenciones" itemprop="item" class="hover:text-oxblood transition"><span itemprop="name">Catálogo</span></a>
+        <a href="/subvenciones" itemprop="item" class="hover:text-accent2 transition"><span itemprop="name">Catálogo</span></a>
         <meta itemprop="position" content="2">
       </li>
-      <li class="text-ink3">›</li>
+      <li class="text-line">›</li>
       <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem" class="text-ink2">
         <span itemprop="name">{{ sub.titulo[:60] }}{% if sub.titulo|length > 60 %}…{% endif %}</span>
         <meta itemprop="position" content="3">
@@ -57,156 +57,146 @@
     </ol>
   </nav>
 
-  <a href="javascript:history.back()" class="press text-oxblood inline-flex items-center gap-2 ed-link mb-6">
-    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+  <a href="javascript:history.back()" class="link inline-flex items-center gap-1.5 text-sm mb-6 font-medium">
+    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round"/></svg>
     Volver
   </a>
 
-  <article class="grid grid-cols-12 gap-6 md:gap-10">
+  <article class="grid grid-cols-12 gap-8">
 
-    {# ────── Columna izquierda — meta, sello, CTA persistente ────── #}
-    <aside class="col-span-12 md:col-span-4 lg:col-span-3 md:order-1">
-      <div class="md:sticky md:top-6">
-        {# Sello expediente #}
-        <div class="border-2 border-oxblood text-oxblood inline-block px-3 py-2 -rotate-3 mb-6 select-none">
-          <div class="press leading-none">Expediente</div>
-          <div class="ff-mono text-xs leading-none mt-1 text-center">
-            {% if rp.get("codigoBDNS") %}BDNS-{{ rp.get("codigoBDNS") }}{% else %}{{ "%07d"|format(range(1000000)|random) }}{% endif %}
-          </div>
+    {# ─── Sidebar (columna izquierda) ─── #}
+    <aside class="col-span-12 md:col-span-4 lg:col-span-3 order-1">
+      <div class="md:sticky md:top-24 space-y-6">
+
+        {# Card identificación #}
+        <div class="card p-5">
+          <div class="eyebrow mb-3">Identificación</div>
+          <dl class="space-y-3 text-sm">
+            <div>
+              <dt class="text-xs text-ink3 mb-0.5">Ámbito</dt>
+              <dd class="font-semibold text-ink">{{ sub.ambito|capitalize }}</dd>
+            </div>
+            {% if sub.ccaa %}
+            <div>
+              <dt class="text-xs text-ink3 mb-0.5">Comunidad</dt>
+              <dd class="text-ink2">{{ sub.ccaa }}</dd>
+            </div>
+            {% endif %}
+            {% if tipo_conv %}
+            <div>
+              <dt class="text-xs text-ink3 mb-0.5">Tipo de convocatoria</dt>
+              <dd class="text-ink2">{{ tipo_conv }}</dd>
+            </div>
+            {% endif %}
+            <div>
+              <dt class="text-xs text-ink3 mb-0.5">Organismo</dt>
+              <dd class="text-ink2 text-sm leading-snug">{{ sub.organismo or "—" }}</dd>
+            </div>
+            {% if rp.get("codigoBDNS") %}
+            <div>
+              <dt class="text-xs text-ink3 mb-0.5">Ref. BDNS</dt>
+              <dd class="font-mono text-xs text-ink2">{{ rp.get("codigoBDNS") }}</dd>
+            </div>
+            {% endif %}
+          </dl>
         </div>
 
-        <div class="press text-ink mb-2">Identificación</div>
-        <div class="rule mb-4"></div>
-        <dl class="space-y-3.5 mb-7">
-          <div>
-            <dt class="press-sm text-ink3 mb-1">Ámbito</dt>
-            <dd class="text-ink ff-display text-lg" style='font-variation-settings:"opsz" 144,"wght" 600'>{{ sub.ambito|capitalize }}</dd>
-          </div>
-          {% if sub.ccaa %}
-          <div>
-            <dt class="press-sm text-ink3 mb-1">Comunidad</dt>
-            <dd class="text-ink">{{ sub.ccaa }}</dd>
-          </div>
-          {% endif %}
-          {% if tipo_conv %}
-          <div>
-            <dt class="press-sm text-ink3 mb-1">Tipo de convocatoria</dt>
-            <dd class="text-ink">{{ tipo_conv }}</dd>
-          </div>
-          {% endif %}
-          <div>
-            <dt class="press-sm text-ink3 mb-1">Organismo</dt>
-            <dd class="text-ink2 text-sm leading-snug">{{ sub.organismo or "—" }}</dd>
-          </div>
-        </dl>
-
-        {# Cierre — destacado #}
+        {# Cierre destacado #}
         {% if sub.fecha_fin %}
-        <div class="bg-oxblood text-paper px-4 py-4 mb-5">
-          <div class="press-sm text-paper/70 mb-1">Cierre de solicitudes</div>
-          <div class="num-bloomberg text-3xl leading-none">{{ sub.fecha_fin.strftime("%d.%m.%Y") }}</div>
+        <div class="card p-5 bg-gradient-to-br from-accent to-purple-600 border-0 text-white">
+          <div class="text-xs uppercase tracking-wider opacity-90 mb-1 font-semibold">Cierre solicitudes</div>
+          <div class="text-3xl font-bold leading-none mt-2">{{ sub.fecha_fin.strftime("%d.%m.%Y") }}</div>
+          {% set days_left = (sub.fecha_fin - today).days if today else None %}
+          {% if days_left is not none and days_left >= 0 %}
+          <div class="text-xs opacity-90 mt-2">
+            {% if days_left == 0 %}Cierra hoy{% elif days_left == 1 %}1 día restante{% else %}{{ days_left }} días restantes{% endif %}
+          </div>
+          {% endif %}
         </div>
         {% endif %}
 
-        {# CTAs en columna #}
+        {# CTAs #}
         <div class="space-y-2">
           {% if url_sede %}
-          <a href="{{ url_sede }}" target="_blank" rel="noopener"
-             class="btn-sello w-full px-5 py-3.5 flex items-center justify-between group">
-            <span class="ff-display text-base" style='font-variation-settings:"opsz" 144,"wght" 600'>Solicitar online</span>
-            <svg class="w-4 h-4 group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m0 0l-6-6m6 6l-6 6"/></svg>
+          <a href="{{ url_sede }}" target="_blank" rel="noopener" class="btn-accent w-full">
+            Solicitar online
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
           {% endif %}
           {% if sub.enlace_oficial %}
-          <a href="{{ sub.enlace_oficial }}" target="_blank" rel="noopener"
-             class="btn-ghost w-full px-5 py-3 flex items-center justify-between group">
-            <span class="text-sm font-medium">Convocatoria oficial</span>
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+          <a href="{{ sub.enlace_oficial }}" target="_blank" rel="noopener" class="btn-ghost w-full text-sm">
+            Convocatoria oficial
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
           {% endif %}
           {% if url_bases %}
-          <a href="{{ url_bases }}" target="_blank" rel="noopener"
-             class="border border-ink/30 hover:border-ink hover:bg-paperdk transition w-full px-5 py-3 flex items-center justify-between text-sm text-ink2 group">
-            <span>Bases reguladoras</span>
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+          <a href="{{ url_bases }}" target="_blank" rel="noopener" class="btn-ghost w-full text-sm text-ink2">
+            Bases reguladoras
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
           {% endif %}
         </div>
       </div>
     </aside>
 
-    {# ────── Columna principal — contenido editorial ────── #}
-    <div class="col-span-12 md:col-span-8 lg:col-span-9 md:order-2">
+    {# ─── Contenido principal ─── #}
+    <div class="col-span-12 md:col-span-8 lg:col-span-9 order-2">
 
-      {# Sección decorativa — número del informe + título.
-         Tamaño adaptativo según longitud del título: titulares cortos al
-         tamaño editorial grande; títulos largos (>120 chars) bajan a un
-         tamaño más legible sin romper la jerarquía visual. #}
-      <div class="press text-oxblood mb-3">Convocatoria</div>
-      <div class="rule mb-5"></div>
+      <div class="eyebrow mb-3">Convocatoria</div>
       {% set titulo_len = sub.titulo|length %}
-      {% if titulo_len > 220 %}
-        {% set h1_size = "text-[22px] sm:text-[26px] md:text-[30px] lg:text-[34px]" %}
-        {% set h1_leading = "leading-[1.15]" %}
-      {% elif titulo_len > 160 %}
-        {% set h1_size = "text-[26px] sm:text-[30px] md:text-[34px] lg:text-[40px]" %}
-        {% set h1_leading = "leading-[1.1]" %}
-      {% elif titulo_len > 100 %}
-        {% set h1_size = "text-[30px] sm:text-[36px] md:text-[44px] lg:text-[52px]" %}
-        {% set h1_leading = "leading-[1.05]" %}
+      {% if titulo_len > 200 %}
+        {% set h1_size = "text-2xl md:text-3xl" %}
+      {% elif titulo_len > 120 %}
+        {% set h1_size = "text-2xl md:text-4xl" %}
+      {% elif titulo_len > 80 %}
+        {% set h1_size = "text-3xl md:text-5xl" %}
       {% else %}
-        {% set h1_size = "text-[36px] sm:text-[44px] md:text-[56px] lg:text-[68px]" %}
-        {% set h1_leading = "leading-[0.95]" %}
+        {% set h1_size = "text-4xl md:text-5xl lg:text-6xl" %}
       {% endif %}
-      <h1 class="ff-display text-ink {{ h1_leading }} tracking-tight {{ h1_size }}"
-          style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 700'>
+      <h1 class="display font-semibold text-ink leading-tight {{ h1_size }} mb-8">
         {{ sub.titulo }}
       </h1>
-      <div class="rule mt-7 mb-8"></div>
 
-      {# Detección de subvención incompleta — bases reguladoras sin convocatoria abierta aún #}
+      {# Aviso de convocatoria incompleta #}
       {% set _campos_clave = (sub.importe_total or sub.importe_max_beneficiario or sub.porcentaje or sub.fecha_fin or tipos_benef or instrumentos or documentos) %}
       {% if not _campos_clave %}
-      <div class="border-2 border-ochre bg-ochre/10 p-5 mb-8 flex items-start gap-4">
-        <div class="press text-ochre shrink-0">!</div>
-        <div>
-          <div class="ff-display text-lg text-ink mb-1" style='font-variation-settings:"opsz" 144,"wght" 600'>
-            Convocatoria aún por abrir
+      <div class="card p-5 mb-8 bg-warn/5 border-warn/30">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-warn flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r="0.5" fill="currentColor"/></svg>
+          <div>
+            <div class="font-semibold text-ink mb-1">Convocatoria aún por abrir</div>
+            <p class="text-sm text-ink2">
+              Esta entrada en BDNS son las <strong>bases reguladoras</strong>. El plazo todavía no se ha abierto, así que no hay detalles de cuantías ni documentos.
+              {% if sub.enlace_oficial %}<a href="{{ sub.enlace_oficial }}" target="_blank" rel="noopener" class="link-underline">Consulta el boletín oficial</a>.{% endif %}
+            </p>
           </div>
-          <p class="text-sm text-ink2 leading-relaxed">
-            Esta entrada en BDNS son las <strong>bases reguladoras</strong> de una ayuda
-            cuyo plazo de presentación todavía no se ha abierto.
-            Aún no se han publicado los detalles de cuantías, beneficiarios concretos,
-            sectores elegibles ni documentos para solicitar.
-            {% if sub.enlace_oficial %}Consulta las bases en el <a href="{{ sub.enlace_oficial }}" target="_blank" rel="noopener" class="text-oxblood underline hover:no-underline">boletín oficial</a>.{% endif %}
-          </p>
         </div>
       </div>
       {% endif %}
 
-      {# KPIs editoriales — Bloomberg #}
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-px bg-ink border border-ink mb-10">
-        <div class="bg-paper p-5">
-          <div class="press-sm text-ink3 mb-2">Presupuesto total</div>
-          <div class="num-bloomberg text-3xl text-ink leading-none">
-            {% if sub.importe_total %}{{ "{:,.0f}".format(sub.importe_total) }}<span class="text-base text-ink2 ml-1">€</span>{% else %}—{% endif %}
+      {# KPIs #}
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-10">
+        <div class="card p-4">
+          <div class="text-xs text-ink3 font-medium mb-1">Presupuesto</div>
+          <div class="text-2xl font-bold text-ink leading-none">
+            {% if sub.importe_total %}{{ "{:,.0f}".format(sub.importe_total) }}<span class="text-base text-ink3 font-medium ml-0.5">€</span>{% else %}<span class="text-ink3">—</span>{% endif %}
           </div>
         </div>
-        <div class="bg-paper p-5">
-          <div class="press-sm text-ink3 mb-2">Máx. por empresa</div>
-          <div class="num-bloomberg text-3xl text-oxblood leading-none">
-            {% if sub.importe_max_beneficiario %}{{ "{:,.0f}".format(sub.importe_max_beneficiario) }}<span class="text-base text-ink2 ml-1">€</span>{% else %}—{% endif %}
+        <div class="card p-4">
+          <div class="text-xs text-ink3 font-medium mb-1">Máx. empresa</div>
+          <div class="text-2xl font-bold text-accent2 leading-none">
+            {% if sub.importe_max_beneficiario %}{{ "{:,.0f}".format(sub.importe_max_beneficiario) }}<span class="text-base text-ink3 font-medium ml-0.5">€</span>{% else %}<span class="text-ink3">—</span>{% endif %}
           </div>
         </div>
-        <div class="bg-paper p-5">
-          <div class="press-sm text-ink3 mb-2">% Subvencionado</div>
-          <div class="num-bloomberg text-3xl text-ink leading-none">
-            {% if sub.porcentaje %}{{ sub.porcentaje }}<span class="text-base text-ink2 ml-1">%</span>{% else %}—{% endif %}
+        <div class="card p-4">
+          <div class="text-xs text-ink3 font-medium mb-1">Subvencionado</div>
+          <div class="text-2xl font-bold text-ink leading-none">
+            {% if sub.porcentaje %}{{ sub.porcentaje }}<span class="text-base text-ink3 font-medium ml-0.5">%</span>{% else %}<span class="text-ink3">—</span>{% endif %}
           </div>
         </div>
-        <div class="bg-paper p-5">
-          <div class="press-sm text-ink3 mb-2">Cierre</div>
-          <div class="num-bloomberg text-3xl leading-none {% if sub.fecha_fin %}text-ink{% else %}text-ink3{% endif %}">
+        <div class="card p-4">
+          <div class="text-xs text-ink3 font-medium mb-1">Cierre</div>
+          <div class="text-2xl font-bold leading-none {% if sub.fecha_fin %}text-ink{% else %}text-ink3{% endif %}">
             {% if sub.fecha_fin %}{{ sub.fecha_fin.strftime("%d.%m.%y") }}{% else %}—{% endif %}
           </div>
         </div>
@@ -215,125 +205,123 @@
       {# Plazos #}
       {% if text_inicio or text_fin or sub.fecha_inicio %}
       <section class="mb-10">
-        <div class="press text-oxblood mb-2">Plazos</div>
-        <div class="rule mb-5"></div>
-        <dl class="grid md:grid-cols-2 gap-4">
-          <div class="border-l-2 border-ink/30 pl-4">
-            <dt class="press-sm text-ink3 mb-1">Apertura</dt>
-            <dd class="text-ink ff-display text-lg" style='font-variation-settings:"opsz" 144,"wght" 500'>
+        <div class="eyebrow mb-3">Plazos</div>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="card p-5">
+            <div class="text-xs text-ink3 font-medium mb-1">Apertura</div>
+            <div class="font-semibold text-ink">
               {% if text_inicio %}{{ text_inicio }}
               {% elif sub.fecha_inicio %}{{ sub.fecha_inicio.strftime("%d.%m.%Y") }}
               {% else %}<span class="text-ink3">—</span>{% endif %}
-            </dd>
+            </div>
           </div>
-          <div class="border-l-2 border-oxblood pl-4">
-            <dt class="press-sm text-oxblood mb-1">Cierre</dt>
-            <dd class="text-ink ff-display text-lg" style='font-variation-settings:"opsz" 144,"wght" 600'>
+          <div class="card p-5 border-accent/40 bg-accent3">
+            <div class="text-xs text-accent2 font-semibold mb-1 uppercase tracking-wider">Cierre</div>
+            <div class="font-semibold text-ink">
               {% if text_fin %}{{ text_fin }}
               {% elif sub.fecha_fin %}{{ sub.fecha_fin.strftime("%d.%m.%Y") }}
               {% else %}<span class="text-ink3">—</span>{% endif %}
-            </dd>
+            </div>
           </div>
-        </dl>
+        </div>
       </section>
       {% endif %}
 
       {# Beneficiarios #}
       {% if tipos_benef or tamanos %}
       <section class="mb-10">
-        <div class="press text-oxblood mb-2">Quién puede solicitar</div>
-        <div class="rule mb-5"></div>
-        <ul class="space-y-2 text-base text-ink2">
-          {% for t in tipos_benef %}
-          <li class="flex items-start gap-3">
-            <span class="ff-mono text-oxblood text-xs pt-1.5">{{ "%02d"|format(loop.index) }}—</span>
-            <span>{{ t.descripcion }}</span>
-          </li>
-          {% endfor %}
-        </ul>
-        {% if tamanos %}
-        <div class="flex flex-wrap items-baseline gap-2 mt-4 pt-3 border-t border-ink/15">
-          <span class="press-sm text-ink3">Tamaño elegible</span>
-          {% for t in tamanos %}<span class="press-sm border border-ink/40 text-ink2 px-2 py-0.5">{{ t }}</span>{% endfor %}
+        <div class="eyebrow mb-3">Quién puede solicitar</div>
+        <div class="card p-6">
+          <ul class="space-y-2.5 text-sm text-ink2">
+            {% for t in tipos_benef %}
+            <li class="flex items-start gap-3">
+              <svg class="w-4 h-4 text-success flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>{{ t.descripcion }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+          {% if tamanos %}
+          <div class="flex flex-wrap items-center gap-2 mt-5 pt-4 border-t border-line">
+            <span class="text-xs text-ink3 font-medium mr-1">Tamaño:</span>
+            {% for t in tamanos %}<span class="pill">{{ t }}</span>{% endfor %}
+          </div>
+          {% endif %}
         </div>
-        {% endif %}
       </section>
       {% endif %}
 
       {# Sectores #}
       {% if sectores or sub.cnae_elegible %}
       <section class="mb-10">
-        <div class="press text-oxblood mb-2">Sectores y actividades</div>
-        <div class="rule mb-5"></div>
-        {% if sectores %}
-        <ul class="space-y-2 text-base text-ink2 mb-3">
-          {% for s in sectores %}
-          <li class="flex items-start gap-3">
-            <span class="ff-mono text-oxblood text-xs pt-1.5">{{ "%02d"|format(loop.index) }}—</span>
-            <span>{{ s.descripcion }}{% if s.codigo %} <span class="ff-mono text-ink3 text-xs">({{ s.codigo }})</span>{% endif %}</span>
-          </li>
-          {% endfor %}
-        </ul>
-        {% endif %}
-        {% if sub.cnae_elegible %}
-        <div class="flex flex-wrap items-baseline gap-2 pt-3 border-t border-ink/15">
-          <span class="press-sm text-ink3">CNAE</span>
-          {% for c in sub.cnae_elegible %}<span class="ff-mono text-xs border border-ink/40 text-ink2 px-1.5 py-0.5">{{ c }}</span>{% endfor %}
+        <div class="eyebrow mb-3">Sectores y actividades</div>
+        <div class="card p-6">
+          {% if sectores %}
+          <ul class="space-y-2 text-sm text-ink2 mb-4">
+            {% for s in sectores %}
+            <li class="flex items-start gap-3">
+              <span class="font-mono text-xs text-ink3 flex-shrink-0 mt-0.5 w-6">{{ "%02d"|format(loop.index) }}.</span>
+              <span>{{ s.descripcion }}{% if s.codigo %} <code class="font-mono text-xs text-ink3 ml-1">({{ s.codigo }})</code>{% endif %}</span>
+            </li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+          {% if sub.cnae_elegible %}
+          <div class="flex flex-wrap gap-1.5 pt-4 border-t border-line">
+            <span class="text-xs text-ink3 font-medium mr-1 self-center">CNAE:</span>
+            {% for c in sub.cnae_elegible %}<span class="pill text-xs font-mono">{{ c }}</span>{% endfor %}
+          </div>
+          {% endif %}
         </div>
-        {% endif %}
       </section>
       {% endif %}
 
-      {# Finalidad / instrumentos #}
+      {# Finalidad e instrumentos #}
       {% if sub.finalidad or instrumentos %}
       <section class="mb-10">
-        <div class="press text-oxblood mb-2">Finalidad y tipo de ayuda</div>
-        <div class="rule mb-5"></div>
-        {% if sub.finalidad %}
-        <div class="flex flex-wrap gap-1.5 mb-4">
-          {% for f in sub.finalidad %}<span class="press-sm border border-ink text-ink px-2.5 py-1">{{ f }}</span>{% endfor %}
+        <div class="eyebrow mb-3">Finalidad y tipo de ayuda</div>
+        <div class="card p-6">
+          {% if sub.finalidad %}
+          <div class="flex flex-wrap gap-2 mb-4">
+            {% for f in sub.finalidad %}<span class="pill pill-accent">{{ f }}</span>{% endfor %}
+          </div>
+          {% endif %}
+          {% if instrumentos %}
+          <ul class="space-y-2 text-sm text-ink2">
+            {% for i in instrumentos %}
+            <li class="flex items-start gap-3">
+              <span class="font-mono text-xs text-ink3 flex-shrink-0 mt-0.5 w-6">{{ "%02d"|format(loop.index) }}.</span>
+              <span>{{ i.descripcion }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+          {% endif %}
         </div>
-        {% endif %}
-        {% if instrumentos %}
-        <ul class="space-y-2 text-base text-ink2">
-          {% for i in instrumentos %}
-          <li class="flex items-start gap-3">
-            <span class="ff-mono text-oxblood text-xs pt-1.5">{{ "%02d"|format(loop.index) }}—</span>
-            <span>{{ i.descripcion }}</span>
-          </li>
-          {% endfor %}
-        </ul>
-        {% endif %}
       </section>
       {% endif %}
 
       {# Ámbito geográfico #}
       {% if regiones %}
       <section class="mb-10">
-        <div class="press text-oxblood mb-2">Ámbito geográfico</div>
-        <div class="rule mb-5"></div>
-        <ul class="space-y-2 text-base text-ink2">
-          {% for r in regiones %}
-          <li class="flex items-start gap-3">
-            <span class="ff-mono text-oxblood text-xs pt-1.5">{{ "%02d"|format(loop.index) }}—</span>
-            <span>{{ r.descripcion }}</span>
-          </li>
-          {% endfor %}
-        </ul>
+        <div class="eyebrow mb-3">Ámbito geográfico</div>
+        <div class="card p-6">
+          <ul class="space-y-2 text-sm text-ink2">
+            {% for r in regiones %}
+            <li class="flex items-start gap-3">
+              <span class="font-mono text-xs text-ink3 flex-shrink-0 mt-0.5 w-6">{{ "%02d"|format(loop.index) }}.</span>
+              <span>{{ r.descripcion }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
       </section>
       {% endif %}
 
-      {# Descripción — gran cuerpo de prosa.
-         safe_html renderiza HTML si lo hay (sanitizado con bleach), si no lo
-         deja como texto plano. Resuelve el caso de convocatorias EU que traen
-         <p><strong>...</strong></p> en la descripción. #}
+      {# Descripción #}
       {% if sub.descripcion %}
       <section class="mb-10">
-        <div class="press text-oxblood mb-2">Descripción</div>
-        <div class="rule mb-5"></div>
-        <div class="border-l-4 border-oxblood pl-6 py-2 bg-paperdk/30">
-          <div class="prose-editorial text-ink leading-relaxed text-[17px] max-w-[68ch]"
-               style="font-family: 'Fraunces', Georgia, serif; font-variation-settings: 'opsz' 14, 'wght' 400;">
+        <div class="eyebrow mb-3">Descripción</div>
+        <div class="card p-7">
+          <div class="prose-clean text-ink2 leading-relaxed">
             {% set _html = sub.descripcion|safe_html %}
             {% if '<p' in _html|string or '<strong' in _html|string or '<a ' in _html|string %}
               {{ _html }}
@@ -345,39 +333,38 @@
       </section>
       {% endif %}
 
-      {# Histórico de pagos reales (RAISC Catalunya) #}
+      {# Histórico de pagos RAISC #}
       {% if raisc and raisc.get("concesiones") %}
       <section class="mb-10">
-        <div class="press text-oxblood mb-2">Histórico de pagos (datos reales)</div>
-        <div class="rule mb-5"></div>
-        <div class="border border-ink/40 p-5 bg-paperdk/30">
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
+        <div class="eyebrow mb-3">Histórico de pagos (datos reales)</div>
+        <div class="card p-6">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
             <div>
-              <div class="num-bloomberg text-3xl text-ink">{{ "{:,}".format(raisc.concesiones) }}</div>
-              <div class="press-sm text-ink3 mt-1">concesiones pagadas</div>
+              <div class="text-2xl font-bold text-ink">{{ "{:,}".format(raisc.concesiones) }}</div>
+              <div class="text-xs text-ink3 mt-1">concesiones</div>
             </div>
             {% if raisc.get("importe_total_pagado") and raisc.importe_total_pagado > 0 %}
             <div>
-              <div class="num-bloomberg text-3xl text-ink">{{ "{:,.0f}".format(raisc.importe_total_pagado) }}€</div>
-              <div class="press-sm text-ink3 mt-1">total pagado</div>
+              <div class="text-2xl font-bold text-ink">{{ "{:,.0f}".format(raisc.importe_total_pagado) }}€</div>
+              <div class="text-xs text-ink3 mt-1">total pagado</div>
             </div>
             {% endif %}
             {% if raisc.get("importe_medio") and raisc.importe_medio > 0 %}
             <div>
-              <div class="num-bloomberg text-3xl text-ink">{{ "{:,.0f}".format(raisc.importe_medio) }}€</div>
-              <div class="press-sm text-ink3 mt-1">importe medio</div>
+              <div class="text-2xl font-bold text-ink">{{ "{:,.0f}".format(raisc.importe_medio) }}€</div>
+              <div class="text-xs text-ink3 mt-1">importe medio</div>
             </div>
             {% endif %}
             {% if raisc.get("importe_max") and raisc.importe_max > 0 %}
             <div>
-              <div class="num-bloomberg text-3xl text-ink">{{ "{:,.0f}".format(raisc.importe_max) }}€</div>
-              <div class="press-sm text-ink3 mt-1">máximo a un beneficiario</div>
+              <div class="text-2xl font-bold text-ink">{{ "{:,.0f}".format(raisc.importe_max) }}€</div>
+              <div class="text-xs text-ink3 mt-1">máximo</div>
             </div>
             {% endif %}
           </div>
-          <div class="text-xs text-ink3 mt-3 pt-3 border-t border-ink/15">
-            Fuente: <a href="https://analisi.transparenciacatalunya.cat/Economia/Concessions-del-RAISC-Registre-de-subvencions-i-aj/s9xt-n979" target="_blank" rel="noopener" class="text-oxblood underline">RAISC Generalitat Catalunya</a>.
-            Datos verificados de adjudicaciones reales{% if raisc.get("ultima_concesion") %} · última concesión {{ raisc.ultima_concesion[:10] }}{% endif %}.
+          <div class="text-xs text-ink3 pt-3 border-t border-line">
+            Fuente: <a href="https://analisi.transparenciacatalunya.cat/Economia/Concessions-del-RAISC-Registre-de-subvencions-i-aj/s9xt-n979" target="_blank" rel="noopener" class="link-underline">RAISC Generalitat Catalunya</a>.
+            Datos reales de adjudicaciones{% if raisc.get("ultima_concesion") %} · última {{ raisc.ultima_concesion[:10] }}{% endif %}.
           </div>
         </div>
       </section>
@@ -386,43 +373,43 @@
       {# Documentos #}
       {% if documentos %}
       <section class="mb-10">
-        <div class="press text-oxblood mb-2">Documentos oficiales</div>
-        <div class="rule mb-5"></div>
-        <ul class="space-y-2">
-          {% for d in documentos %}
-            {% if d.id %}
-            <li>
-              <a href="https://www.infosubvenciones.es/bdnstrans/GE/es/convocatoria/{{ rp.get('codigoBDNS') }}/document/{{ d.id }}"
-                 target="_blank" rel="noopener"
-                 class="group flex items-baseline gap-3 py-2 border-b border-ink/15 hover:bg-paperdk/40 px-2 transition">
-                <span class="ff-mono text-oxblood text-xs">{{ "%02d"|format(loop.index) }}—</span>
-                <span class="flex-1 text-ink ed-link">{{ d.nombreFic or "Documento " ~ d.id }}</span>
-                {% if d.datMod %}<span class="ff-mono text-xs text-ink3">{{ d.datMod }}</span>{% endif %}
-                <svg class="w-3.5 h-3.5 text-ink3 group-hover:text-oxblood transition" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-              </a>
-            </li>
-            {% endif %}
-          {% endfor %}
-        </ul>
+        <div class="eyebrow mb-3">Documentos oficiales</div>
+        <div class="card overflow-hidden">
+          <ul class="divide-y divide-line">
+            {% for d in documentos %}
+              {% if d.id %}
+              <li>
+                <a href="https://www.infosubvenciones.es/bdnstrans/GE/es/convocatoria/{{ rp.get('codigoBDNS') }}/document/{{ d.id }}"
+                   target="_blank" rel="noopener"
+                   class="group flex items-center gap-3 px-5 py-3 hover:bg-paperdk transition">
+                  <svg class="w-4 h-4 text-ink3 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z M14 2v6h6 M16 13H8 M16 17H8 M10 9H8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span class="flex-1 text-sm text-ink group-hover:text-accent2 transition">{{ d.nombreFic or "Documento " ~ d.id }}</span>
+                  {% if d.datMod %}<span class="text-xs text-ink3 font-mono">{{ d.datMod }}</span>{% endif %}
+                  <svg class="w-3.5 h-3.5 text-ink3 group-hover:text-accent2 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </a>
+              </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
       </section>
       {% endif %}
 
-      {# Colofón — disclaimer + CTA secundaria #}
-      <section class="border-t border-b border-ink py-7 mt-12 mb-4 bg-paperdk/30">
-        <div class="grid md:grid-cols-2 gap-6 items-start">
+      {# Colofón #}
+      <section class="card p-6 mt-12 bg-paperdk">
+        <div class="grid md:grid-cols-2 gap-6 items-center">
           <div>
-            <div class="press text-ink mb-2">Colofón</div>
-            <p class="text-sm text-ink2 leading-relaxed max-w-md">
-              Información orientativa generada a partir de fuentes oficiales (BDNS). Consulta siempre la convocatoria oficial publicada antes de solicitar.
-              {% if rp.get("codigoBDNS") %} Ref. BDNS: <code class="ff-mono text-ink bg-paper px-1.5 py-0.5">{{ rp.get("codigoBDNS") }}</code>.{% endif %}
+            <div class="eyebrow mb-2">Aviso</div>
+            <p class="text-sm text-ink2 leading-relaxed">
+              Información orientativa de fuentes oficiales (BDNS). Consulta siempre la convocatoria oficial antes de solicitar.
+              {% if rp.get("codigoBDNS") %} Ref. BDNS: <code class="font-mono text-xs bg-paper px-1.5 py-0.5 rounded border border-line">{{ rp.get("codigoBDNS") }}</code>{% endif %}
             </p>
           </div>
           {% if url_sede %}
           <div class="md:text-right">
-            <a href="{{ url_sede }}" target="_blank" rel="noopener"
-               class="btn-sello inline-flex items-center gap-3 px-6 py-3.5 group">
-              <span class="ff-display text-base" style='font-variation-settings:"opsz" 144,"wght" 600'>Solicitar online</span>
-              <svg class="w-4 h-4 group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m0 0l-6-6m6 6l-6 6"/></svg>
+            <a href="{{ url_sede }}" target="_blank" rel="noopener" class="btn-accent">
+              Solicitar online
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m0 0l-6-6m6 6l-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
           </div>
           {% endif %}

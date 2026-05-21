@@ -1,86 +1,64 @@
 {% extends "base.html" %}
+
+{% block title %}Resultados — {{ razon_social or nif }} · Radar Ayudas{% endblock %}
+
 {% block content %}
 
-{# ───── Cabecera SOLO PRINT — controlada por @media print en base.html ───── #}
-<div class="print-only">
-  <table style="width:100%;border:none !important;border-collapse:collapse;">
-    <tr style="border:none !important;">
-      <td style="border:none !important;padding:0;">
-        <div style="font-family:'Fraunces',Georgia,serif;font-size:18pt;font-weight:700;letter-spacing:-0.02em;">Radar Ayudas</div>
-        <div style="font-size:7pt;letter-spacing:0.05em;color:#555;text-transform:uppercase;">Boletín inteligente de subvenciones · España + UE</div>
-      </td>
-      <td style="border:none !important;padding:0;text-align:right;font-size:8pt;color:#444;">
-        Informe N.º <strong style="color:#000;">{{ "%07d"|format(range(1000000)|random) }}</strong><br>
-        Emisión {{ today_iso }}<br>
-        Generado por radarayudas.com
-      </td>
-    </tr>
-  </table>
-  <hr style="border:none;border-top:0.6pt solid #000;margin:6pt 0 8pt;">
-</div>
+<div class="max-w-6xl mx-auto px-5 md:px-8 py-10 md:py-14">
 
-<div class="max-w-7xl mx-auto px-5 md:px-8 py-10 md:py-14">
-
-  {# ───── Cabecera tipo portada de informe ───── #}
-  <header class="grid grid-cols-12 gap-6 mb-10">
-    <div class="col-span-12 md:col-span-3">
-      <div class="flex flex-wrap items-center gap-3">
-        <a href="/" class="press text-oxblood inline-flex items-center gap-2 ed-link">
-          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
-          Nueva consulta
-        </a>
-        <button onclick="window.print()" class="press-sm text-ink2 hover:text-oxblood inline-flex items-center gap-1.5 ed-link print-hide" title="Imprimir o guardar como PDF">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
-          Imprimir / PDF
-        </button>
-      </div>
-      <div class="rule mt-2 mb-4"></div>
-      <div class="press-sm text-ink3">
-        Informe №<br>
-        <span class="ff-mono text-ink">{{ "%07d"|format(range(1000000)|random) }}</span><br>
-        Emisión {{ today_iso }}
-      </div>
+  {# ─── Cabecera ─── #}
+  <header class="mb-10">
+    <div class="flex items-center justify-between mb-6">
+      <a href="/" class="link inline-flex items-center gap-2 text-sm font-medium">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Nueva búsqueda
+      </a>
+      <button onclick="window.print()" class="btn-ghost text-sm print-hide">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+        Descargar PDF
+      </button>
     </div>
-    <div class="col-span-12 md:col-span-9">
-      <div class="press text-oxblood mb-3">Resultado del análisis</div>
-      <h1 class="ff-display text-ink leading-[0.95] tracking-tight text-[44px] md:text-[64px] lg:text-[78px]"
-          style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 700'>
-        {{ razon_social or nif }}
-      </h1>
-      <div class="rule mt-6 mb-4"></div>
-      <div class="flex flex-wrap items-baseline gap-x-6 gap-y-2">
-        <div>
-          <span class="num-bloomberg text-5xl text-oxblood leading-none">{{ total_aplicables or total }}</span>
-          <span class="press-sm text-ink2 ml-2">aplicables</span>
-        </div>
-        {% if no_aplicables %}
-        <div>
-          <span class="num-bloomberg text-3xl text-ink3 leading-none">{{ no_aplicables|length }}</span>
-          <span class="press-sm text-ink3 ml-2">descartadas, con motivo</span>
-        </div>
-        {% endif %}
+
+    <div class="eyebrow mb-2">Resultado del análisis</div>
+    <h1 class="display text-4xl md:text-5xl lg:text-6xl font-semibold text-ink mb-4 leading-tight">
+      {{ razon_social or nif }}
+    </h1>
+    <div class="flex flex-wrap items-baseline gap-6 text-sm text-ink2">
+      <div class="flex items-baseline gap-2">
+        <span class="text-3xl font-bold text-accent2">{{ total_aplicables or total }}</span>
+        <span class="text-ink3">aplicables</span>
+      </div>
+      {% if no_aplicables %}
+      <div class="flex items-baseline gap-2">
+        <span class="text-xl font-semibold text-ink3">{{ no_aplicables|length }}</span>
+        <span class="text-ink3">descartadas con motivo</span>
+      </div>
+      {% endif %}
+      <div class="text-xs text-ink3 font-mono">
+        Informe №{{ "%07d"|format(range(1000000)|random) }} · {{ today_iso }}
       </div>
     </div>
   </header>
 
-  {# ───── Leyenda explicativa de % match ───── #}
-  <div class="border-t border-ink/40 pt-3 mb-6 grid md:grid-cols-3 gap-3 text-xs text-ink2">
-    <div class="flex items-start gap-2">
-      <span class="ff-mono text-oxblood font-bold mt-0.5">% match</span>
-      <span>Encaje con tu perfil empresarial. <strong class="text-ink">Cuanto más alto, mejor</strong>: cruzamos CNAE, provincia, tamaño y finalidad con los requisitos oficiales.</span>
-    </div>
-    <div class="flex items-start gap-2">
-      <span class="text-moss ff-mono mt-0.5">✓</span>
-      <span><strong class="text-ink">Aplicables</strong>: tu empresa cumple los requisitos formales (sector, región, beneficiario elegible).</span>
-    </div>
-    <div class="flex items-start gap-2">
-      <span class="text-oxblood ff-mono mt-0.5">✕</span>
-      <span><strong class="text-ink">Descartadas</strong>: te decimos por qué no encajan (becas individuales, convenios nominales, etc.).</span>
+  {# ─── Leyenda ─── #}
+  <div class="card p-5 mb-8 bg-paperdk">
+    <div class="grid md:grid-cols-3 gap-4 text-sm">
+      <div class="flex items-start gap-2">
+        <span class="pill pill-accent text-xs flex-shrink-0">% match</span>
+        <span class="text-ink2">Encaje con tu perfil. Cruzamos CNAE, provincia, tamaño y finalidad.</span>
+      </div>
+      <div class="flex items-start gap-2">
+        <svg class="w-4 h-4 text-success flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="text-ink2"><strong class="text-ink">Aplicables</strong>: cumples los requisitos formales.</span>
+      </div>
+      <div class="flex items-start gap-2">
+        <svg class="w-4 h-4 text-danger flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round"/></svg>
+        <span class="text-ink2"><strong class="text-ink">Descartadas</strong>: te explicamos por qué no encajan.</span>
+      </div>
     </div>
   </div>
 
-  {# ───── Filtros editoriales ───── #}
-  {# Recolectar todas las finalidades únicas (no vacías) presentes en cards/rows #}
+  {# ─── Filtros ─── #}
   {% set ns = namespace(all=[]) %}
   {% for r in (top3 + rest) %}
     {% for f in (r.subvencion.finalidad or []) %}
@@ -91,33 +69,29 @@
   {% endfor %}
 
   {% if ns.all or (top3 or rest) %}
-  <div class="border-t border-b border-ink py-3 mb-8 flex flex-wrap items-center gap-3" id="filters">
-    <span class="press text-ink mr-2">Filtros</span>
-    <button type="button" data-filter="all" class="filter-btn press-sm border border-ink bg-ink text-paper px-3 py-1.5">
-      Todas <span class="opacity-60">({{ (top3|length) + (rest|length) }})</span>
+  <div class="mb-8 flex flex-wrap items-center gap-2" id="filters">
+    <span class="text-xs font-medium text-ink3 mr-2">Filtros:</span>
+    <button type="button" data-filter="all" class="filter-btn pill bg-ink text-paper border-ink hover:bg-ink2 px-3 py-1.5 text-xs cursor-pointer">
+      Todas <span class="opacity-60 ml-1">({{ (top3|length) + (rest|length) }})</span>
     </button>
-    <button type="button" data-filter="urgent" class="filter-btn press-sm border border-ink/40 text-ink px-3 py-1.5 hover:bg-ink hover:text-paper transition">
+    <button type="button" data-filter="urgent" class="filter-btn pill px-3 py-1.5 text-xs cursor-pointer hover:bg-ink hover:text-paper transition">
       Cierra &lt; 30 días
     </button>
     {% for f in ns.all[:10] %}
-    <button type="button" data-finalidad="{{ f }}" class="filter-btn press-sm border border-ink/40 text-ink px-3 py-1.5 hover:bg-ink hover:text-paper transition">
+    <button type="button" data-finalidad="{{ f }}" class="filter-btn pill px-3 py-1.5 text-xs cursor-pointer hover:bg-ink hover:text-paper transition">
       {{ f|replace('_', ' ') }}
     </button>
     {% endfor %}
   </div>
 
-  {# Mensaje cuando un filtro no tiene resultados #}
-  <div id="filter-empty" class="hidden border border-ink p-8 text-center bg-paperdk/40 mb-8">
-    <div class="press text-oxblood mb-2">Sin coincidencias</div>
-    <p class="ff-display text-xl text-ink mb-2" style='font-variation-settings:"opsz" 144,"wght" 600'>
-      Ninguna convocatoria del informe encaja con ese filtro.
-    </p>
-    <p class="text-sm text-ink2">Prueba a pulsar <strong>Todas</strong> o usa otro filtro.</p>
+  <div id="filter-empty" class="hidden card p-10 text-center mb-8">
+    <div class="eyebrow text-danger mb-2">Sin coincidencias</div>
+    <p class="text-lg font-semibold text-ink mb-1">Ninguna convocatoria encaja con ese filtro.</p>
+    <p class="text-sm text-ink2">Prueba con <strong>Todas</strong> o cambia el filtro.</p>
   </div>
 
   <script>
     (function() {
-      // Espera al DOM si script se ejecuta antes
       function init() {
         var btns = document.querySelectorAll('.filter-btn');
         var cards = document.querySelectorAll('[data-card-finalidades]');
@@ -126,25 +100,20 @@
         var restSection = document.getElementById('rest-section');
         var emptyMsg = document.getElementById('filter-empty');
 
-        if (btns.length === 0) return; // No hay filtros, no hacer nada
+        if (btns.length === 0) return;
 
         function matchesFinalidad(el, fin) {
-          var attr = el.getAttribute('data-card-finalidades') ||
-                     el.getAttribute('data-row-finalidades') || '';
+          var attr = el.getAttribute('data-card-finalidades') || el.getAttribute('data-row-finalidades') || '';
           if (!attr) return false;
           var list = attr.split(',').map(function(s){return s.trim();}).filter(Boolean);
           return list.indexOf(fin) >= 0;
         }
-
         function matchesUrgent(el) {
           var d = parseInt(el.getAttribute('data-days-to-close') || '-1', 10);
-          // urgent: cierra en 0-30 días (incluido). 999 = sin fecha de cierre.
-          // -1 = no se sabe. Solo válidas las que tienen fecha conocida en rango.
           return d >= 0 && d <= 30 && d < 999;
         }
 
-        var currentFilter = 'all';
-        var currentFinalidad = '';
+        var currentFilter = 'all', currentFinalidad = '';
 
         function elementMatches(el) {
           if (currentFilter === 'all') return true;
@@ -155,30 +124,18 @@
 
         function applyFilter() {
           var top3Visible = 0, restVisible = 0;
-
           cards.forEach(function(c) {
             var show = elementMatches(c);
-            // Display: 'flex' para cards top3 (son <a class="ed-card flex flex-col">),
-            // 'table-row' no aplica aquí porque las cards son <a>, no <tr>.
-            // Usar '' restablece al display original definido en CSS (flex en este caso).
             c.style.display = show ? '' : 'none';
             if (show) top3Visible++;
           });
           rows.forEach(function(r) {
             var show = elementMatches(r);
-            // Rows SÍ son <tr> — display='' o 'table-row'.
             r.style.display = show ? '' : 'none';
             if (show) restVisible++;
           });
-
-          // Secciones: visible solo si algo dentro está visible
-          if (top3Section) {
-            top3Section.style.display = (top3Visible > 0) ? '' : 'none';
-          }
-          if (restSection) {
-            restSection.style.display = (restVisible > 0) ? '' : 'none';
-          }
-
+          if (top3Section) top3Section.style.display = (top3Visible > 0) ? '' : 'none';
+          if (restSection) restSection.style.display = (restVisible > 0) ? '' : 'none';
           var totalVisible = top3Visible + restVisible;
           if (emptyMsg) {
             if (totalVisible === 0) emptyMsg.classList.remove('hidden');
@@ -190,130 +147,107 @@
           btn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-
-            // Reset visual de todos los botones
             btns.forEach(function(b) {
               b.classList.remove('bg-ink','text-paper','border-ink');
-              b.classList.add('border-ink/40','text-ink');
+              b.classList.add('bg-line2','text-ink2');
             });
-
-            btn.classList.remove('border-ink/40','text-ink');
+            btn.classList.remove('bg-line2','text-ink2');
             btn.classList.add('bg-ink','text-paper','border-ink');
 
             var dataFilter = btn.getAttribute('data-filter') || '';
             var dataFinalidad = btn.getAttribute('data-finalidad') || '';
-
-            if (dataFinalidad) {
-              currentFilter = 'finalidad';
-              currentFinalidad = dataFinalidad;
-            } else if (dataFilter === 'urgent') {
-              currentFilter = 'urgent';
-              currentFinalidad = '';
-            } else {
-              currentFilter = 'all';
-              currentFinalidad = '';
-            }
-
+            if (dataFinalidad) { currentFilter = 'finalidad'; currentFinalidad = dataFinalidad; }
+            else if (dataFilter === 'urgent') { currentFilter = 'urgent'; currentFinalidad = ''; }
+            else { currentFilter = 'all'; currentFinalidad = ''; }
             applyFilter();
           });
         });
-
-        // Estado inicial: "Todas" activo (todo visible)
         applyFilter();
       }
-
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-      } else {
-        init();
-      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+      else init();
     })();
   </script>
   {% endif %}
 
-  {# ───── TOP 3 — destacadas tipo "portada" ───── #}
+  {# ─── TOP 3 ─── #}
   {% if top3 %}
-  <section id="top3-section" class="mb-14">
+  <section id="top3-section" class="mb-12">
     <div class="flex items-baseline justify-between mb-5">
-      <h2 class="ff-display text-3xl md:text-4xl text-ink" style='font-variation-settings:"opsz" 144,"wght" 600'>
-        Las tres <span class="ff-display-light text-oxblood">imprescindibles</span>
-      </h2>
-      <span class="press-sm text-ink3 hidden md:block">Las que más encajan con tu perfil</span>
+      <div>
+        <div class="eyebrow mb-1">Top {{ top3|length }}</div>
+        <h2 class="display text-2xl md:text-3xl font-semibold text-ink">Las que más encajan</h2>
+      </div>
     </div>
-    <div class="rule mb-6"></div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-px bg-ink border border-ink">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
     {% for r in top3 %}
       <a href="/subsidy/{{ r.subvencion.id }}"
-         class="ed-card !border-0 bg-paper p-7 flex flex-col group"
+         class="card card-hover p-6 flex flex-col group"
          data-card-finalidades="{{ (r.subvencion.finalidad or [])|join(',') }}"
          data-days-to-close="{% if r.urgency_days is defined and r.urgency_days >= 0 %}{{ r.urgency_days }}{% else %}999{% endif %}">
 
-        <div class="flex items-baseline justify-between mb-4">
-          <span class="num-bloomberg text-5xl text-oxblood leading-none">{{ "%02d"|format(loop.index) }}</span>
-          <div class="text-right">
-            <div class="num-bloomberg text-3xl text-ink leading-none">{{ r.score }}<span class="text-lg text-ink2">%</span></div>
-            <div class="press-sm text-ink3 mt-1">match</div>
-          </div>
+        <div class="flex items-start justify-between mb-4">
+          <div class="text-3xl font-bold text-accent2">{{ r.score }}<span class="text-base text-ink3 font-medium">%</span></div>
+          <span class="text-xs font-medium text-ink3 font-mono">#{{ "%02d"|format(loop.index) }}</span>
         </div>
 
         {% if r.urgency_days is defined and r.urgency_days >= 0 and r.urgency_days <= 30 %}
-        <div class="inline-flex items-center gap-1.5 self-start border border-oxblood text-oxblood press-sm px-2 py-1 mb-3">
-          <span class="w-1.5 h-1.5 bg-oxblood animate-softblink"></span>
+        <div class="pill pill-warn text-xs mb-3 self-start">
+          <span class="w-1.5 h-1.5 rounded-full bg-warn pulse-dot"></span>
           Cierra en {{ r.urgency_days }} día{{ '' if r.urgency_days == 1 else 's' }}
         </div>
         {% endif %}
 
-        {# Tamaño adaptativo: títulos largos en text-lg, cortos en text-2xl #}
         {% set _tlen = (r.subvencion.titulo or '')|length %}
-        <h3 class="ff-display {% if _tlen > 140 %}text-base md:text-lg{% elif _tlen > 80 %}text-lg md:text-xl{% else %}text-xl md:text-2xl{% endif %} leading-[1.15] text-ink mb-3 line-clamp-3 group-hover:text-oxblood transition"
-            style='font-variation-settings:"opsz" 144,"wght" 700'>
+        <h3 class="font-semibold text-ink leading-snug mb-3 line-clamp-3 group-hover:text-accent2 transition
+          {% if _tlen > 120 %}text-sm{% else %}text-base{% endif %}">
           {{ r.subvencion.titulo }}
         </h3>
 
-        <div class="rule-thin my-3"></div>
+        <div class="border-t border-line my-3"></div>
 
-        <dl class="space-y-1 text-sm mb-3">
+        <dl class="space-y-1.5 text-xs mb-3">
           <div class="flex items-baseline justify-between gap-2">
-            <dt class="press-sm text-ink3 shrink-0">Organismo</dt>
-            <dd class="text-ink2 text-right line-clamp-1">{{ (r.subvencion.organismo or "—")|truncate(45, true, "…") }}</dd>
+            <dt class="text-ink3">Organismo</dt>
+            <dd class="text-ink2 text-right line-clamp-1">{{ (r.subvencion.organismo or "—")|truncate(35, true, "…") }}</dd>
           </div>
           {% if r.subvencion.importe_total %}
           <div class="flex items-baseline justify-between gap-2">
-            <dt class="press-sm text-ink3 shrink-0">Importe</dt>
-            <dd class="ff-mono text-ink font-medium">{{ "{:,.0f}".format(r.subvencion.importe_total) }}€</dd>
+            <dt class="text-ink3">Importe</dt>
+            <dd class="font-mono font-semibold text-ink">{{ "{:,.0f}".format(r.subvencion.importe_total) }}€</dd>
           </div>
           {% endif %}
           {% if r.subvencion.fecha_fin %}
           <div class="flex items-baseline justify-between gap-2">
-            <dt class="press-sm text-ink3 shrink-0">Cierre</dt>
-            <dd class="ff-mono text-ink">{{ r.subvencion.fecha_fin.strftime("%d.%m.%Y") }}</dd>
+            <dt class="text-ink3">Cierre</dt>
+            <dd class="font-mono text-ink">{{ r.subvencion.fecha_fin.strftime("%d.%m.%Y") }}</dd>
           </div>
           {% endif %}
         </dl>
 
         {% if r.match_reasons %}
-        <ul class="text-sm text-ink2 mt-2 space-y-1 flex-1">
+        <ul class="text-xs text-ink2 mt-2 space-y-1 flex-1">
           {% for reason in r.match_reasons[:3] %}
-          <li class="flex items-start gap-2">
-            <span class="ff-mono text-moss text-[10px] pt-1">✓</span>
-            <span>{{ reason }}</span>
+          <li class="flex items-start gap-1.5">
+            <svg class="w-3 h-3 text-success flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="line-clamp-2">{{ reason }}</span>
           </li>
           {% endfor %}
         </ul>
         {% endif %}
 
         {% if r.subvencion.finalidad %}
-        <div class="flex flex-wrap gap-1 mt-4 pt-3 border-t border-ink/10">
-          {% for f in r.subvencion.finalidad %}
-          <span class="press-sm border border-ink/30 text-ink2 px-1.5 py-0.5">{{ f }}</span>
+        <div class="flex flex-wrap gap-1 mt-4 pt-3 border-t border-line">
+          {% for f in r.subvencion.finalidad[:3] %}
+          <span class="pill text-[10px]">{{ f }}</span>
           {% endfor %}
         </div>
         {% endif %}
 
-        <div class="mt-4 press-sm text-oxblood inline-flex items-center gap-2">
-          Leer ficha completa
-          <svg class="w-3 h-3 group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+        <div class="mt-4 text-xs font-medium text-accent2 inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+          Ver detalle
+          <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
       </a>
     {% endfor %}
@@ -321,43 +255,47 @@
   </section>
   {% endif %}
 
-  {# ───── REST — tabla editorial ───── #}
+  {# ─── REST — tabla ─── #}
   {% if rest %}
-  <section id="rest-section" class="mb-14">
+  <section id="rest-section" class="mb-12">
     <div class="flex items-baseline justify-between mb-5">
-      <h2 class="ff-display text-2xl md:text-3xl text-ink" style='font-variation-settings:"opsz" 144,"wght" 600'>Otras aplicables</h2>
-      <span class="press-sm text-ink3">{{ rest|length }} más para ti</span>
+      <div>
+        <div class="eyebrow mb-1">{{ rest|length }} más</div>
+        <h2 class="display text-2xl font-semibold text-ink">Otras aplicables</h2>
+      </div>
     </div>
-    <div class="rule mb-5"></div>
 
-    <div class="border border-ink overflow-hidden">
+    <div class="card overflow-hidden">
       <table class="w-full text-sm">
-        <thead class="bg-ink text-paper">
+        <thead class="bg-paperdk border-b border-line">
           <tr>
-            <th class="px-4 py-3 text-left press-sm">Match</th>
-            <th class="px-4 py-3 text-left press-sm">Convocatoria</th>
-            <th class="px-4 py-3 text-left press-sm hidden md:table-cell">Tipo</th>
-            <th class="px-4 py-3 text-left press-sm hidden lg:table-cell">Organismo</th>
-            <th class="px-4 py-3 text-left press-sm">Cierra</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-ink3 uppercase tracking-wider">Match</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-ink3 uppercase tracking-wider">Convocatoria</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-ink3 uppercase tracking-wider hidden md:table-cell">Finalidad</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-ink3 uppercase tracking-wider hidden lg:table-cell">Organismo</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-ink3 uppercase tracking-wider">Cierra</th>
           </tr>
         </thead>
         <tbody>
           {% for r in rest %}
-          <tr class="border-t border-ink/15 hover:bg-paperdk/50 transition"
+          <tr class="border-t border-line hover:bg-paperdk/60 transition"
               data-row-finalidades="{{ (r.subvencion.finalidad or [])|join(',') }}"
               data-days-to-close="{% if r.urgency_days is defined and r.urgency_days >= 0 %}{{ r.urgency_days }}{% else %}999{% endif %}">
             <td class="px-4 py-3 align-top">
-              <span class="inline-flex items-center justify-center min-w-[2.75rem] px-2 py-1 border ff-mono text-sm font-bold
-                {% if r.score >= 60 %}border-oxblood text-oxblood bg-oxblood/5
-                {% elif r.score >= 40 %}border-ochre text-ochre bg-ochre/5
-                {% else %}border-ink/30 text-ink3{% endif %}">{{ r.score }}</span>
+              <span class="inline-flex items-center justify-center min-w-[2.75rem] px-2 py-1 rounded-md text-xs font-bold
+                {% if r.score >= 60 %}bg-accent3 text-accent2
+                {% elif r.score >= 40 %}bg-warn/10 text-warn
+                {% else %}bg-line2 text-ink3{% endif %}">{{ r.score }}%</span>
             </td>
             <td class="px-4 py-3 align-top">
-              <a class="ff-display text-base text-ink hover:text-oxblood transition line-clamp-2" style='font-variation-settings:"opsz" 144,"wght" 600' href="/subsidy/{{ r.subvencion.id }}">{{ r.subvencion.titulo }}</a>
+              <a class="text-sm font-medium text-ink hover:text-accent2 transition line-clamp-2" href="/subsidy/{{ r.subvencion.id }}">{{ r.subvencion.titulo }}</a>
               {% if r.match_reasons %}
-              <div class="text-xs text-ink2 mt-1 space-y-0.5">
+              <div class="text-xs text-ink3 mt-1 space-y-0.5">
                 {% for reason in r.match_reasons[:2] %}
-                <div class="flex items-start gap-1.5"><span class="ff-mono text-moss text-[10px] pt-1">✓</span><span class="line-clamp-1">{{ reason }}</span></div>
+                <div class="flex items-start gap-1">
+                  <svg class="w-3 h-3 text-success flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span class="line-clamp-1">{{ reason }}</span>
+                </div>
                 {% endfor %}
               </div>
               {% endif %}
@@ -365,13 +303,13 @@
             <td class="px-4 py-3 align-top hidden md:table-cell">
               {% if r.subvencion.finalidad %}
                 <div class="flex flex-wrap gap-1">
-                  {% for f in r.subvencion.finalidad[:3] %}<span class="press-sm border border-ink/30 text-ink2 px-1.5 py-0.5">{{ f }}</span>{% endfor %}
+                  {% for f in r.subvencion.finalidad[:3] %}<span class="pill text-[10px]">{{ f }}</span>{% endfor %}
                 </div>
-              {% else %}<span class="text-ink3">—</span>{% endif %}
+              {% else %}<span class="text-ink3 text-xs">—</span>{% endif %}
             </td>
-            <td class="px-4 py-3 text-ink2 align-top text-xs hidden lg:table-cell">{{ (r.subvencion.organismo or "—")|truncate(45, true, "…") }}</td>
+            <td class="px-4 py-3 text-ink3 align-top text-xs hidden lg:table-cell">{{ (r.subvencion.organismo or "—")|truncate(35, true, "…") }}</td>
             <td class="px-4 py-3 align-top">
-              <span class="ff-mono text-sm text-ink">{% if r.subvencion.fecha_fin %}{{ r.subvencion.fecha_fin.strftime("%d.%m.%Y") }}{% else %}—{% endif %}</span>
+              <span class="font-mono text-xs text-ink2">{% if r.subvencion.fecha_fin %}{{ r.subvencion.fecha_fin.strftime("%d.%m.%y") }}{% else %}—{% endif %}</span>
             </td>
           </tr>
           {% endfor %}
@@ -381,31 +319,32 @@
   </section>
   {% endif %}
 
-  {# ───── NO APLICABLES — colofón de transparencia ───── #}
+  {# ─── NO APLICABLES ─── #}
   {% if no_aplicables %}
-  <section class="mb-14">
-    <details class="border border-ink/40 group">
-      <summary class="cursor-pointer px-5 py-4 flex items-center justify-between hover:bg-paperdk/50 transition">
+  <section class="mb-12">
+    <details class="card overflow-hidden group">
+      <summary class="cursor-pointer px-5 py-4 flex items-center justify-between hover:bg-paperdk/60 transition list-none">
         <div class="flex items-baseline gap-3">
-          <span class="num-bloomberg text-3xl text-ink3">{{ no_aplicables|length }}</span>
-          <span class="ff-display text-lg text-ink" style='font-variation-settings:"opsz" 144,"wght" 500'>convocatorias descartadas, con motivo</span>
+          <span class="text-2xl font-bold text-ink3">{{ no_aplicables|length }}</span>
+          <span class="text-base font-medium text-ink">convocatorias descartadas, con motivo</span>
         </div>
-        <svg class="w-4 h-4 text-ink3 group-open:rotate-180 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        <svg class="w-4 h-4 text-ink3 group-open:rotate-180 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </summary>
-      <div class="border-t border-ink/20 max-h-[26rem] overflow-y-auto">
+      <div class="border-t border-line max-h-[26rem] overflow-y-auto">
         <table class="w-full text-xs">
           <tbody>
             {% for r in no_aplicables %}
-            <tr class="border-t border-ink/10">
+            <tr class="border-t border-line first:border-t-0">
               <td class="px-4 py-3 align-top">
-                <a class="ff-display text-sm hover:text-oxblood transition text-ink2 line-clamp-2" style='font-variation-settings:"opsz" 144,"wght" 500' href="/subsidy/{{ r.subvencion.id }}">{{ r.subvencion.titulo }}</a>
+                <a class="text-sm font-medium hover:text-accent2 transition text-ink2 line-clamp-2" href="/subsidy/{{ r.subvencion.id }}">{{ r.subvencion.titulo }}</a>
                 {% if r.exclusion_reasons %}
-                <div class="text-[11px] text-oxblood mt-1 flex items-start gap-1.5">
-                  <span class="ff-mono text-[10px] pt-0.5">✕</span><span>{{ r.exclusion_reasons[0] }}</span>
+                <div class="text-[11px] text-danger mt-1 flex items-start gap-1">
+                  <svg class="w-3 h-3 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round"/></svg>
+                  <span>{{ r.exclusion_reasons[0] }}</span>
                 </div>
                 {% endif %}
               </td>
-              <td class="px-4 py-3 align-top text-ink3 text-[11px] whitespace-nowrap">{{ (r.subvencion.organismo or "—")|truncate(35, true, "…") }}</td>
+              <td class="px-4 py-3 align-top text-ink3 text-[11px] whitespace-nowrap">{{ (r.subvencion.organismo or "—")|truncate(30, true, "…") }}</td>
             </tr>
             {% endfor %}
           </tbody>
@@ -415,47 +354,57 @@
   </section>
   {% endif %}
 
-  {# ───── Sin resultados ───── #}
+  {# ─── Sin resultados ─── #}
   {% if total == 0 %}
-  <div class="border border-ink p-10 text-center bg-paperdk/40">
-    <div class="press text-oxblood mb-3">Sin resultados hoy</div>
-    <p class="ff-display text-3xl md:text-4xl text-ink mb-3" style='font-variation-settings:"opsz" 144,"wght" 600'>
-      No hemos encontrado subvenciones abiertas <span class="ff-display-light text-oxblood">para tu perfil</span>.
+  <div class="card p-12 text-center">
+    <div class="eyebrow text-danger mb-3">Sin resultados</div>
+    <h2 class="display text-3xl md:text-4xl font-semibold text-ink mb-3">
+      No hemos encontrado subvenciones abiertas para tu perfil.
+    </h2>
+    <p class="text-ink2 max-w-xl mx-auto mb-6">
+      Las bases oficiales se actualizan diariamente. Vuelve más adelante o ajusta tu CNAE / provincia.
     </p>
-    <p class="text-sm text-ink2 max-w-xl mx-auto">
-      Las bases oficiales se actualizan a diario. Vuelve más adelante o ajusta tu CNAE/provincia para ampliar el radio de búsqueda.
-    </p>
+    <a href="/" class="btn-accent">Hacer otra búsqueda</a>
   </div>
   {% endif %}
 
-  {# ───── CTA suscripción — estilo "suscríbete al boletín" ───── #}
-  <section class="mt-16 border-t border-b border-ink bg-ink text-paper">
-    <div class="px-5 md:px-12 py-12 md:py-16 grid grid-cols-12 gap-6">
-      <div class="col-span-12 md:col-span-5">
-        <div class="press text-ochrelt mb-3">El boletín</div>
-        <h2 class="ff-display text-4xl md:text-5xl leading-[1] text-paper" style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 700'>
-          Recibe este informe <span class="ff-display-light text-ochrelt">en tu bandeja</span>.
-        </h2>
-      </div>
-      <div class="col-span-12 md:col-span-7">
-        <p class="text-paper/80 text-base leading-relaxed mb-5 max-w-md">
-          Te enviamos este informe en PDF y avisos cuando aparezca una nueva convocatoria afín a tu perfil. Sin spam. Baja en un clic.
+  {# ─── Suscripción alerta ─── #}
+  <section class="mt-12 card p-8 bg-gradient-to-br from-accent3 to-paperdk">
+    <div class="grid md:grid-cols-2 gap-6 items-center">
+      <div>
+        <div class="eyebrow mb-2">Alertas por email</div>
+        <h2 class="display text-2xl font-semibold text-ink mb-2">Recibe nuevas convocatorias afines</h2>
+        <p class="text-sm text-ink2">
+          Te enviamos un email cuando aparezca una subvención que encaje con tu perfil. Sin spam. Baja con un clic.
         </p>
-        <form hx-post="/api/subscribe" hx-target="#subscribe-result" hx-swap="innerHTML"
-              class="flex flex-col md:flex-row gap-3 max-w-xl">
-          <input type="email" name="email" required placeholder="tu@empresa.com"
-                 class="flex-1 bg-transparent border-b-2 border-paper text-paper placeholder:text-paper/40 px-1 py-2 focus:outline-none focus:border-ochrelt transition text-lg">
-          <input type="hidden" name="perfil_json" value='{{ perfil_json }}'>
-          <input type="hidden" name="nif" value="{{ nif }}">
-          <input type="hidden" name="razon_social" value="{{ razon_social or '' }}">
-          <button type="submit" class="bg-ochre text-ink border border-ochre hover:bg-ochrelt hover:border-ochrelt transition px-6 py-3 ff-display text-base" style='font-variation-settings:"opsz" 144,"wght" 700'>
-            Suscribirse →
-          </button>
-        </form>
-        <div id="subscribe-result" class="mt-3 text-sm text-paper/80"></div>
       </div>
+      <form hx-post="/api/subscribe"
+            hx-target="this"
+            hx-swap="outerHTML"
+            class="flex flex-col sm:flex-row gap-2">
+        <input type="hidden" name="razon_social" value="{{ razon_social }}">
+        <input type="hidden" name="nif" value="{{ nif or '' }}">
+        <input type="hidden" name="perfil_json" value="{{ perfil_json }}">
+        <input type="email" name="email" required placeholder="tu@empresa.com"
+               class="input flex-1">
+        <button type="submit" class="btn-accent whitespace-nowrap">
+          Suscribirse
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m0 0l-6-6m6 6l-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </form>
     </div>
   </section>
 
 </div>
+
+<style>
+  @media print {
+    .print-hide, header[class*='sticky'], footer { display: none !important; }
+    body { background: white; }
+    .card { box-shadow: none; border: 1px solid #ccc; }
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary { list-style: none; }
+</style>
+
 {% endblock %}

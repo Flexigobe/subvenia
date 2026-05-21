@@ -2,162 +2,136 @@
 {% block title %}Por qué es gratis · Radar Ayudas{% endblock %}
 {% block meta_description %}Radar Ayudas es gratis y sin registro. Sin anuncios, sin venta de datos, sin tarjeta. Cruzamos datos públicos para ahorrarte horas leyendo BOE/BDNS.{% endblock %}
 {% block og_title %}Radar Ayudas es gratis — y así seguirá{% endblock %}
+
 {% block content %}
 
-<div class="max-w-7xl mx-auto px-5 md:px-8 py-10 md:py-14">
+{# Hero #}
+<section class="hero-bg border-b border-line">
+  <div class="max-w-3xl mx-auto px-5 md:px-8 py-20 text-center">
+    <div class="eyebrow mb-4">Manifiesto</div>
+    <h1 class="display-tight text-5xl md:text-6xl font-semibold text-ink mb-6">
+      Es gratis. <span class="bg-gradient-to-r from-accent to-purple-600 bg-clip-text text-transparent">Y seguirá siéndolo.</span>
+    </h1>
+    <p class="text-lg text-ink2 leading-relaxed">
+      No hay planes de pago. No hay tarjeta. No hay registro.
+      Cruzamos datos públicos (BDNS, BORME, Comisión Europea) para decirte qué subvenciones puede pedir tu empresa.
+    </p>
+  </div>
+</section>
 
-  {# ───── Cabecera ───── #}
-  <header class="grid grid-cols-12 gap-6 mb-12">
-    <div class="col-span-12 md:col-span-3">
-      <div class="press text-oxblood">№ Manifiesto</div>
-      <div class="rule mt-1 mb-3"></div>
-      <div class="press-sm text-ink2">Por qué es gratis.</div>
-    </div>
-    <div class="col-span-12 md:col-span-9">
-      <h1 class="ff-display text-ink leading-[0.95] tracking-tight text-[44px] md:text-[68px] lg:text-[84px]"
-          style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 700'>
-        Es gratis. <span class="ff-display-light text-oxblood">Y seguirá siéndolo.</span>
-      </h1>
-      <div class="rule mt-6 mb-3"></div>
-      <p class="text-base md:text-lg text-ink2 leading-relaxed max-w-3xl">
-        Radar Ayudas no tiene planes de pago, ni tarjeta, ni registro. Cruza datos públicos
-        (BDNS, BORME, F&amp;T Portal de la Comisión Europea) para decirte qué subvenciones
-        puede pedir tu empresa, en 30 segundos. Sin coste.
+{# Por qué #}
+<section class="border-b border-line">
+  <div class="max-w-3xl mx-auto px-5 md:px-8 py-16">
+    <div class="eyebrow mb-3">Por qué</div>
+    <h2 class="display text-3xl md:text-4xl font-semibold text-ink mb-8">
+      Los datos ya son públicos. La gestión no debería ser cara.
+    </h2>
+    <div class="space-y-6 text-ink2 text-lg leading-relaxed">
+      <p>
+        BDNS, BORME y el portal Funding &amp; Tenders publican toda la información necesaria.
+        El problema no son los datos: es la herramienta para cruzarlos contra tu empresa.
+      </p>
+      <p>
+        Eso es lo que automatizamos, y no nos cuesta tanto como para cobrártelo.
+        La infraestructura tiene un coste modesto que asumimos como parte del proyecto.
+      </p>
+      <p>
+        <strong class="text-ink">Cero tracking. Cero venta de datos.</strong>
+        Si dejas un email para alertas, se usa para alertas. Punto. Te das de baja con un clic.
       </p>
     </div>
-  </header>
+  </div>
+</section>
 
-  {# ───── Manifesto ───── #}
-  <section class="mb-16 grid grid-cols-12 gap-6">
-    <div class="col-span-12 md:col-span-3">
-      <div class="press text-oxblood">Por qué</div>
-      <div class="rule mt-1 mb-3"></div>
-    </div>
-    <div class="col-span-12 md:col-span-9 space-y-6">
-      <article>
-        <h2 class="ff-display text-2xl md:text-3xl text-ink mb-2" style='font-variation-settings:"opsz" 144,"wght" 600'>
-          Los datos ya son públicos. La gestión, no debería ser cara.
-        </h2>
-        <p class="text-ink2 leading-relaxed">
-          BDNS, BORME y el portal Funding &amp; Tenders publican toda la información necesaria
-          para saber qué ayudas existen. El problema no son los datos: es la herramienta para
-          cruzarlos contra tu empresa. Eso es lo que automatizamos, y no nos cuesta tanto como
-          para cobrártelo.
-        </p>
-      </article>
-      <article>
-        <h2 class="ff-display text-2xl md:text-3xl text-ink mb-2" style='font-variation-settings:"opsz" 144,"wght" 600'>
-          Cero tracking. Cero venta de datos.
-        </h2>
-        <p class="text-ink2 leading-relaxed">
-          No usamos cookies de terceros. No vendemos emails. Si dejas un correo para alertas,
-          se usa para alertas, punto. Y te das de baja con un clic. El código está abierto,
-          los tests publicados.
-        </p>
-      </article>
-      <article>
-        <h2 class="ff-display text-2xl md:text-3xl text-ink mb-2" style='font-variation-settings:"opsz" 144,"wght" 600'>
-          ¿Cómo se sostiene esto?
-        </h2>
-        <p class="text-ink2 leading-relaxed">
-          La infraestructura tiene un coste modesto (servidor + base de datos) que asumimos
-          como parte del proyecto. Si alguna vez necesitamos cobrar algo, lo haremos por
-          consultoría B2B explícita (acompañamiento en solicitudes), nunca por el acceso a
-          la herramienta básica.
-        </p>
-      </article>
-    </div>
-  </section>
-
-  {# ───── Lo que sí y lo que no ───── #}
-  <section class="mb-16">
-    <div class="grid grid-cols-12 gap-6 mb-6">
-      <div class="col-span-12 md:col-span-3">
-        <div class="press text-oxblood">Trato</div>
-        <div class="rule mt-1 mb-3"></div>
-      </div>
-      <div class="col-span-12 md:col-span-9">
-        <h2 class="ff-display text-3xl md:text-4xl text-ink leading-tight" style='font-variation-settings:"opsz" 144,"wght" 600'>
-          Qué incluye, qué no.
-        </h2>
-      </div>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-ink border border-ink">
-      <article class="bg-paper p-7">
-        <div class="press text-moss mb-3">Sí</div>
-        <ul class="space-y-2 text-sm text-ink2">
-          <li class="flex items-start gap-2"><span class="ff-mono text-moss mt-0.5">✓</span><span>Búsqueda ilimitada en BDNS + UE + BORME.</span></li>
-          <li class="flex items-start gap-2"><span class="ff-mono text-moss mt-0.5">✓</span><span>Matching automático con tu CNAE, provincia y tamaño.</span></li>
-          <li class="flex items-start gap-2"><span class="ff-mono text-moss mt-0.5">✓</span><span>Filtros honestos: excluye las que no aplican.</span></li>
-          <li class="flex items-start gap-2"><span class="ff-mono text-moss mt-0.5">✓</span><span>Alertas por email opcionales — solo si las pides.</span></li>
-          <li class="flex items-start gap-2"><span class="ff-mono text-moss mt-0.5">✓</span><span>Sin registro, sin tarjeta, sin tracking.</span></li>
-          <li class="flex items-start gap-2"><span class="ff-mono text-moss mt-0.5">✓</span><span>Información actualizada diariamente desde fuentes oficiales.</span></li>
+{# Sí / No #}
+<section class="border-b border-line bg-paperdk">
+  <div class="max-w-5xl mx-auto px-5 md:px-8 py-16">
+    <div class="eyebrow mb-3 text-center">Trato</div>
+    <h2 class="display text-3xl md:text-4xl font-semibold text-ink mb-10 text-center">
+      Qué incluye y qué no.
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div class="card p-7">
+        <div class="flex items-center gap-2 mb-4">
+          <div class="w-8 h-8 rounded-full bg-success/15 flex items-center justify-center">
+            <svg class="w-4 h-4 text-success" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3 class="font-semibold text-ink">Sí incluye</h3>
+        </div>
+        <ul class="space-y-2.5 text-sm text-ink2">
+          <li class="flex items-start gap-2"><svg class="w-4 h-4 text-success flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Búsqueda ilimitada en BDNS + UE + BORME</li>
+          <li class="flex items-start gap-2"><svg class="w-4 h-4 text-success flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Matching automático con tu CNAE, provincia y tamaño</li>
+          <li class="flex items-start gap-2"><svg class="w-4 h-4 text-success flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Te explica por qué encaja y por qué no</li>
+          <li class="flex items-start gap-2"><svg class="w-4 h-4 text-success flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Alertas por email opcionales</li>
+          <li class="flex items-start gap-2"><svg class="w-4 h-4 text-success flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Datos actualizados diariamente</li>
+          <li class="flex items-start gap-2"><svg class="w-4 h-4 text-success flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Sin registro, sin tarjeta, sin tracking</li>
         </ul>
-      </article>
-      <article class="bg-paper p-7">
-        <div class="press text-oxblood mb-3">No</div>
-        <ul class="space-y-2 text-sm text-ink2">
-          <li class="flex items-start gap-2"><span class="ff-mono text-oxblood mt-0.5">×</span><span>No tramitamos solicitudes por ti.</span></li>
-          <li class="flex items-start gap-2"><span class="ff-mono text-oxblood mt-0.5">×</span><span>No sustituimos a una consultoría especializada.</span></li>
-          <li class="flex items-start gap-2"><span class="ff-mono text-oxblood mt-0.5">×</span><span>No garantizamos que te concedan la subvención.</span></li>
-          <li class="flex items-start gap-2"><span class="ff-mono text-oxblood mt-0.5">×</span><span>No vendemos tus datos. A nadie. Nunca.</span></li>
-          <li class="flex items-start gap-2"><span class="ff-mono text-oxblood mt-0.5">×</span><span>No mostramos anuncios.</span></li>
+      </div>
+      <div class="card p-7">
+        <div class="flex items-center gap-2 mb-4">
+          <div class="w-8 h-8 rounded-full bg-danger/15 flex items-center justify-center">
+            <svg class="w-4 h-4 text-danger" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round"/></svg>
+          </div>
+          <h3 class="font-semibold text-ink">No incluye</h3>
+        </div>
+        <ul class="space-y-2.5 text-sm text-ink2">
+          <li class="flex items-start gap-2"><svg class="w-4 h-4 text-danger flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round"/></svg> Tramitamos solicitudes por ti</li>
+          <li class="flex items-start gap-2"><svg class="w-4 h-4 text-danger flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round"/></svg> Sustituimos a una consultoría</li>
+          <li class="flex items-start gap-2"><svg class="w-4 h-4 text-danger flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round"/></svg> Garantizamos que te concedan la subvención</li>
+          <li class="flex items-start gap-2"><svg class="w-4 h-4 text-danger flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round"/></svg> Vendemos tus datos. A nadie. Nunca.</li>
+          <li class="flex items-start gap-2"><svg class="w-4 h-4 text-danger flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round"/></svg> Mostramos anuncios</li>
         </ul>
-      </article>
+      </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  {# ───── FAQ ───── #}
-  <section class="mb-16">
-    <div class="grid grid-cols-12 gap-6 mb-6">
-      <div class="col-span-12 md:col-span-3">
-        <div class="press text-oxblood">FAQ</div>
-        <div class="rule mt-1 mb-3"></div>
-      </div>
-      <div class="col-span-12 md:col-span-9">
-        <h2 class="ff-display text-3xl md:text-4xl text-ink leading-tight" style='font-variation-settings:"opsz" 144,"wght" 600'>
-          Preguntas frecuentes
-        </h2>
-      </div>
-    </div>
-    <div class="space-y-1">
+{# FAQ #}
+<section class="border-b border-line">
+  <div class="max-w-3xl mx-auto px-5 md:px-8 py-16">
+    <div class="eyebrow mb-3">Preguntas frecuentes</div>
+    <h2 class="display text-3xl md:text-4xl font-semibold text-ink mb-8">
+      Lo que la gente nos pregunta.
+    </h2>
+    <div class="space-y-2">
       {% set faqs = [
-        ("¿De verdad no cuesta nada?", "Sí, de verdad. Sin tarjeta, sin registro, sin trial que se convierte en plan de pago. Si algún día cambia, será un servicio aparte (consultoría) y nunca tocará el acceso básico a la herramienta."),
-        ("¿Cómo financiáis la infraestructura?", "Servidor y base de datos cuestan menos de 20€ al mes. Lo cubrimos como parte del proyecto. Si Radar Ayudas crece mucho y los costes suben, lo evaluaremos; mientras tanto, gratis."),
-        ("¿Datos personales y RGPD?", "Solo guardamos email si te suscribes a alertas. Nada más. Cumplimos RGPD; mira la política de privacidad para detalles."),
-        ("¿Por qué confiar en datos sin pagar?", "Las fuentes son oficiales: BDNS (Base de Datos Nacional de Subvenciones), BORME (Registro Mercantil), F&T Portal (Comisión Europea). Nosotros solo cruzamos; los datos no los inventamos."),
-        ("¿Puedo recibir alertas cuando salga una ayuda nueva?", "Sí. Deja tu email en el formulario de alertas. Te avisamos cuando aparece una subvención nueva que encaja con tu perfil. Te das de baja con un clic."),
-        ("¿Funciona para autónomos?", "Sí. Indica tu CNAE y provincia, te mostramos ayudas estatales, autonómicas y europeas aplicables."),
+        ("¿De verdad no cuesta nada?", "Sí, de verdad. Sin tarjeta, sin registro, sin trial que se convierte en plan de pago. Si algún día cambia, será un servicio aparte (consultoría) y nunca tocará el acceso básico."),
+        ("¿Cómo financiáis la infraestructura?", "Servidor y base de datos cuestan menos de 20€/mes. Lo cubrimos como parte del proyecto. Si Radar Ayudas crece mucho, lo evaluaremos. Mientras tanto, gratis."),
+        ("¿Datos personales y RGPD?", "Solo guardamos email si te suscribes a alertas. Nada más. Cumplimos RGPD; mira la política de privacidad."),
+        ("¿Por qué confiar en datos gratis?", "Las fuentes son oficiales: BDNS, BORME, F&T Portal de la Comisión Europea. Nosotros solo cruzamos."),
+        ("¿Puedo recibir alertas?", "Sí. Deja tu email después de la búsqueda. Te avisamos cuando aparezca una subvención afín. Baja con un clic."),
+        ("¿Funciona para autónomos?", "Sí. Indica tu CNAE y provincia, te mostramos ayudas estatales, autonómicas y europeas."),
       ] %}
       {% for q, a in faqs %}
-      <details class="border border-ink/30 group">
-        <summary class="cursor-pointer px-5 py-4 text-sm font-semibold text-ink flex items-center justify-between hover:bg-paperdk/40 transition">
-          <span class="ff-display" style='font-variation-settings:"opsz" 144,"wght" 600'>{{ q }}</span>
-          <svg class="w-4 h-4 text-ink3 group-open:rotate-180 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+      <details class="card group">
+        <summary class="cursor-pointer px-5 py-4 flex items-center justify-between hover:bg-paperdk/60 transition list-none">
+          <span class="font-medium text-ink">{{ q }}</span>
+          <svg class="w-4 h-4 text-ink3 group-open:rotate-180 transition flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </summary>
         <div class="px-5 pb-4 text-sm text-ink2 leading-relaxed">{{ a }}</div>
       </details>
       {% endfor %}
     </div>
-  </section>
+  </div>
+</section>
 
-  {# ───── CTA cierre ───── #}
-  <section class="bg-ink text-paper p-8 md:p-12 relative overflow-hidden grain">
-    <div class="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-oxblood/20 blur-3xl"></div>
-    <div class="relative grid grid-cols-12 gap-6 items-center">
-      <div class="col-span-12 md:col-span-8">
-        <div class="press text-ochrelt mb-3">¿Listo?</div>
-        <h2 class="ff-display text-3xl md:text-4xl text-paper leading-tight" style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 600'>
-          Empieza a buscar. Sin coste. Sin compromiso.
-        </h2>
-      </div>
-      <div class="col-span-12 md:col-span-4 md:text-right">
-        <a href="/" class="inline-flex items-center gap-2 bg-ochre text-ink border border-ochre hover:bg-ochrelt transition px-6 py-3 ff-display text-base" style='font-variation-settings:"opsz" 144,"wght" 700'>
-          Ir al buscador →
-        </a>
-      </div>
-    </div>
-  </section>
+{# CTA cierre #}
+<section class="bg-gradient-to-br from-accent to-purple-600 text-white">
+  <div class="max-w-3xl mx-auto px-5 md:px-8 py-16 text-center">
+    <h2 class="display text-3xl md:text-4xl font-semibold mb-3">
+      Empieza a buscar. Sin coste. Sin compromiso.
+    </h2>
+    <p class="opacity-90 mb-8 text-lg">30 segundos para descubrir qué ayudas puedes pedir hoy.</p>
+    <a href="/" class="inline-flex items-center gap-2 bg-white text-accent2 px-6 py-3 rounded-lg font-semibold hover:bg-paperdk transition shadow-elev">
+      Ir al buscador
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m0 0l-6-6m6 6l-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+</section>
 
-</div>
+<style>
+  summary::-webkit-details-marker { display: none; }
+  summary { list-style: none; }
+</style>
+
 {% endblock %}

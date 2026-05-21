@@ -285,4 +285,7 @@ def subsidy_detail(
             detail="Convocatoria cerrada. Solo mostramos convocatorias abiertas.",
         )
 
-    return templates.TemplateResponse(request, "subsidy_detail.html", {"sub": sub})
+    return templates.TemplateResponse(
+        request, "subsidy_detail.html",
+        {"sub": sub, "today": today},
+    )
