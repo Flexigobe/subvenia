@@ -237,7 +237,9 @@ _cache: dict[str, tuple[int, str | None, bool, int, str, float]] = {}
 _CACHE_TTL = 7 * 86400
 _BATCH_SIZE = 8       # Más candidatos por llamada (Paid Tier soporta prompts largos)
 _TIMEOUT_S = 45.0
-_MIN_CONFIDENCE = 80  # Umbral estricto — solo "aplicable" si el LLM tiene 80%+ confianza
+_MIN_CONFIDENCE = 90  # Umbral muy estricto — solo "aplicable" si el LLM tiene 90%+ confianza.
+                      # Política: cero falsos positivos. Preferimos descartar oportunidades
+                      # marginales antes que mostrar una subvención que la empresa NO pueda pedir.
 _MAX_PARALLEL_BATCHES = 40  # Paid Tier: 10.000 RPM, 40 concurrent margen amplio
 
 
