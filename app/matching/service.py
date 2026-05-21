@@ -517,10 +517,12 @@ def _post_llm_blacklist_match(sub) -> str | None:
 
 # ─── BLOQUE 1: Ferias ICEX sectoriales (la trampa más común) ───
 _FERIAS_ICEX = [
-    # Cuero, piel, calzado, marroquinería
-    (r"\b(lineapelle|momad|micam|mipel|peleter[ií]a\b|cuero\b|calzado\s+(feria|show)|leather\s+show|footwear\s+(show|fair)|aec\s+calzado)",
-     ["14", "15", "4641", "4642", "4772", "4669"],
-     "Feria cuero/calzado/marroquinería"),
+    # Cuero, piel, calzado, marroquinería.
+    # NOTA: BDNS contiene typos comunes — aceptamos LINEAPELLE / LINEAEPELLE
+    # / LINEA PELLE (con espacios o dobles vocales).
+    (r"\b(linea?[\s\-]?e?pelle|momad|micam|mipel|peleter[ií]a\b|cuero\b|calzado\s+(feria|show)|leather\s+show|footwear\s+(show|fair)|aec\s+calzado|fashion\s+&\s+jewels?|expo\s*toys|toys?\s+from\s+spain)",
+     ["14", "15", "4641", "4642", "4772", "4669", "32", "4647", "4665"],
+     "Feria cuero/calzado/joyería/juguete/marroquinería sectorial"),
     # Cosmética, perfumería
     (r"\b(beauty\s*world|cosmoprof|stanpa|cosm[eé]tica\s+feria|perfumer[íi]a\s+feria|in-?cosmetics)",
      ["20", "2042", "4645", "4775", "9602"],
@@ -713,7 +715,10 @@ async def rank_for(
         analyzed.append((c, a))
 
     settings = get_settings()
-    use_llm = bool(settings.gemini_api_key) and len(analyzed) > 0
+    # use_llm: activo si hay key Gemini O Anthropic (provider abstraído en scorer_llm)
+    use_llm = (
+        bool(settings.gemini_api_key) or bool(settings.anthropic_api_key)
+    ) and len(analyzed) > 0
 
     # Pre-split: las que pasan analyzer (no son becas/convenios/concesiones obvias)
     # vs las claramente descartadas. El analyzer regex es 99% fiable para casos obvios.
