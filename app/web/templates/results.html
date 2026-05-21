@@ -117,102 +117,116 @@
 
   <script>
     (function() {
-      var btns = document.querySelectorAll('.filter-btn');
-      var cards = document.querySelectorAll('[data-card-finalidades]');
-      var rows = document.querySelectorAll('[data-row-finalidades]');
-      var top3Section = document.getElementById('top3-section');
-      var restSection = document.getElementById('rest-section');
-      var noAplSection = document.getElementById('no-aplicables-section');
-      var emptyMsg = document.getElementById('filter-empty');
+      // Espera al DOM si script se ejecuta antes
+      function init() {
+        var btns = document.querySelectorAll('.filter-btn');
+        var cards = document.querySelectorAll('[data-card-finalidades]');
+        var rows = document.querySelectorAll('[data-row-finalidades]');
+        var top3Section = document.getElementById('top3-section');
+        var restSection = document.getElementById('rest-section');
+        var emptyMsg = document.getElementById('filter-empty');
 
-      function matchesFinalidad(el, fin) {
-        var attr = el.getAttribute('data-card-finalidades') ||
-                   el.getAttribute('data-row-finalidades') || '';
-        if (!attr) return false;
-        var list = attr.split(',').map(function(s){return s.trim();}).filter(Boolean);
-        return list.indexOf(fin) >= 0;
-      }
+        if (btns.length === 0) return; // No hay filtros, no hacer nada
 
-      function matchesUrgent(el) {
-        var d = parseInt(el.getAttribute('data-days-to-close') || '999', 10);
-        return d >= 0 && d <= 30;
-      }
-
-      // Estado actual del filtro
-      var currentFilter = 'all'; // 'all' | 'urgent' | 'finalidad'
-      var currentFinalidad = '';
-
-      function elementMatches(el) {
-        if (currentFilter === 'all') return true;
-        if (currentFilter === 'urgent') return matchesUrgent(el);
-        if (currentFilter === 'finalidad' && currentFinalidad) return matchesFinalidad(el, currentFinalidad);
-        return true;
-      }
-
-      function applyFilter() {
-        var top3Visible = 0, restVisible = 0;
-
-        // 1. Mostrar/ocultar cada card y row individualmente
-        cards.forEach(function(c) {
-          var show = elementMatches(c);
-          c.style.display = show ? '' : 'none';
-          if (show) top3Visible++;
-        });
-        rows.forEach(function(r) {
-          var show = elementMatches(r);
-          r.style.display = show ? '' : 'none';
-          if (show) restVisible++;
-        });
-
-        // 2. SIEMPRE re-evaluar visibility de secciones (no asumir estado previo)
-        if (top3Section) {
-          top3Section.style.display = (top3Visible > 0) ? '' : 'none';
-        }
-        if (restSection) {
-          restSection.style.display = (restVisible > 0) ? '' : 'none';
+        function matchesFinalidad(el, fin) {
+          var attr = el.getAttribute('data-card-finalidades') ||
+                     el.getAttribute('data-row-finalidades') || '';
+          if (!attr) return false;
+          var list = attr.split(',').map(function(s){return s.trim();}).filter(Boolean);
+          return list.indexOf(fin) >= 0;
         }
 
-        // 3. Mensaje vacío si ninguna card/row visible
-        var totalVisible = top3Visible + restVisible;
-        if (emptyMsg) {
-          if (totalVisible === 0) emptyMsg.classList.remove('hidden');
-          else emptyMsg.classList.add('hidden');
+        function matchesUrgent(el) {
+          var d = parseInt(el.getAttribute('data-days-to-close') || '-1', 10);
+          // urgent: cierra en 0-30 días (incluido). 999 = sin fecha de cierre.
+          // -1 = no se sabe. Solo válidas las que tienen fecha conocida en rango.
+          return d >= 0 && d <= 30 && d < 999;
         }
-      }
 
-      btns.forEach(function(btn) {
-        btn.addEventListener('click', function(e) {
-          e.preventDefault();
+        var currentFilter = 'all';
+        var currentFinalidad = '';
 
-          // 1. Reset visual de TODOS los botones
-          btns.forEach(function(b) {
-            b.classList.remove('bg-ink','text-paper','border-ink');
-            b.classList.add('border-ink/40','text-ink');
+        function elementMatches(el) {
+          if (currentFilter === 'all') return true;
+          if (currentFilter === 'urgent') return matchesUrgent(el);
+          if (currentFilter === 'finalidad' && currentFinalidad) return matchesFinalidad(el, currentFinalidad);
+          return true;
+        }
+
+        function applyFilter() {
+          var top3Visible = 0, restVisible = 0;
+
+          cards.forEach(function(c) {
+            var show = elementMatches(c);
+            // Display: 'flex' para cards top3 (son <a class="ed-card flex flex-col">),
+            // 'table-row' no aplica aquí porque las cards son <a>, no <tr>.
+            // Usar '' restablece al display original definido en CSS (flex en este caso).
+            c.style.display = show ? '' : 'none';
+            if (show) top3Visible++;
+          });
+          rows.forEach(function(r) {
+            var show = elementMatches(r);
+            // Rows SÍ son <tr> — display='' o 'table-row'.
+            r.style.display = show ? '' : 'none';
+            if (show) restVisible++;
           });
 
-          // 2. Marcar este botón como activo
-          btn.classList.remove('border-ink/40','text-ink');
-          btn.classList.add('bg-ink','text-paper','border-ink');
-
-          // 3. Determinar tipo de filtro
-          var dataFilter = btn.getAttribute('data-filter') || '';
-          var dataFinalidad = btn.getAttribute('data-finalidad') || '';
-
-          if (dataFinalidad) {
-            currentFilter = 'finalidad';
-            currentFinalidad = dataFinalidad;
-          } else if (dataFilter === 'urgent') {
-            currentFilter = 'urgent';
-            currentFinalidad = '';
-          } else {
-            currentFilter = 'all';
-            currentFinalidad = '';
+          // Secciones: visible solo si algo dentro está visible
+          if (top3Section) {
+            top3Section.style.display = (top3Visible > 0) ? '' : 'none';
+          }
+          if (restSection) {
+            restSection.style.display = (restVisible > 0) ? '' : 'none';
           }
 
-          // 4. Aplicar filtro (siempre desde cero, sin asumir estados previos)
-          applyFilter();
+          var totalVisible = top3Visible + restVisible;
+          if (emptyMsg) {
+            if (totalVisible === 0) emptyMsg.classList.remove('hidden');
+            else emptyMsg.classList.add('hidden');
+          }
+        }
+
+        btns.forEach(function(btn) {
+          btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            // Reset visual de todos los botones
+            btns.forEach(function(b) {
+              b.classList.remove('bg-ink','text-paper','border-ink');
+              b.classList.add('border-ink/40','text-ink');
+            });
+
+            btn.classList.remove('border-ink/40','text-ink');
+            btn.classList.add('bg-ink','text-paper','border-ink');
+
+            var dataFilter = btn.getAttribute('data-filter') || '';
+            var dataFinalidad = btn.getAttribute('data-finalidad') || '';
+
+            if (dataFinalidad) {
+              currentFilter = 'finalidad';
+              currentFinalidad = dataFinalidad;
+            } else if (dataFilter === 'urgent') {
+              currentFilter = 'urgent';
+              currentFinalidad = '';
+            } else {
+              currentFilter = 'all';
+              currentFinalidad = '';
+            }
+
+            applyFilter();
+          });
         });
-      });
+
+        // Estado inicial: "Todas" activo (todo visible)
+        applyFilter();
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
     })();
   </script>
   {% endif %}

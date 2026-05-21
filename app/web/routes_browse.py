@@ -56,10 +56,9 @@ _AMBITO_CHOICES = [
 ]
 
 _ESTADO_CHOICES = [
-    ("vigentes", "Vigentes (abiertas o por abrir)"),
+    ("vigentes", "Vigentes"),
     ("abierta", "Solo abiertas"),
-    ("cerrada", "Cerradas"),
-    ("todas", "Todas"),
+    ("proximamente", "Próximamente (aún no abren)"),
 ]
 
 _FINALIDAD_CHOICES = [
@@ -138,9 +137,13 @@ def browse(
         stmt = stmt.where(Subvencion.ambito == ambito)
 
     today = date.today()
-    # Mantener compat: estado="abierta"/"vigentes" son lo mismo ahora; "cerrada"
-    # se ignora porque las cerradas NO aparecen nunca por política.
-    # "proximamente" sigue siendo válido (abierta no ha empezado pero está cerca).
+    # Política zero cerradas: nunca aparecen, da igual qué pida el usuario.
+    # Filtros disponibles: vigentes (default), abierta, proximamente.
+    if estado == "abierta":
+        stmt = stmt.where(Subvencion.estado == "abierta")
+    elif estado == "proximamente":
+        stmt = stmt.where(Subvencion.estado == "proximamente")
+    # "vigentes" o default → ya pasaron por is_open_filter, no filtro extra
 
     if finalidad:
         # Usar overlap con el array de finalidad de la subvención

@@ -51,10 +51,8 @@ _CATEGORIA_CHOICES = [
 ]
 
 _ESTADO_CHOICES = [
-    ("vigentes", "Vigentes (abiertas o sin fecha)"),
+    ("vigentes", "Vigentes"),
     ("abierta", "Cerrarán pronto"),
-    ("cerrada", "Cerradas"),
-    ("todas", "Todas"),
 ]
 
 _ORDEN_CHOICES = [
@@ -108,20 +106,18 @@ def browse_licitaciones(
         stmt = stmt.where(Licitacion.provincia == provincia)
 
     today = date.today()
-    if estado == "vigentes":
-        stmt = stmt.where(
-            or_(Licitacion.fecha_limite.is_(None), Licitacion.fecha_limite >= today)
-        )
-    elif estado == "abierta":
+    # Política zero cerradas: nunca aparecen, da igual qué pida el usuario.
+    # Filtro base: solo vigentes (fecha_limite futura o NULL si no se sabe).
+    stmt = stmt.where(
+        or_(Licitacion.fecha_limite.is_(None), Licitacion.fecha_limite >= today)
+    )
+    if estado == "abierta":
         # Que cierren pronto (próximos 30 días)
         from datetime import timedelta
         stmt = stmt.where(
             Licitacion.fecha_limite >= today,
             Licitacion.fecha_limite <= today + timedelta(days=30),
         )
-    elif estado == "cerrada":
-        stmt = stmt.where(Licitacion.fecha_limite < today)
-    # "todas" → sin filtro
 
     # Categoría CPV: filtrar por prefijo (2 chars) en el array
     if categoria:
