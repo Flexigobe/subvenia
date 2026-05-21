@@ -235,10 +235,12 @@ explicaciones fuera del array. El JSON debe ser parseable directamente."""
 # (score, razon, applicable, confidence, requisitos_json, expires_unix)
 _cache: dict[str, tuple[int, str | None, bool, int, str, float]] = {}
 _CACHE_TTL = 7 * 86400
-_BATCH_SIZE = 8       # Más candidatos por llamada (Paid Tier soporta prompts largos)
-_TIMEOUT_S = 45.0
+_BATCH_SIZE = 8       # Candidatos por llamada (Paid Tier soporta prompts largos)
+_TIMEOUT_S = 20.0     # Reducido de 45→20s para evitar timeout HTTP de Render (60s).
+                      # Render Starter (0.5 CPU) tarda más en procesar; si LLM peta,
+                      # el fallback determinista del scorer entrega resultados igualmente.
 _MIN_CONFIDENCE = 80  # Umbral estricto — solo "aplicable" si el LLM tiene 80%+ confianza
-_MAX_PARALLEL_BATCHES = 40  # Paid Tier: 10.000 RPM, 40 concurrent margen amplio
+_MAX_PARALLEL_BATCHES = 20  # Reducido de 40 para no saturar a Gemini desde una sola request
 
 
 _PROVINCIA_CCAA: dict[str, str] = {

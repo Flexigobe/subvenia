@@ -168,7 +168,33 @@ async def search(
         finalidad=finalidad,
         tipo_solicitante=tipo_solic,
     )
-    ranked = await rank_for(db, perfil, limit=30)
+
+    # Si el matching peta o tarda demasiado, NO devolvemos 500. Caemos al
+    # filter determinista (sin LLM) que es rápido (~1-2s) y siempre da resultados.
+    import logging as _logging
+    _log = _logging.getLogger(__name__)
+    try:
+        ranked = await rank_for(db, perfil, limit=30)
+    except Exception as exc:
+        _log.exception("rank_for() failed in /search, falling back to filter-only: %s", exc)
+        # Fallback: usa solo el filter determinista (sin LLM) y crea RankedResult
+        # provisionales para no romper el template.
+        from app.matching.filter import find_candidates as _find
+        from app.matching.service import RankedResult as _Ranked
+        candidates = _find(db, perfil, limit=30)
+        ranked = [
+            _Ranked(
+                subvencion=c.subvencion,
+                score=c.score,
+                razon=None,
+                rank=idx,
+                applicable=True,
+                match_reasons=("Encaje preliminar (matching IA temporalmente no disponible)",),
+                exclusion_reasons=(),
+                urgency_days=-1,
+            )
+            for idx, c in enumerate(candidates)
+        ]
 
     # Persistir search_results
     for r in ranked:

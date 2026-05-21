@@ -348,6 +348,30 @@ _POST_LLM_BLACKLIST_PATTERNS = [
     (r"\b(asociaciones?\s+sin\s+[áa]nimo\s+de\s+lucro|asoc\.\s+sin\s+[áa]nimo)", "Asociaciones sin ánimo de lucro"),
     (r"\b(consejo\s+(de\s+)?hermandades|junta\s+de\s+cofrad[ií]as)", "Consejo hermandades / junta cofradías"),
     (r"\bproyectos?\s+de\s+(igualdad|inclusi[oó]n|integraci[oó]n)\s+social", "Proyectos sociales (entidades sociales)"),
+
+    # ════════════════════════════════════════════════════════════════════
+    # POLÍTICA CERO FALSOS POSITIVOS — Horizon Europe "open topic" calls
+    # de I+D fundamental que el LLM confunde con asociación de palabras.
+    # Estas convocatorias requieren capacidad de I+D innovador (universidades,
+    # startups deeptech, consorcios), NO son para PYMEs comerciales/industriales
+    # tradicionales aunque el "tema" suene parecido.
+    # ════════════════════════════════════════════════════════════════════
+
+    # Water Resilience / I+D agua europea (no aplica a fontaneros/distribuidores)
+    (r"\b(european\s+)?water\s+resilience\s+strategy", "EU Water Resilience Strategy: I+D hídrica para consorcios"),
+    (r"\binnovative\s+solutions?\s+for\s+(the\s+)?(european\s+)?water", "I+D hídrica EU (no para comercio fontanería)"),
+    (r"\bwater[\s\-](cycle|smart|industry)", "I+D hídrica EU"),
+
+    # Energy / climate I+D (no para empresas no energéticas)
+    (r"\b(climate\s+(adaptation|resilience|mitigation)\s+(strategy|research))", "I+D climática EU"),
+    (r"\b(net[\s\-]?zero|carbon[\s\-]?neutral)\s+(industry|cities|emissions?)\s+(research|innovation)", "I+D descarbonización"),
+
+    # Open topic / two-stage = típicamente I+D fundamental EU
+    (r"^open\s+topic[:\s]", "Open topic Horizon: I+D fundamental (consorcios/universidades)"),
+    (r"\btwo[\s\-]?stage\s+\(20\d{2}\)", "Convocatoria Horizon two-stage I+D"),
+
+    # Eurostars / EU PYME Innovadora: requieren capacidad I+D real
+    (r"\b(eurostars|asociaci[oó]n\s+europea\s+para\s+(las\s+)?pyme\s+innovador)", "Eurostars/EU PYME Innovadora: requiere proyecto I+D concreto"),
 ]
 
 
