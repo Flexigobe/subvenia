@@ -6,10 +6,10 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-# Run migrations as preDeployCommand so they don't block the healthcheck window.
-# Railway injects $PORT — uvicorn must bind to 0.0.0.0:$PORT.
-preDeployCommand = ["sh", "-c", "echo '[predeploy] DB_HOST='${PGHOST:-unset}; echo '[predeploy] testing DNS'; getent hosts ${PGHOST:-postgres.railway.internal} || echo 'DNS FAIL'; echo '[predeploy] alembic upgrade head'; alembic upgrade head"]
-startCommand = "echo '[start] uvicorn on port:' $PORT; exec python -u -m uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers"
+# Alembic se ejecuta en startCommand con timeout corto para no bloquear el healthcheck
+# si la DB no está accesible. Si alembic falla, uvicorn arranca igualmente y /healthz
+# responde 200 — las rutas que tocan DB fallarán hasta que se solucione el problema.
+startCommand = "set +e; echo '[start] env'; env | grep -E '^(DATABASE_URL|PGHOST|RAILWAY_PRIVATE_DOMAIN)' | sed 's/:.*@/:***@/'; echo '[start] alembic'; timeout 60 alembic upgrade head 2>&1; echo '[start] alembic_done'; echo '[start] uvicorn on port:' $PORT; exec python -u -m uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers"
 healthcheckPath = "/healthz"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
