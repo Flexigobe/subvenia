@@ -30,7 +30,7 @@
   </header>
 
   {# ───── Filtros ───── #}
-  <form method="get" action="/licitaciones" class="border border-ink p-5 md:p-6 mb-8 bg-paperdk/40 grid grid-cols-12 gap-4 items-end">
+  <form method="get" action="/licitaciones" class="border card p-6 mb-8 grid grid-cols-12 gap-4 items-end">
     <div class="col-span-12">
       <label for="q" class="eyebrow text-ink2 mb-2 block">Búsqueda libre</label>
       <input id="q" type="text" name="q" value="{{ q }}" placeholder="Título, organismo, descripción… ej: 'mantenimiento informático', 'obras hospital', 'limpieza edificios'"
@@ -66,7 +66,7 @@
       </select>
     </div>
     <div class="col-span-12 md:col-span-2">
-      <button type="submit" class="btn-accent w-full px-4 py-3 ff-display" style='font-weight: 600"opsz" 144,"wght" 600'>Filtrar</button>
+      <button type="submit" class="btn-accent w-full px-4 py-3" >Filtrar</button>
     </div>
     <div class="col-span-12">
       <label for="importe_min" class="eyebrow text-ink2 mb-2 block">Importe mínimo (€)</label>
@@ -78,22 +78,22 @@
 
   {# ───── Tabla ───── #}
   {% if items %}
-  <div class="border border-ink overflow-hidden mb-6">
+  <div class="card overflow-hidden mb-6">
     <table class="w-full text-sm">
       <thead class="bg-ink text-paper">
         <tr>
-          <th class="px-4 py-3 text-left press-sm">Licitación</th>
-          <th class="px-4 py-3 text-left press-sm hidden md:table-cell">Comprador</th>
-          <th class="px-4 py-3 text-left press-sm hidden lg:table-cell">Importe</th>
-          <th class="px-4 py-3 text-left press-sm hidden md:table-cell">Cierra</th>
-          <th class="px-4 py-3 text-left press-sm">Detalle</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-ink3 uppercase tracking-wider">Licitación</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-ink3 uppercase tracking-wider hidden md:table-cell">Comprador</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-ink3 uppercase tracking-wider hidden lg:table-cell">Importe</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-ink3 uppercase tracking-wider hidden md:table-cell">Cierra</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-ink3 uppercase tracking-wider">Detalle</th>
         </tr>
       </thead>
       <tbody>
         {% for lic in items %}
-        <tr class="border-t border-ink/15 hover:bg-paperdk/50 transition">
+        <tr class="border-t border-ink/60 hover:bg-paperdk transition">
           <td class="px-4 py-3">
-            <a href="{{ lic.enlace_oficial }}" target="_blank" rel="noopener" class="display font-semibold text-base text-ink hover:text-accent2 transition line-clamp-2" style='font-weight: 600"opsz" 144,"wght" 600'>
+            <a href="{{ lic.enlace_oficial }}" target="_blank" rel="noopener" class="display font-semibold text-base text-ink hover:text-accent2 transition line-clamp-2" >
               {{ lic.titulo or "—" }}
             </a>
             {% if lic.descripcion %}
@@ -115,7 +115,7 @@
             <span class="font-mono text-xs text-ink2">{% if lic.fecha_limite %}{{ lic.fecha_limite.strftime("%d.%m.%Y") }}{% else %}—{% endif %}</span>
           </td>
           <td class="px-4 py-3">
-            <a href="{{ lic.enlace_oficial }}" target="_blank" rel="noopener" class="text-xs text-accent2 ed-link inline-flex items-center gap-1.5">
+            <a href="{{ lic.enlace_oficial }}" target="_blank" rel="noopener" class="text-xs text-accent2 link inline-flex items-center gap-1.5">
               Abrir PDF
               <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
             </a>
@@ -126,9 +126,9 @@
     </table>
   </div>
   {% else %}
-  <div class="border border-ink p-10 text-center bg-paperdk/40 mb-6">
+  <div class="border card p-10 text-center mb-6">
     <div class="eyebrow mb-3">Sin coincidencias</div>
-    <p class="display font-semibold text-2xl md:text-3xl text-ink mb-2" style='font-weight: 600"opsz" 144,"wght" 600'>
+    <p class="display font-semibold text-2xl md:text-3xl text-ink mb-2" >
       No hay licitaciones que coincidan.
     </p>
     <p class="text-sm text-ink2">Prueba con otros términos o cambia el estado a "Todas".</p>
@@ -141,7 +141,7 @@
     <div>
       {% if page > 1 %}
       <a href="/licitaciones?q={{ q }}&provincia={{ provincia }}&estado={{ estado }}&categoria={{ categoria }}&importe_min={{ importe_min }}&orden={{ orden }}&page={{ page - 1 }}"
-         class="eyebrow text-ink2 ed-link inline-flex items-center gap-2">
+         class="eyebrow text-ink2 link inline-flex items-center gap-2">
         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
         Anterior
       </a>
@@ -153,7 +153,7 @@
     <div>
       {% if page < total_pages %}
       <a href="/licitaciones?q={{ q }}&provincia={{ provincia }}&estado={{ estado }}&categoria={{ categoria }}&importe_min={{ importe_min }}&orden={{ orden }}&page={{ page + 1 }}"
-         class="eyebrow text-ink2 ed-link inline-flex items-center gap-2">
+         class="eyebrow text-ink2 link inline-flex items-center gap-2">
         Siguiente
         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
       </a>
