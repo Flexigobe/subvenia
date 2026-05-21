@@ -33,7 +33,10 @@ from app.db.session import SessionLocal, get_db
 from app.sync.bdns_enricher import enrich_existing
 from app.sync.bdns_puller import sync_all as bdns_sync_all
 from app.sync.catalogs import sync_catalogs
+from app.sync.empresite_sitemap import sync_empresite_sitemap
 from app.sync.eu_puller import sync_all as eu_sync_all
+from app.sync.ted_puller import sync_recent as ted_sync_recent
+from app.sync.wikidata_puller import sync_wikidata
 
 _log = logging.getLogger(__name__)
 
@@ -384,10 +387,71 @@ async def _run_bdns() -> None:
     _log.info("admin force-sync bdns done: %s", result)
 
 
+async def _run_bdns_full() -> None:
+    """Full backfill: 3 años de BDNS (todas las convocatorias)."""
+    from datetime import date, timedelta
+    with SessionLocal() as session:
+        result = await bdns_sync_all(session, since=date.today() - timedelta(days=365 * 3))
+    _log.info("admin force-sync bdns_full done: %s", result)
+
+
 async def _run_eu() -> None:
     with SessionLocal() as session:
         result = await eu_sync_all(session, max_pages=10)
     _log.info("admin force-sync eu done: %s", result)
+
+
+async def _run_eu_full() -> None:
+    """Full pull: hasta 30 páginas × ~60 queries (teórico 90k topics EU)."""
+    with SessionLocal() as session:
+        result = await eu_sync_all(session, max_pages=30, min_useful=60)
+    _log.info("admin force-sync eu_full done: %s", result)
+
+
+async def _run_ted() -> None:
+    with SessionLocal() as session:
+        result = await ted_sync_recent(session, days=14, max_pages=20)
+    _log.info("admin force-sync ted done: %s", result)
+
+
+async def _run_ted_full() -> None:
+    """TED backfill: 90 días con muchas páginas."""
+    with SessionLocal() as session:
+        result = await ted_sync_recent(session, days=90, max_pages=100)
+    _log.info("admin force-sync ted_full done: %s", result)
+
+
+async def _run_wikidata() -> None:
+    with SessionLocal() as session:
+        result = await sync_wikidata(session)
+    _log.info("admin force-sync wikidata done: %s", result)
+
+
+async def _run_empresite() -> None:
+    """PESADO: 4M+ empresas españolas del sitemap de Empresite."""
+    with SessionLocal() as session:
+        result = await sync_empresite_sitemap(session)
+    _log.info("admin force-sync empresite done: %s", result)
+
+
+async def _run_borme_backfill() -> None:
+    """BORME últimos 30 días para llenar el catálogo de empresas activas."""
+    from datetime import date as _date, timedelta as _td
+
+    from app.sync.borme_ingester import sync_day as _borme_sync_day
+    today = _date.today()
+    aggregated: dict[str, int] = {}
+    for offset in range(0, 30):
+        target = today - _td(days=offset)
+        with SessionLocal() as session:
+            try:
+                stats = await _borme_sync_day(session, target)
+                for k, v in stats.items():
+                    if isinstance(v, (int, float)):
+                        aggregated[k] = aggregated.get(k, 0) + v
+            except Exception as exc:
+                _log.warning("borme_backfill %s failed: %s", target, exc)
+    _log.info("admin force-sync borme_backfill done: %s", aggregated)
 
 
 async def _run_enricher() -> None:
@@ -419,11 +483,18 @@ async def _run_borme() -> None:
 
 _JOB_CALLABLES = {
     "bdns": _run_bdns,
+    "bdns_full": _run_bdns_full,
     "eu": _run_eu,
+    "eu_full": _run_eu_full,
+    "ted": _run_ted,
+    "ted_full": _run_ted_full,
+    "wikidata": _run_wikidata,
+    "empresite": _run_empresite,
+    "borme": _run_borme,
+    "borme_backfill": _run_borme_backfill,
     "enricher": _run_enricher,
     "catalogs": _run_catalogs,
     "alerts": _run_alerts,
-    "borme": _run_borme,
 }
 
 
