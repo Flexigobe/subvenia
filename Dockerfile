@@ -31,6 +31,7 @@ RUN pip install --upgrade pip && \
       "apscheduler>=3.10.4" \
       "python-multipart>=0.0.12" \
       "google-generativeai>=0.8.3" \
+      "anthropic>=0.39.0" \
       "weasyprint>=63.0" \
       "pypdf>=4.0"
 

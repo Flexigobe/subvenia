@@ -368,10 +368,48 @@ def _build_item_context(idx: int, c: Candidate) -> str:
     return "\n".join(lines)
 
 
+async def _call_llm(model, prompt: str) -> str:
+    """Wrapper unificado para llamar al LLM (Gemini o Anthropic Claude).
+    Devuelve el texto de la respuesta. Detecta el provider por el tipo del objeto.
+    """
+    # Anthropic Claude: el "model" es un dict {client, model_name}
+    if isinstance(model, dict) and "anthropic_client" in model:
+        client = model["anthropic_client"]
+        model_name = model["model_name"]
+        resp = await asyncio.wait_for(
+            asyncio.to_thread(
+                client.messages.create,
+                model=model_name,
+                max_tokens=4096,
+                temperature=0.05,
+                messages=[{"role": "user", "content": prompt}],
+            ),
+            timeout=_TIMEOUT_S,
+        )
+        # Anthropic devuelve content como lista de bloques de texto
+        return resp.content[0].text if resp.content else ""
+
+    # Gemini (objeto GenerativeModel): conserva comportamiento original
+    generation_config = {
+        "temperature": 0.05,
+        "response_mime_type": "application/json",
+    }
+    resp = await asyncio.wait_for(
+        asyncio.to_thread(
+            model.generate_content,
+            prompt,
+            generation_config=generation_config,
+        ),
+        timeout=_TIMEOUT_S,
+    )
+    return resp.text or ""
+
+
 async def _score_one_batch(
     model, perfil: EmpresaProfile, batch: list[tuple[int, Candidate]]
 ) -> dict[int, tuple[int, str | None, bool, int, str]]:
-    """Llamada Gemini para un batch. Devuelve dict idx → (score, razon, applicable, confidence, requisitos_json)."""
+    """Llamada LLM (Gemini o Anthropic) para un batch.
+    Devuelve dict idx → (score, razon, applicable, confidence, requisitos_json)."""
     items_text = "\n\n".join(_build_item_context(local_i, c) for local_i, (_, c) in enumerate(batch))
     cnae_desc = _cnae_description(perfil.cnae)
     prompt = _PROMPT_TEMPLATE.format(
@@ -383,19 +421,8 @@ async def _score_one_batch(
         items=items_text,
     )
     try:
-        generation_config = {
-            "temperature": 0.05,  # casi determinista
-            "response_mime_type": "application/json",
-        }
-        resp = await asyncio.wait_for(
-            asyncio.to_thread(
-                model.generate_content,
-                prompt,
-                generation_config=generation_config,
-            ),
-            timeout=_TIMEOUT_S,
-        )
-        text = _strip_markdown_fences(resp.text or "")
+        text_raw = await _call_llm(model, prompt)
+        text = _strip_markdown_fences(text_raw)
         parsed = json.loads(text)
         if not isinstance(parsed, list):
             raise ValueError(f"Expected JSON array, got {type(parsed).__name__}")
@@ -429,28 +456,52 @@ async def _score_one_batch(
 async def score_batch(
     perfil: EmpresaProfile, candidates: list[Candidate]
 ) -> list[tuple[int, str | None, bool, int, list[str]]]:
-    """Pipeline en 2 capas:
+    """Pipeline LLM scoring.
 
-    Capa 1 — Gemini 2.5 FLASH analiza todos los candidatos (rápido, ~3s/batch).
-    Capa 2 — Gemini 2.5 PRO re-analiza los candidatos AMBIGUOS (confidence 50-79)
-             del Flash. Pro es más capaz y resuelve dudas. Solo se invoca para
-             ~10-20% de candidatos típicamente. Coste extra ~5x pero precisión 2x.
-
-    Si GEMINI_API_KEY no está → modo offline (score determinista, conf=0).
+    Provider auto-detectado:
+    - Anthropic Claude (si ANTHROPIC_API_KEY): preferido por precio/calidad.
+    - Gemini (si GEMINI_API_KEY): alternativa.
+    - Sin keys → modo offline (score determinista, conf=0).
     """
     settings = get_settings()
-    if not settings.gemini_api_key:
-        return [(c.score, None, True, 0, []) for c in candidates]
 
-    try:
-        import google.generativeai as genai
-        genai.configure(api_key=settings.gemini_api_key)
-        flash_model = genai.GenerativeModel(settings.gemini_model)
-        # Pro fallback model — más caro pero mucho más capaz para casos límite
-        pro_model = genai.GenerativeModel("gemini-2.5-pro")
-    except Exception as exc:
-        logger.warning("Failed to init Gemini (%s); fallback determinista", exc)
+    # Decidir provider
+    provider = settings.llm_provider
+    if provider == "auto":
+        if settings.anthropic_api_key:
+            provider = "anthropic"
+        elif settings.gemini_api_key:
+            provider = "gemini"
+        else:
+            return [(c.score, None, True, 0, []) for c in candidates]
+
+    if provider == "anthropic":
+        if not settings.anthropic_api_key:
+            return [(c.score, None, True, 0, []) for c in candidates]
+        try:
+            from anthropic import Anthropic
+            client = Anthropic(api_key=settings.anthropic_api_key)
+            flash_model = {
+                "anthropic_client": client,
+                "model_name": settings.anthropic_model,
+            }
+            # Para Claude no usamos pro fallback (Haiku ya es suficiente y mantiene coste bajo)
+            pro_model = flash_model
+        except Exception as exc:
+            logger.warning("Failed to init Anthropic (%s); fallback determinista", exc)
+            return [(c.score, None, True, 0, []) for c in candidates]
+    elif not settings.gemini_api_key:
         return [(c.score, None, True, 0, []) for c in candidates]
+    else:
+        try:
+            import google.generativeai as genai
+            genai.configure(api_key=settings.gemini_api_key)
+            flash_model = genai.GenerativeModel(settings.gemini_model)
+            # Pro fallback model — más caro pero mucho más capaz para casos límite
+            pro_model = genai.GenerativeModel("gemini-2.5-pro")
+        except Exception as exc:
+            logger.warning("Failed to init Gemini (%s); fallback determinista", exc)
+            return [(c.score, None, True, 0, []) for c in candidates]
     model = flash_model  # capa 1 default
 
     ph = _perfil_hash(perfil)

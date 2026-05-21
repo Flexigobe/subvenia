@@ -45,9 +45,16 @@ class Settings(BaseSettings):
     # Matching
     matching_candidate_limit: int = 30
 
+    # LLM scoring provider — "gemini" o "anthropic" (default: anthropic si hay key)
+    llm_provider: str = "auto"  # auto: anthropic si hay key, sino gemini
+
     # Gemini LLM scoring
     gemini_api_key: str = ""
-    gemini_model: str = "gemini-2.0-flash"  # 1500 RPD free tier vs 250 RPD on 2.5-flash
+    gemini_model: str = "gemini-2.5-flash"
+
+    # Anthropic Claude LLM scoring (alternativa a Gemini)
+    anthropic_api_key: str = ""
+    anthropic_model: str = "claude-haiku-4-5-20251001"  # Haiku 4.5: rápido y barato
 
     # Brevo (transactional email)
     brevo_api_key: str = ""
