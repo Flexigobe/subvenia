@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import uuid
+from datetime import date as _date
 from pathlib import Path
 from typing import Annotated
 from uuid import UUID
