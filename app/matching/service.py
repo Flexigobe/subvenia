@@ -681,16 +681,41 @@ async def rank_for(
                     exclusion_reasons = list(a.exclusion_reasons) or exclusion_reasons
                 match_reasons = []
 
+            # POLÍTICA CERO FALSOS POSITIVOS cuando el LLM falla:
+            # Si llm_confidence=0 (timeout, error, no procesado), NO confiamos en
+            # el analyzer regex sin más. Solo dejamos applicable=True si:
+            #   1. El analyzer YA detectó match positivo (a.applicable=True), Y
+            #   2. La subvención tiene el CNAE de la empresa explícito en cnae_elegible.
+            # Si no se cumple ambas, marcamos como descartada con motivo.
+            # Esto evita mostrar subvenciones EU genéricas (Horizon, defensa, biocidas)
+            # como aplicables a una empresa comercial cualquiera cuando el LLM falla.
+            if llm_confidence == 0 and a.applicable:
+                from app.matching.filter import cnae_match_variants as _cnae_var
+                user_variants = set(_cnae_var(perfil.cnae))
+                sub_cnaes = set(c.subvencion.cnae_elegible or [])
+                has_explicit_cnae = bool(sub_cnaes & user_variants)
+                if not has_explicit_cnae:
+                    llm_applicable_safe = False
+                    fallback_exclusion = (
+                        "Análisis IA no concluyente; CNAE no listado explícitamente"
+                    )
+                    exclusion_reasons = [fallback_exclusion] + list(exclusion_reasons)
+                    match_reasons = []
+                else:
+                    llm_applicable_safe = a.applicable
+            else:
+                llm_applicable_safe = llm_applicable
+
             # Mostrar score real: en modo LLM, el score llm_score sustituye al determinista
             # excepto cuando el LLM falló (confidence=0).
-            final_score = llm_score if llm_confidence > 0 else (c.score if a.applicable else max(0, c.score - 60))
+            final_score = llm_score if llm_confidence > 0 else (c.score if llm_applicable_safe else max(0, c.score - 60))
 
             final_results.append(RankedResult(
                 subvencion=c.subvencion,
                 score=final_score,
                 razon=razon,
                 rank=0,
-                applicable=llm_applicable if llm_confidence > 0 else a.applicable,
+                applicable=llm_applicable_safe if llm_confidence == 0 else (llm_applicable if llm_confidence > 0 else a.applicable),
                 match_reasons=tuple(match_reasons[:8]),
                 exclusion_reasons=tuple(exclusion_reasons[:6]),
                 urgency_days=a.urgency_days,
