@@ -363,6 +363,18 @@ def parse_item(raw: dict[str, Any]) -> dict[str, Any] | None:
     status_code = _first(md.get("status"), "31094503")
     estado = _STATUS_MAP.get(str(status_code), "cerrada")
 
+    # SANITY CHECK: si el external_id apunta a un topic de año < año actual - 1
+    # (típicamente cascade funding o ad-hoc cuyo topic padre está cerrado),
+    # marcamos como 'cerrada' aunque el API diga 'abierta'. El portal real
+    # mostrará la página del topic padre como cerrada y confunde al usuario.
+    if external_id and estado == "abierta":
+        m = re.search(r"-(20\d{2})-", external_id)
+        if m:
+            topic_year = int(m.group(1))
+            current_year = date_t.today().year
+            if topic_year < current_year - 1:
+                estado = "cerrada"
+
     # ── Descripción rica: descriptionByte (HTML largo) → texto plano ──
     description_html = _first(md.get("descriptionByte"))
     description = _strip_html(description_html) if description_html else None
