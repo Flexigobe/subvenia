@@ -8,16 +8,16 @@
   {# ───── Portadilla ───── #}
   <header class="grid grid-cols-12 gap-6 mb-12">
     <div class="col-span-12 md:col-span-3">
-      <div class="press text-oxblood">№ Método</div>
-      <div class="rule mt-1 mb-3"></div>
-      <div class="press-sm text-ink2">El recorrido completo, paso a paso.</div>
+      <div class="eyebrow">№ Método</div>
+      <div class="border-t border-line mt-1 mb-3"></div>
+      <div class="text-xs text-ink2">El recorrido completo, paso a paso.</div>
     </div>
     <div class="col-span-12 md:col-span-9">
-      <h1 class="ff-display text-ink leading-[0.93] tracking-tight text-[48px] md:text-[78px] lg:text-[96px]"
-          style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 700'>
-        Así <span class="ff-display-light text-oxblood">funciona</span>.
+      <h1 class="display font-semibold text-ink leading-[0.93] tracking-tight text-[48px] md:text-[78px] lg:text-[96px]"
+          style='font-weight: 600"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 700'>
+        Así <span class="display font-semibold-light text-accent2">funciona</span>.
       </h1>
-      <div class="rule mt-6 mb-3"></div>
+      <div class="border-t border-line mt-6 mb-3"></div>
       <p class="text-base md:text-lg text-ink2 leading-relaxed max-w-3xl">
         De un click en "Buscar" hasta tu informe, en cinco pasos. Sin caja negra, sin promesas comerciales.
       </p>
@@ -41,13 +41,13 @@
     {% for num, title, body in steps %}
     <li class="bg-paper p-7 md:p-10 grid grid-cols-12 gap-6 md:gap-8 items-start">
       <div class="col-span-12 md:col-span-2">
-        <div class="num-bloomberg text-[64px] md:text-[88px] leading-[0.85] text-oxblood">{{ num }}</div>
+        <div class="font-bold text-[64px] md:text-[88px] leading-[0.85] text-accent2">{{ num }}</div>
       </div>
       <div class="col-span-12 md:col-span-10">
-        <h2 class="ff-display text-2xl md:text-3xl lg:text-4xl leading-[1.05] text-ink mb-3" style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 600'>
+        <h2 class="display font-semibold text-2xl md:text-3xl lg:text-4xl leading-[1.05] text-ink mb-3" style='font-weight: 600"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 600'>
           {{ title }}
         </h2>
-        <div class="rule-thin mb-3"></div>
+        <div class="border-t border-line2 mb-3"></div>
         <p class="text-base text-ink2 leading-relaxed max-w-3xl">{{ body|safe }}</p>
       </div>
     </li>
@@ -58,10 +58,10 @@
   <section class="border-t border-b border-ink py-12 mb-16">
     <div class="grid grid-cols-12 gap-6 md:gap-10">
       <div class="col-span-12 md:col-span-4">
-        <div class="press text-oxblood mb-2">Qué NO hacemos</div>
-        <div class="rule mb-4"></div>
-        <h2 class="ff-display text-4xl md:text-5xl leading-[1.02] text-ink" style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 600'>
-          Honestidad <span class="ff-display-light text-oxblood">explícita</span>.
+        <div class="eyebrow mb-2">Qué NO hacemos</div>
+        <div class="border-t border-line mb-4"></div>
+        <h2 class="display font-semibold text-4xl md:text-5xl leading-[1.02] text-ink" style='font-weight: 600"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 600'>
+          Honestidad <span class="display font-semibold-light text-accent2">explícita</span>.
         </h2>
       </div>
       <div class="col-span-12 md:col-span-8">
@@ -74,9 +74,9 @@
           ] %}
           {% for title, body in noes %}
           <li class="flex items-start gap-4 pb-5 border-b border-ink/15 last:border-0">
-            <span class="ff-mono text-oxblood text-xs pt-1.5 shrink-0">{{ "%02d"|format(loop.index) }}—</span>
+            <span class="font-mono text-accent2 text-xs pt-1.5 shrink-0">{{ "%02d"|format(loop.index) }}—</span>
             <div>
-              <div class="ff-display text-xl text-ink mb-1" style='font-variation-settings:"opsz" 144,"wght" 600'>{{ title }}</div>
+              <div class="display font-semibold text-xl text-ink mb-1" style='font-weight: 600"opsz" 144,"wght" 600'>{{ title }}</div>
               <div class="text-sm text-ink2 leading-relaxed">{{ body }}</div>
             </div>
           </li>
@@ -88,16 +88,16 @@
 
   {# ───── Stack técnico ───── #}
   <section class="bg-ink text-paper p-8 md:p-12 mb-12 relative overflow-hidden grain">
-    <div class="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-oxblood/30 blur-3xl"></div>
-    <div class="absolute -bottom-20 -left-20 w-96 h-96 rounded-full bg-ochre/20 blur-3xl"></div>
+    <div class="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-accent/30 blur-3xl"></div>
+    <div class="absolute -bottom-20 -left-20 w-96 h-96 rounded-full bg-warn/20 blur-3xl"></div>
     <div class="relative grid grid-cols-12 gap-6">
       <div class="col-span-12 md:col-span-3">
-        <div class="press text-ochrelt">Stack</div>
-        <div class="rule mt-1 mb-4 bg-paper"></div>
-        <div class="press-sm text-paper/70">Para los curiosos</div>
+        <div class="press text-warnlt">Stack</div>
+        <div class="border-t border-line mt-1 mb-4 bg-paper"></div>
+        <div class="text-xs text-paper/70">Para los curiosos</div>
       </div>
       <div class="col-span-12 md:col-span-9">
-        <h2 class="ff-display text-3xl md:text-4xl text-paper mb-4" style='font-variation-settings:"opsz" 144,"wght" 600'>
+        <h2 class="display font-semibold text-3xl md:text-4xl text-paper mb-4" style='font-weight: 600"opsz" 144,"wght" 600'>
           Código abierto. Tests publicados.
         </h2>
         <p class="text-base text-paper/80 leading-relaxed max-w-3xl">
@@ -111,8 +111,8 @@
 
   {# ───── CTA cierre ───── #}
   <div class="text-center pt-6">
-    <a href="/" class="btn-sello inline-flex items-center gap-3 px-8 py-4">
-      <span class="ff-display text-lg" style='font-variation-settings:"opsz" 144,"wght" 600'>Probar Radar Ayudas ahora</span>
+    <a href="/" class="btn-accent inline-flex items-center gap-3 px-8 py-4">
+      <span class="display font-semibold text-lg" style='font-weight: 600"opsz" 144,"wght" 600'>Probar Radar Ayudas ahora</span>
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m0 0l-6-6m6 6l-6 6"/></svg>
     </a>
   </div>

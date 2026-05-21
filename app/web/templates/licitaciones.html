@@ -7,24 +7,24 @@
   {# ───── Portadilla ───── #}
   <header class="grid grid-cols-12 gap-6 mb-10">
     <div class="col-span-12 md:col-span-3">
-      <div class="press text-oxblood">№ Licitaciones</div>
-      <div class="rule mt-1 mb-3"></div>
-      <div class="press-sm text-ink2">Contratos del sector público · Fuente TED (DOUE)</div>
+      <div class="eyebrow">№ Licitaciones</div>
+      <div class="border-t border-line mt-1 mb-3"></div>
+      <div class="text-xs text-ink2">Contratos del sector público · Fuente TED (DOUE)</div>
     </div>
     <div class="col-span-12 md:col-span-9">
-      <h1 class="ff-display text-ink leading-[0.95] tracking-tight text-[44px] md:text-[68px] lg:text-[84px]"
-          style='font-variation-settings:"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 700'>
-        Licitaciones<br><span class="ff-display-light text-oxblood">públicas</span>
+      <h1 class="display font-semibold text-ink leading-[0.95] tracking-tight text-[44px] md:text-[68px] lg:text-[84px]"
+          style='font-weight: 600"opsz" 144,"SOFT" 30,"WONK" 1,"wght" 700'>
+        Licitaciones<br><span class="display font-semibold-light text-accent2">públicas</span>
       </h1>
-      <div class="rule mt-6 mb-3"></div>
+      <div class="border-t border-line mt-6 mb-3"></div>
       <div class="flex items-baseline gap-4">
-        <span class="num-bloomberg text-4xl text-ink">{{ "{:,}".format(total_count) }}</span>
-        <span class="press-sm text-ink2">contratos públicos · vender al Estado y la UE</span>
+        <span class="font-bold text-4xl text-ink">{{ "{:,}".format(total_count) }}</span>
+        <span class="text-xs text-ink2">contratos públicos · vender al Estado y la UE</span>
       </div>
       <p class="text-sm text-ink2 mt-4 max-w-2xl leading-relaxed">
         Las licitaciones son <strong>oportunidades para que tu empresa venda servicios, obras o suministros</strong> al sector público.
         No son subvenciones — son contratos que paga la Administración. Datos oficiales del
-        <a href="https://ted.europa.eu" target="_blank" rel="noopener" class="text-oxblood underline">Diario Oficial de la UE (TED)</a>.
+        <a href="https://ted.europa.eu" target="_blank" rel="noopener" class="text-accent2 underline">Diario Oficial de la UE (TED)</a>.
       </p>
     </div>
   </header>
@@ -32,47 +32,47 @@
   {# ───── Filtros ───── #}
   <form method="get" action="/licitaciones" class="border border-ink p-5 md:p-6 mb-8 bg-paperdk/40 grid grid-cols-12 gap-4 items-end">
     <div class="col-span-12">
-      <label for="q" class="press text-ink mb-2 block">Búsqueda libre</label>
+      <label for="q" class="eyebrow text-ink2 mb-2 block">Búsqueda libre</label>
       <input id="q" type="text" name="q" value="{{ q }}" placeholder="Título, organismo, descripción… ej: 'mantenimiento informático', 'obras hospital', 'limpieza edificios'"
-             class="ed-input-box w-full text-base">
+             class="input w-full text-base">
     </div>
     <div class="col-span-6 md:col-span-3">
-      <label for="categoria" class="press text-ink mb-2 block">Categoría (CPV)</label>
-      <select id="categoria" name="categoria" class="ed-input-box w-full">
+      <label for="categoria" class="eyebrow text-ink2 mb-2 block">Categoría (CPV)</label>
+      <select id="categoria" name="categoria" class="input w-full">
         {% for value, label in categoria_choices %}
         <option value="{{ value }}" {% if categoria == value %}selected{% endif %}>{{ label }}</option>
         {% endfor %}
       </select>
     </div>
     <div class="col-span-6 md:col-span-2">
-      <label for="provincia" class="press text-ink mb-2 block">Provincia</label>
+      <label for="provincia" class="eyebrow text-ink2 mb-2 block">Provincia</label>
       <input id="provincia" type="text" name="provincia" value="{{ provincia }}" placeholder="08, 28…" maxlength="2"
-             class="ed-input-box w-full">
+             class="input w-full">
     </div>
     <div class="col-span-6 md:col-span-3">
-      <label for="estado" class="press text-ink mb-2 block">Estado</label>
-      <select id="estado" name="estado" class="ed-input-box w-full">
+      <label for="estado" class="eyebrow text-ink2 mb-2 block">Estado</label>
+      <select id="estado" name="estado" class="input w-full">
         {% for value, label in estado_choices %}
         <option value="{{ value }}" {% if estado == value %}selected{% endif %}>{{ label }}</option>
         {% endfor %}
       </select>
     </div>
     <div class="col-span-6 md:col-span-2">
-      <label for="orden" class="press text-ink mb-2 block">Ordenar</label>
-      <select id="orden" name="orden" class="ed-input-box w-full">
+      <label for="orden" class="eyebrow text-ink2 mb-2 block">Ordenar</label>
+      <select id="orden" name="orden" class="input w-full">
         {% for value, label in orden_choices %}
         <option value="{{ value }}" {% if orden == value %}selected{% endif %}>{{ label }}</option>
         {% endfor %}
       </select>
     </div>
     <div class="col-span-12 md:col-span-2">
-      <button type="submit" class="btn-sello w-full px-4 py-3 ff-display" style='font-variation-settings:"opsz" 144,"wght" 600'>Filtrar</button>
+      <button type="submit" class="btn-accent w-full px-4 py-3 ff-display" style='font-weight: 600"opsz" 144,"wght" 600'>Filtrar</button>
     </div>
     <div class="col-span-12">
-      <label for="importe_min" class="press text-ink mb-2 block">Importe mínimo (€)</label>
+      <label for="importe_min" class="eyebrow text-ink2 mb-2 block">Importe mínimo (€)</label>
       <input id="importe_min" type="number" name="importe_min" min="0" step="10000" value="{{ importe_min or '' }}"
              placeholder="0 (cualquier importe)"
-             class="ed-input-box w-full">
+             class="input w-full">
     </div>
   </form>
 
@@ -93,29 +93,29 @@
         {% for lic in items %}
         <tr class="border-t border-ink/15 hover:bg-paperdk/50 transition">
           <td class="px-4 py-3">
-            <a href="{{ lic.enlace_oficial }}" target="_blank" rel="noopener" class="ff-display text-base text-ink hover:text-oxblood transition line-clamp-2" style='font-variation-settings:"opsz" 144,"wght" 600'>
+            <a href="{{ lic.enlace_oficial }}" target="_blank" rel="noopener" class="display font-semibold text-base text-ink hover:text-accent2 transition line-clamp-2" style='font-weight: 600"opsz" 144,"wght" 600'>
               {{ lic.titulo or "—" }}
             </a>
             {% if lic.descripcion %}
             <p class="text-xs text-ink3 mt-1 line-clamp-2">{{ lic.descripcion[:200] }}</p>
             {% endif %}
             <div class="flex flex-wrap gap-1.5 mt-1.5">
-              {% if lic.tipo_contrato %}<span class="press-sm border border-ink/30 text-ink3 px-1.5 py-0.5">{{ lic.tipo_contrato }}</span>{% endif %}
-              {% if lic.tipo_procedimiento %}<span class="press-sm border border-ink/30 text-ink3 px-1.5 py-0.5">{{ lic.tipo_procedimiento }}</span>{% endif %}
-              {% if lic.ciudad %}<span class="press-sm border border-ink/30 text-ink3 px-1.5 py-0.5">{{ lic.ciudad[:30] }}</span>{% endif %}
+              {% if lic.tipo_contrato %}<span class="text-xs border border-ink/30 text-ink3 px-1.5 py-0.5">{{ lic.tipo_contrato }}</span>{% endif %}
+              {% if lic.tipo_procedimiento %}<span class="text-xs border border-ink/30 text-ink3 px-1.5 py-0.5">{{ lic.tipo_procedimiento }}</span>{% endif %}
+              {% if lic.ciudad %}<span class="text-xs border border-ink/30 text-ink3 px-1.5 py-0.5">{{ lic.ciudad[:30] }}</span>{% endif %}
             </div>
           </td>
           <td class="px-4 py-3 text-ink2 hidden md:table-cell text-xs">{{ (lic.organismo or "—")[:50] }}</td>
           <td class="px-4 py-3 hidden lg:table-cell">
             {% if lic.importe_total %}
-            <span class="ff-mono text-sm text-ink font-medium">{{ "{:,.0f}".format(lic.importe_total) }} €</span>
+            <span class="font-mono text-sm text-ink font-medium">{{ "{:,.0f}".format(lic.importe_total) }} €</span>
             {% else %}<span class="text-ink3 text-xs">—</span>{% endif %}
           </td>
           <td class="px-4 py-3 hidden md:table-cell">
-            <span class="ff-mono text-xs text-ink2">{% if lic.fecha_limite %}{{ lic.fecha_limite.strftime("%d.%m.%Y") }}{% else %}—{% endif %}</span>
+            <span class="font-mono text-xs text-ink2">{% if lic.fecha_limite %}{{ lic.fecha_limite.strftime("%d.%m.%Y") }}{% else %}—{% endif %}</span>
           </td>
           <td class="px-4 py-3">
-            <a href="{{ lic.enlace_oficial }}" target="_blank" rel="noopener" class="press-sm text-oxblood ed-link inline-flex items-center gap-1.5">
+            <a href="{{ lic.enlace_oficial }}" target="_blank" rel="noopener" class="text-xs text-accent2 ed-link inline-flex items-center gap-1.5">
               Abrir PDF
               <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
             </a>
@@ -127,8 +127,8 @@
   </div>
   {% else %}
   <div class="border border-ink p-10 text-center bg-paperdk/40 mb-6">
-    <div class="press text-oxblood mb-3">Sin coincidencias</div>
-    <p class="ff-display text-2xl md:text-3xl text-ink mb-2" style='font-variation-settings:"opsz" 144,"wght" 600'>
+    <div class="eyebrow mb-3">Sin coincidencias</div>
+    <p class="display font-semibold text-2xl md:text-3xl text-ink mb-2" style='font-weight: 600"opsz" 144,"wght" 600'>
       No hay licitaciones que coincidan.
     </p>
     <p class="text-sm text-ink2">Prueba con otros términos o cambia el estado a "Todas".</p>
@@ -141,19 +141,19 @@
     <div>
       {% if page > 1 %}
       <a href="/licitaciones?q={{ q }}&provincia={{ provincia }}&estado={{ estado }}&categoria={{ categoria }}&importe_min={{ importe_min }}&orden={{ orden }}&page={{ page - 1 }}"
-         class="press text-ink ed-link inline-flex items-center gap-2">
+         class="eyebrow text-ink2 ed-link inline-flex items-center gap-2">
         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
         Anterior
       </a>
       {% endif %}
     </div>
-    <span class="press text-ink2">
-      Página <span class="num-bloomberg text-xl text-ink mx-1">{{ page }}</span> de <span class="num-bloomberg text-xl text-ink mx-1">{{ total_pages }}</span>
+    <span class="eyebrow text-ink22">
+      Página <span class="font-bold text-xl text-ink mx-1">{{ page }}</span> de <span class="font-bold text-xl text-ink mx-1">{{ total_pages }}</span>
     </span>
     <div>
       {% if page < total_pages %}
       <a href="/licitaciones?q={{ q }}&provincia={{ provincia }}&estado={{ estado }}&categoria={{ categoria }}&importe_min={{ importe_min }}&orden={{ orden }}&page={{ page + 1 }}"
-         class="press text-ink ed-link inline-flex items-center gap-2">
+         class="eyebrow text-ink2 ed-link inline-flex items-center gap-2">
         Siguiente
         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
       </a>
