@@ -6,9 +6,10 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-# Run migrations then start the FastAPI server.
+# Run migrations as preDeployCommand so they don't block the healthcheck window.
 # Railway injects $PORT — uvicorn must bind to 0.0.0.0:$PORT.
-startCommand = "echo '[start] alembic upgrade head'; alembic upgrade head; echo '[start] starting uvicorn on port:' $PORT; exec python -u -m uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers"
+preDeployCommand = ["sh", "-c", "echo '[predeploy] DB_HOST='${PGHOST:-unset}; echo '[predeploy] testing DNS'; getent hosts ${PGHOST:-postgres.railway.internal} || echo 'DNS FAIL'; echo '[predeploy] alembic upgrade head'; alembic upgrade head"]
+startCommand = "echo '[start] uvicorn on port:' $PORT; exec python -u -m uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers"
 healthcheckPath = "/healthz"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
