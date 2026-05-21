@@ -30,8 +30,12 @@ services:
         value: "30"
       - key: GEMINI_MODEL
         value: gemini-2.5-flash
+      - key: ANTHROPIC_MODEL
+        value: claude-haiku-4-5-20251001
+      - key: LLM_PROVIDER
+        value: auto
       - key: ALERT_FROM_EMAIL
-        value: alertas@flexigobe.com
+        value: comercial@flexigobe.com
       - key: ADMIN_USER
         value: admin
       - key: RATE_LIMIT_PER_HOUR
@@ -40,6 +44,8 @@ services:
         value: https://radarayudas.com
       # Secretos: definir desde el dashboard, no en git
       - key: GEMINI_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
         sync: false
       - key: BREVO_API_KEY
         sync: false
